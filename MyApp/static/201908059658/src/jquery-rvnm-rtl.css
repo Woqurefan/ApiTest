@@ -1,0 +1,215 @@
+/**
+ * rvnm Responsive vertical navigation menu
+ *
+ * Copyright (C) 2017 4xmen team <a1gard@4xmen.ir>
+ *
+ * LICENSE: This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 3 of the License, or (at your option) any
+ * later version.  This program is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+ * Public License for more details.  You should have received a copy of the GNU
+ * General Public License along with this program.
+ * If not, see <http://opensource.org/licenses/gpl-license.php>.
+ *
+ * @package    rvnm
+ * @subpackage rvnm style sheet right to left
+ * @author     4xmen team  <www.4xmen.ir>
+ * @author     A1Gard <a1gard@4xmen.ir>
+ * @link       https://github.com/4xmen/rvnm
+ */
+.rvnm-navbar-box{
+    direction: rtl;
+    left: auto ;
+    right:0 ;
+}
+
+.rvnm-wrapper{
+    margin-left: 0;
+    margin-right: 220px;
+}
+
+.rvnm-navbar-box ul li ul{
+    padding-left: 0;
+    padding-right: 10px;
+}
+.rvnm-navbar-box li .fa{
+    margin-right: 0px;
+    margin-left: 10px;
+}
+
+.rvnm-navbar-box ul li.rvnm-expandable{
+    background-image: url(img/lb.png) ;
+    background-position: 5% 10px;
+}
+
+.rvnm-navbar-box ul li.rvnm-collapseable{
+    background-position: 5% 10px;
+}
+
+
+/* minmal mode */
+
+.rvnm-wrapper.rvnm-minimal{
+    margin-right: 40px;
+    margin-left: 0;
+}
+
+
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand .fa{
+    margin-left: 20px;
+    margin-right: 0;
+}
+
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    left:auto;
+    right:40px;
+    padding-right: 0;
+    border-right: 1px solid #e0e0e0;
+    border-left: 0;
+}
+
+/* mobile mode */
+.rvnm-navbar-box.rvnm-mobile{
+    right: 0px;
+    left: auto;
+}
+
+.rvnm-wrapper.rvnm-mobile{
+    margin-right: 0;
+}
+
+.rvnm-navbar-box.rvnm-mobile.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+
+
+/* dark theme */
+
+.rvnm-navbar-box.dark ul li.rvnm-expandable{
+    background-image: url(img/lw.png) ;
+    background-position: 10px 15px;
+}
+
+.rvnm-navbar-box.dark ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-position: 10px 15px;
+}
+
+/* Dark theme minimal mode */
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    border-right: 0;
+}
+
+
+/* Dark theme mobile mode */
+.rvnm-navbar-box.rvnm-mobile.dark.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+
+
+/* dark ruby theme */
+
+.rvnm-navbar-box.dark-ruby ul li.rvnm-expandable{
+    background-image: url(img/lw.png) ;
+    background-position: 10px 15px;
+}
+
+.rvnm-navbar-box.dark-ruby ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-position: 10px 15px;
+}
+
+/* Dark theme minimal mode */
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    border-right: 0;
+}
+
+
+/* Dark theme mobile mode */
+.rvnm-navbar-box.rvnm-mobile.dark-ruby.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+
+
+
+/* dark beryl theme */
+
+.rvnm-navbar-box.dark-beryl ul li.rvnm-expandable{
+    background-image: url(img/lw.png) ;
+    background-position: 10px 15px;
+}
+
+.rvnm-navbar-box.dark-beryl ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-position: 10px 15px;
+}
+
+/* Dark theme minimal mode */
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    border-right: 0;
+}
+
+
+/* Dark theme mobile mode */
+.rvnm-navbar-box.rvnm-mobile.dark-beryl.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+
+
+
+
+/* dark doder theme */
+
+.rvnm-navbar-box.dark-doder ul li.rvnm-expandable{
+    background-image: url(img/lw.png) ;
+    background-position: 10px 15px;
+}
+
+.rvnm-navbar-box.dark-doder ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-position: 10px 15px;
+}
+
+/* Dark theme minimal mode */
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    border-right: 0;
+}
+
+
+/* Dark theme mobile mode */
+.rvnm-navbar-box.rvnm-mobile.dark-doder.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+
+
+
+
+
+
+/* dark lesb theme */
+
+.rvnm-navbar-box.dark-lesb ul li.rvnm-expandable{
+    background-image: url(img/lw.png) ;
+    background-position: 10px 15px;
+}
+
+.rvnm-navbar-box.dark-lesb ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-position: 10px 15px;
+}
+
+/* Dark theme minimal mode */
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    border-right: 0;
+}
+
+
+/* Dark theme mobile mode */
+.rvnm-navbar-box.rvnm-mobile.dark-lesb.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+
+
+

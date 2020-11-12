@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>帮助文档</title>
+
+    <style>
+        a{
+            text-decoration: none;
+            color: green;
+        }
+        a:hover{
+            color: red;
+            font-size: x-large;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div style="padding-left: 20px">
+        <a href="javascript:show_help('1')">项目列表</a> <br><br>
+        <a href="javascript:show_help('2')">接口库</a> <br><br>
+        <a href="javascript:show_help('3')">接口调试</a> <br><br>
+        <a href="javascript:show_help('4')">后台</a> <br><br>
+        <a href="javascript:show_help('5')">账户</a>
+    </div>
+
+    <div style="width: 3px;height: 500px;background: linear-gradient(to top,red,green);
+                position: absolute;left: 150px;top: 10px;">
+        &nbsp;
+    </div>
+
+    <div style="position: absolute;left: 200px;top: 0px">
+        <span id="help_1">
+        <h2>项目列表</h2>
+        项目列表作为接口测试平台的基础单元，用来存放用户的接口数据等信息。<br>
+        不同项目之间无法完全互通，数据互相不影响，属于平行世界。 <br>
+        项目有自己的权限保护系统，用户可放心的在里面进行安全的测试任务，而不被其他人打扰 <br>
+        项目之间可以共享的有 host域名，以便其他人在编辑接口时复用 <br>
+        项目内包含 接口库 和 用例库 和 项目设置 三大模块 <br>
+        项目的后续设置如 名称/备注/其他管理员 均可以在 项目设置模块中设置 <br>
+        项目列表就是所有人创建的项目的列表 您可以挑选需要的项目进入内部 <br>
+        每个用户可以创建无限多的项目 <br>
+        </span>
+
+        <span style="display: none"  id="help_2">
+        <h2>接口库</h2>
+        接口库作为项目内的第一个子模块，主要用来存放用户的接口数据 <br>
+        接口库中 可以对接口进行增删改查 <br>
+        接口库中 可以对接口进行自动健壮性测试 <br>
+        接口库中 可以如postman一样调试接口 <br>
+        接口库中 可以设置项目内的公共请求头/域名 作为全局变量 <br>
+        您可以在后续的用例库 中直接套用接口库中的接口 <br>
+        </span>
+
+        <span style="display: none"  id="help_3">
+        <h2>接口调试</h2>
+        接口调试模块 是一个临时的类似postman的接口调试 <br>
+        您可以不必先新建项目/进入项目/新增接口 来进行调试 <br>
+        直接就开始使用，并且会保留您的请求记录，可以随时回放 <br>
+        对于想复用的接口，您可以保存到您已有的项目中 <br>
+        </span>
+
+        <span style="display: none"  id="help_4">
+        <h2>后台</h2>
+        后台包括我们的用户管理/数据管理 <br>
+        只有管理员可以登陆，申请管理员请联系 开发者    <br>
+        </span>
+
+        <span style="display: none"  id="help_5">
+        <h2>账户</h2>
+        进入登陆页面，输入用户名/密码，点击注册 按钮即可注册成功 <br>
+        注册成功后，直接点击登陆按钮即可登陆成功 <br>
+        如果遇到任何登陆问题，请联系管理员 或在首页进行吐槽(当然你也进不去首页～) <br>
+        </span>
+    </div>
+
+    <script>
+        function show_help(which_id) {
+        {#  第一步：隐藏右侧所有文案  #}
+        document.getElementById('help_1').style.display = 'none';
+        document.getElementById('help_2').style.display = 'none';
+        document.getElementById('help_3').style.display = 'none';
+        document.getElementById('help_4').style.display = 'none';
+        document.getElementById('help_5').style.display = 'none';
+        {#   第二步：把which_id的span文案显   #}
+
+            document.getElementById('help_'+which_id).style.display = 'block';
+
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+##ignore this file##
+##*.sqlite3
+##*.log
+##*.txt
+.idea
+*.pyc

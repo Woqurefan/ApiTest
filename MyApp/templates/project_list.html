@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>项目列表</title>
+</head>
+<body>
+    <h3 style="padding-left: 10px;color: #353c48">项目列表：
+        <span style="font-size: small;color: grey;">
+            点击 <a href="#" onclick="javascript:document.getElementById('add_project_div').style.display='block'">新增项目</a>
+            即可创建属于您的新项目！
+        </span>
+    </h3>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>项目id</th> <th>项目名称</th> <th>创建者</th> <th>备注</th>  <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+             {% for i in projects %}
+                 <tr>
+                    <td>{{ i.id }}</td><td>{{ i.name }}</td> <td>{{ i.user }}</td> <td>{{ i.remark }}</td> <td>  <button onclick="javascript:document.location.href='/apis/{{ i.id }}/'" class="btn btn-success">进入</button> <button onclick="delete_project('{{ i.id }}')" class="btn btn-danger">删除</button></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function delete_project(id){
+            if(confirm('确定是否要删除该项目么？') == false){return}
+            $.get('/delete_project/',{
+                'id':id
+            },function (ret) {
+                document.location.reload()
+            })
+        }
+    </script>
+
+
+    <div id="add_project_div" style="width: 50%;background-color: white;border: 1px solid black;
+                position: absolute;left: 25%;top: 30px;padding-left: 10px;
+                box-shadow: 4px 4px 8px grey;border-radius: 5px;
+                display: none">
+        <h3>项目名称：(最多100字)</h3>
+        <input id="project_name" type="text" placeholder="请输入项目名字" style="width: 95%">
+        <br><br>
+        <button onclick="javascript:document.getElementById('add_project_div').style.display='none'" class="btn btn-danger">取消</button>
+        <button onclick="add_project()" class="btn btn-success">确定</button>
+        <br><br>
+    </div>
+
+    <script>
+        function add_project() {
+            project_name = document.getElementById('project_name').value ;
+
+
+            $.get('/add_project/',{
+                'project_name':project_name,
+            },function (ret) {
+                document.location.reload();
+            })
+
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试平台登录</title>
+    <style>
+         body{
+            background: url("/static/login.jpg");
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .wqrf_input{
+            width: 90%;
+            background-color: #d1d0d1;
+            border-radius: 50px;
+            text-align: center;
+            float: right;
+            margin-right: 10px;
+            height: 30px;
+            border: 0;
+
+        }
+        span{
+            color: #f25e78;
+        }
+    </style>
+     <script src="/static/201908059658/js/jquery-1.11.0.min.js" type="text/javascript"></script>
+
+</head>
+<body>
+<br>
+    <div style="box-shadow: 4px 4px 6px #2a262a;margin-left: -webkit-calc(50% - 150px);width: 300px;background-color: white; opacity:0.8;border-radius: 20px;text-align: center">
+        <br>
+        <strong><span style="font-size: xx-large;">接口测试平台</span></strong>
+        <br>
+        <span>欢迎使用</span>
+        <br><br>
+
+            <input id="username" type="text" class="wqrf_input" placeholder="用户名">
+            <br><br>
+            <input id="password" type="password" class="wqrf_input" placeholder="密码">
+
+        <br><br><br>
+        <button onclick="login()" style="width: 90%;height: 35px;border-radius: 50px;background-color: #f25e78;color: white;font-size: large;border: 0;box-shadow: 4px 4px 4px #a0a0a0">登 陆</button>
+        <br><br>
+        <span style="font-size: xx-small">若首次登录,请点击 <a href="javascript:register()">注册账号</a></span>
+        <br><br>
+    </div>
+
+
+<script>
+    function register() {
+        username = document.getElementById('username').value;
+        password = document.getElementById('password').value;
+        $.get("/register_action/",{
+            "username":username,
+            "password":password
+        },function (ret) {
+            alert(ret)
+        })
+    }
+    function login() {
+        username = document.getElementById('username').value;
+        password = document.getElementById('password').value;
+        $.get("/login_action/",{
+            "username":username,
+            "password":password
+        },function (ret) {
+            if(ret == '成功') {
+                document.location.href = '/home/'
+            }else{
+                 alert('您的用户名或密码错误！')
+            }
+        })
+    }
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+
+    </style>
+</head>
+<body>
+
+<h2 style="margin-left: 400px;color: #03c9fb;">欢迎使用 接口测试平台</h2>
+
+<h3>&#12288;您的请求记录：</h3>
+
+<div id="home_log_plan" style="padding-left: 20px;overflow-y: scroll;width: 320px">
+    {% for i in home_log %}
+        <a href="/home_log/{{ i.id }}/" style="text-decoration: none"  class="log" >
+            <span style="font-size: large;color: black">{{ i.api_method }}</span> -
+            {{ i.api_host }}{{ i.api_url }}
+        </a> <br>
+    {% endfor %}
+</div>
+
+<div style="position: absolute;top: 100px;left: 380px;width: -webkit-calc(100% - 390px);">
+    {# 调试弹层及函数 #}
+        <ul class="nav navbar-nav" style="width: 98%">
+            <li>
+                <select id="ts_method" style="height: 40px;" class="form-control">
+                    <option value="none"> 请求方式</option>
+                    <option value="post" > POST</option>
+                    <option value="get" > GET</option>
+                    <option value="put" > PUT</option>
+                    <option value="delete"> DELETE</option>
+                </select>
+            </li>
+
+            <li style="width: -webkit-calc(100% - 225px)">
+                <input id="ts_url" style="color: black;padding-left: 10px;width: 100%;height: 40px;" type="text" placeholder='url: 如 /abcd/efgh/' value="{{ log.api_url }}">
+            </li>
+
+            <li >
+                <button onclick="ts_send()" type="button"
+                        style="height: 40px;width: 120px;"
+                        class="btn btn-default"><span style="font-size: large">Send</span></button>
+            </li>
+        </ul>
+        <br><br><br>
+        <ul class="nav navbar-nav" style="width: 98%">
+            <li style=" width: -webkit-calc(100% - 63px)">
+                 <input id="ts_host"  style="color: black;padding-left: 10px;width: 100%;height: 40px;" type="text" placeholder='host: 如http(s)://xxxx.ccc.com' value="{{ log.api_host }}">
+            </li>
+             <li >
+                <button type="button"
+                        style="height: 40px;width: 60px;"
+                        class="btn btn-default"><span>Clear</span></button>
+            </li>
+        </ul>
+        <br><br><br>
+        <ul class="nav navbar-nav" style="width: 98%">
+            <li style="width:  -webkit-calc(100% - 63px)">
+                 <input id="ts_header"  style="color: black;padding-left: 10px;width: 100%;height: 40px;" type="text"
+                       placeholder='header请求头：如{"Content":"application/json"}' value="{{ log.api_header }}">
+            </li>
+             <li >
+                <button type="button"
+                        style="height: 40px;width: 60px;"
+                        class="btn btn-default"><span>Clear</span></button>
+            </li>
+        </ul>
+        <br><br><br>
+        <ul id="myTab" class="nav nav-tabs" >
+            <li class="active"><a id="click_none" href="#none" data-toggle="tab" >none</a></li>
+            <li ><a href="#form-data" data-toggle="tab" >form-data</a></li>
+            <li ><a href="#x-www-form-urlencoded" data-toggle="tab" >x-www-form-urlencoded</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">raw <b class="caret"></b></a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+                    <li><a href="#Text" tabindex="-1" data-toggle="tab">Text</a></li>
+                    <li><a href="#JavaScript" tabindex="-1" data-toggle="tab">JavaScript</a></li>
+                    <li><a href="#Json" tabindex="-1" data-toggle="tab">Json</a></li>
+                    <li><a href="#Html" tabindex="-1" data-toggle="tab">Html</a></li>
+                    <li><a href="#Xml" tabindex="-1" data-toggle="tab">Xml</a></li>
+                </ul>
+            </li>
+            <li ><a href="#response" data-toggle="tab" >返回体</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade in active" id="none" style="text-align: center;color: grey">
+                <h3>这个请求将不会携带任何请求体</h3>
+                <h5>This request will not carry any request-body</h5>
+            </div>
+            <div class="tab-pane fade" id="form-data">
+                <div class="table-responsive" style="width: 98%;color: black">
+                    <table class="table table-bordered table-striped" id="mytable" style="background-color:white">
+                        <thead style="color: #337ab7;font-size: x-small">
+                          <tr>
+                            <td style="width: 30%">Key</td>
+                            <td style="width: 50%">Value</td>
+                          </tr>
+                        </thead>
+                        <tbody id="mytbody">
+                          <tr>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn btn-default" id="add"><i class="fa fa-plus"></i> 添加新参数</button>
+                <script>window.jQuery || document.write('<script src="/static/201801271505/js/jquery-1.11.0.min.js"><\/script>')</script>
+                <script type="text/javascript" src="/static/201801271505/js/bootstable.js"></script>
+            </div>
+            <div class="tab-pane fade" id="x-www-form-urlencoded">
+                <div class="table-responsive" style="width: 98%;color: black">
+                    <table class="table table-bordered table-striped" id="mytable2" style="background-color:white">
+                        <thead style="color: #337ab7;font-size: x-small">
+                          <tr>
+                            <td style="width: 30%">Key</td>
+                            <td style="width: 50%">Value</td>
+                          </tr>
+                        </thead>
+                        <tbody id="mytbody2">
+                          <tr>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn btn-default" id="add2"><i class="fa fa-plus"></i> 添加新参数</button>
+                <script>window.jQuery || document.write('<script src="/static/201801271505/js/jquery-1.11.0.min.js"><\/script>')</script>
+                <script type="text/javascript" src="/static/201801271505/js/bootstable.js"></script>
+            </div>
+            <div class="tab-pane fade" id="Text">
+                <textarea name="" id="raw_Text" style="color: black;width: 98%;height: 300px"></textarea>
+            </div>
+            <div class="tab-pane fade" id="JavaScript">
+                <textarea name="" id="raw_JavaScript" style="color: black;width: 98%;height: 300px"></textarea>
+            </div>
+            <div class="tab-pane fade" id="Json">
+                <textarea name="" id="raw_Json" style="color: black;width: 98%;height: 300px"></textarea>
+            </div>
+            <div class="tab-pane fade" id="Html">
+                <textarea name="" id="raw_Html" style="color: black;width: 98%;height: 300px"></textarea>
+            </div>
+            <div class="tab-pane fade" id="Xml">
+                <textarea name="" id="raw_Xml" style="color: black;width: 98%;height: 300px"></textarea>
+            </div>
+            <div class="tab-pane fade" id="response">
+                <textarea name="" id="ts_response_body" disabled="disabled" style="background-color: #e4f3f5;color: black;width: 98%;height: 300px"></textarea>
+            </div>
+        </div>
+        <br>
+
+    <script>
+        // 自动设置请求类型
+        if( "{{ log.api_method }}" != ''){
+            document.getElementById('ts_method').value = "{{ log.api_method }}";
+        }
+        //请求体类型 //请求体
+        if("{{ log.body_method }}" != ''){
+
+            var body_method = '#'+"{{ log.body_method }}";
+            $("li a[href="+body_method+"]").click();
+
+            if("{{ log.body_method }}" == 'Text'){
+                document.getElementById('raw_Text').value = "{{ log.api_body }}";
+            }
+            if("{{ log.body_method }}" == 'JavaScript'){
+                document.getElementById('raw_JavaScript').value = "{{ log.api_body }}";
+            }
+            if("{{ log.body_method }}" == 'Json'){
+                document.getElementById('raw_Json').value = "{{ log.api_body }}";
+            }
+            if("{{ log.body_method }}" == 'Html'){
+                document.getElementById('raw_Html').value = "{{ log.api_body }}";
+            }
+            if("{{ log.body_method }}" == 'Xml'){
+                document.getElementById('raw_Xml').value = "{{ log.api_body }}";
+            }
+            if("{{ log.body_method }}" == 'form-data'){
+                var tbody = document.getElementById('mytbody'); //
+
+                body = eval("{{ log.api_body }}".replace(new RegExp('&quot;',"gm"),'"')); //把这个像列表的字符串请求体变成真正的列表
+                for(var i=0;i<body.length;i++){ // 遍历这个请求体列表
+                    key = body[i][0]; //拿出每一个键值对的key
+                    value = body[i][1];//拿出每一个键值对的value
+                    var childs_tr = tbody.children ;//获取到这个表格下面所有的tr组成的大列表
+                    // 每个tr下的children得到的是 td列表，只有俩个。
+                    childs_tr[i].children[0].innerText = key; //第一个td放key
+                    childs_tr[i].children[1].innerText = value;//第二个td放value
+                    //判断是否是最后一次遍历，来决定是否点击新增参数按钮
+                    if(i<body.length-1){
+                        document.getElementById('add').click()
+                    }
+                }
+            }
+            if("{{ log.body_method }}" == 'x-www-form-urlencoded'){
+                var tbody = document.getElementById('mytbody2'); // 定位表格中的tbody部分
+                body = eval("{{ log.api_body }}".replace(new RegExp('&quot;',"gm"),'"')); //把这个像列表的字符串请求体变成真正的列表
+                for(var i=0;i<body.length;i++){ // 遍历这个请求体列表
+                    key = body[i][0]; //拿出每一个键值对的key
+                    value = body[i][1];//拿出每一个键值对的value
+                    var childs_tr = tbody.children ;//获取到这个表格下面所有的tr组成的大列表
+                    // 每个tr下的children得到的是 td列表，只有俩个。
+                    childs_tr[i].children[0].innerText = key; //第一个td放key
+                    childs_tr[i].children[1].innerText = value;//第二个td放value
+                    //判断是否是最后一次遍历，来决定是否点击新增参数按钮
+                    if(i<body.length-1){
+                        document.getElementById('add2').click()
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        $('#mytable').SetEditable({
+                $addButton: $('#add'),
+            });
+        $('#mytable2').SetEditable({
+                $addButton: $('#add2'),
+            });
+        function ts_send() {
+            // 获取接口的所有数据
+            var ts_method = document.getElementById('ts_method').value ;
+            var ts_url = document.getElementById('ts_url').value ;
+            var ts_host = document.getElementById('ts_host').value ;
+            var ts_header = document.getElementById('ts_header').value ;
+             // 判断顶部的数据是否填充完
+            if(ts_method == 'none'){alert('请选择请求方式！');return}
+            if(ts_url == ''){alert('请输入url！');return}
+            if(ts_host == ''){alert('请输入host！');return}
+             //判断关键数据是否符合规则
+            if(ts_host.slice(0,7) != 'http://' && ts_host.slice(0,8) != 'https://'){
+                alert('host必须以http://或https://开头！');return
+            }
+            if(ts_header != ''){
+                try {
+                    JSON.parse(ts_header)
+                }catch (e) {
+                    alert('header请求头不符合json规范！');
+                    return
+                }
+            }
+            var ts_body_method = $('ul#myTab li[class="active"]')[0].innerText;
+            if(ts_body_method == 'none'){
+                var ts_api_body = ''
+            }
+            if(ts_body_method == 'form-data'){
+                var ts_api_body = []; //新建这个空列表用来存放后续的数据
+                var tbody_ = $("table#mytable tbody")[0]; //获取该表格的内容部分
+                var trlist = tbody_.children ; //获取下面所有tr，每个tr就是一个键值对实际上
+                for(var i=0;i<trlist.length;i++) {
+                    var tdarr = trlist[i].children; // 获取tr下的俩个td
+                    var key = tdarr[0].innerText; // 获取key
+                    var value = tdarr[1].innerText; // 获取value
+                    ts_api_body.push([key, value]);// 作为一个数组，存放到这个大数组里。
+                }
+                ts_api_body = JSON.stringify(ts_api_body);
+            }
+            if(ts_body_method == 'x-www-form-urlencoded'){
+                var ts_api_body = []; //新建这个空列表用来存放后续的数据
+                var tbody_ = $("table#mytable2 tbody")[0]; //获取该表格的内容部分
+                var trlist = tbody_.children ; //获取下面所有tr，每个tr就是一个键值对实际上
+                for(var i=0;i<trlist.length;i++) {
+                    var tdarr = trlist[i].children; // 获取tr下的俩个td
+                    var key = tdarr[0].innerText; // 获取key
+                    var value = tdarr[1].innerText; // 获取value
+                    ts_api_body.push([key, value]);// 作为一个数组，存放到这个大数组里。
+                }
+                ts_api_body = JSON.stringify(ts_api_body);
+            }
+            if(ts_body_method == 'Text'){
+                var ts_api_body = document.getElementById('raw_Text').value;
+            }
+            if(ts_body_method == 'JavaScript'){
+                var ts_api_body = document.getElementById('raw_JavaScript').value;
+            }
+            if(ts_body_method == 'Json'){
+                var ts_api_body = document.getElementById('raw_Json').value;
+            }
+            if(ts_body_method == 'Html'){
+                var ts_api_body = document.getElementById('raw_Html').value;
+            }
+            if(ts_body_method == 'Xml'){
+                var ts_api_body = document.getElementById('raw_Xml').value;
+            }
+            // 发送请求给后台
+             $.get('/Api_send_home/',{
+                'ts_method':ts_method,
+                'ts_url':ts_url,
+                'ts_host':ts_host,
+                'ts_header':ts_header,
+                'ts_body_method':ts_body_method,
+                'ts_api_body':ts_api_body
+            },function (ret) {
+                 log_refersh();
+                $("li a[href=#response]").click(); //点击一下返回体按钮
+                document.getElementById('ts_response_body').value = ret ;//把返回值显示到返回值多行文本框中
+            })
+        }
+        // 左侧记录刷新
+        function log_refersh() {
+            //清空
+            div = document.getElementById('home_log_plan');
+            div.innerHTML = '';
+            // 生成新的
+            $.get('/get_home_log/',{
+            },function (ret) { //ret 应该就是我们获取到的记录列表数组 的字符串形式
+                // 这里写生成展示的代码
+                console.log(ret);
+                var res = eval(ret);
+                var all_logs = res.all_logs;
+                for(var i=0; i<all_logs.length;i++){
+                    var a =document.createElement('a') ;//创建a标签
+                    a.href="/home_log/"+all_logs[i].id+"/" ; // 点击函数
+                    a.style="text-decoration: none" ;
+                    a.class = 'log';
+                    var s = document.createElement('span'); //声明显示请求体类型的span
+                    s.style = "font-size: large;color: black";
+                    s.innerText = all_logs[i].api_method+' - '; //设定这个method;
+                    var s2 = document.createElement('span'); // 声明存放host+url的span
+                    s2.innerText = all_logs[i].api_host+all_logs[i].api_url;
+                    a.appendChild(s);
+                    a.appendChild(s2);
+                    div.appendChild(a);
+                    div.appendChild(document.createElement('br'));
+                }
+            })
+        }
+    </script>
+</div>
+<div id="shu" style="width: 2px;background-color: #262c2c;position: absolute;top: 70px;left:340px;">
+    &nbsp;
+</div>
+<script>
+    var h = document.documentElement.clientHeight;
+    document.getElementById('shu').style.height = (h-85).toString() +'px';
+    document.getElementById('home_log_plan').style.height = (h - 85).toString()+'px';
+</script>
+
+</body>
+</html>

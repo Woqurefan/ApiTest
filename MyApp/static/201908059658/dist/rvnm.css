@@ -1,0 +1,940 @@
+/**
+ * rvnm Responsive vertical navigation menu
+ *
+ * Copyright (C) 2017 4xmen team <a1gard@4xmen.ir>
+ *
+ * LICENSE: This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 3 of the License, or (at your option) any
+ * later version.  This program is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+ * Public License for more details.  You should have received a copy of the GNU
+ * General Public License along with this program.
+ * If not, see <http://opensource.org/licenses/gpl-license.php>.
+ *
+ * @package    rvnm
+ * @subpackage rvnm style sheet right to left
+ * @author     4xmen team  <www.4xmen.ir>
+ * @author     A1Gard <a1gard@4xmen.ir>
+ * @link       https://github.com/4xmen/rvnm
+ */
+.rvnm-navbar-box{
+    direction: rtl;
+    left: auto ;
+    right:0 ;
+}
+
+.rvnm-wrapper{
+    margin-left: 0;
+    margin-right: 220px;
+}
+
+.rvnm-navbar-box ul li ul{
+    padding-left: 0;
+    padding-right: 10px;
+}
+.rvnm-navbar-box li .fa{
+    margin-right: 0px;
+    margin-left: 10px;
+}
+
+.rvnm-navbar-box ul li.rvnm-expandable{
+    background-image: url(img/lb.png) ;
+    background-position: 5% 10px;
+}
+
+.rvnm-navbar-box ul li.rvnm-collapseable{
+    background-position: 5% 10px;
+}
+
+
+/* minmal mode */
+
+.rvnm-wrapper.rvnm-minimal{
+    margin-right: 40px;
+    margin-left: 0;
+}
+
+
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand .fa{
+    margin-left: 20px;
+    margin-right: 0;
+}
+
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    left:auto;
+    right:40px;
+    padding-right: 0;
+    border-right: 1px solid #e0e0e0;
+    border-left: 0;
+}
+
+/* mobile mode */
+.rvnm-navbar-box.rvnm-mobile{
+    right: 0px;
+    left: auto;
+}
+
+.rvnm-wrapper.rvnm-mobile{
+    margin-right: 0;
+}
+
+.rvnm-navbar-box.rvnm-mobile.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+
+
+/* dark theme */
+
+.rvnm-navbar-box.dark ul li.rvnm-expandable{
+    background-image: url(img/lw.png) ;
+    background-position: 10px 15px;
+}
+
+.rvnm-navbar-box.dark ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-position: 10px 15px;
+}
+
+/* Dark theme minimal mode */
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    border-right: 0;
+}
+
+
+/* Dark theme mobile mode */
+.rvnm-navbar-box.rvnm-mobile.dark.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+
+
+/* dark ruby theme */
+
+.rvnm-navbar-box.dark-ruby ul li.rvnm-expandable{
+    background-image: url(img/lw.png) ;
+    background-position: 10px 15px;
+}
+
+.rvnm-navbar-box.dark-ruby ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-position: 10px 15px;
+}
+
+/* Dark theme minimal mode */
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    border-right: 0;
+}
+
+
+/* Dark theme mobile mode */
+.rvnm-navbar-box.rvnm-mobile.dark-ruby.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+
+
+
+/* dark beryl theme */
+
+.rvnm-navbar-box.dark-beryl ul li.rvnm-expandable{
+    background-image: url(img/lw.png) ;
+    background-position: 10px 15px;
+}
+
+.rvnm-navbar-box.dark-beryl ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-position: 10px 15px;
+}
+
+/* Dark theme minimal mode */
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    border-right: 0;
+}
+
+
+/* Dark theme mobile mode */
+.rvnm-navbar-box.rvnm-mobile.dark-beryl.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+
+
+
+
+/* dark doder theme */
+
+.rvnm-navbar-box.dark-doder ul li.rvnm-expandable{
+    background-image: url(img/lw.png) ;
+    background-position: 10px 15px;
+}
+
+.rvnm-navbar-box.dark-doder ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-position: 10px 15px;
+}
+
+/* Dark theme minimal mode */
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    border-right: 0;
+}
+
+
+/* Dark theme mobile mode */
+.rvnm-navbar-box.rvnm-mobile.dark-doder.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+
+
+
+
+
+
+/* dark lesb theme */
+
+.rvnm-navbar-box.dark-lesb ul li.rvnm-expandable{
+    background-image: url(img/lw.png) ;
+    background-position: 10px 15px;
+}
+
+.rvnm-navbar-box.dark-lesb ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-position: 10px 15px;
+}
+
+/* Dark theme minimal mode */
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    border-right: 0;
+}
+
+
+/* Dark theme mobile mode */
+.rvnm-navbar-box.rvnm-mobile.dark-lesb.rvnm-mobile-expand{
+    background-position: 97% 5px;
+}
+/**
+ * rvnm Responsive vertical navigation menu
+ *
+ * Copyright (C) 2017 4xmen team <a1gard@4xmen.ir>
+ *
+ * LICENSE: This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 3 of the License, or (at your option) any
+ * later version.  This program is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+ * Public License for more details.  You should have received a copy of the GNU
+ * General Public License along with this program.
+ * If not, see <http://opensource.org/licenses/gpl-license.php>.
+ *
+ * @package    rvnm
+ * @subpackage rvnm style sheet
+ * @author     4xmen team  <www.4xmen.ir>
+ * @author     A1Gard <a1gard@4xmen.ir>
+ * @link       https://github.com/4xmen/rvnm
+ */
+
+body,html{
+    padding: 0;
+    margin: 0;
+    height: auto;
+}
+
+
+/* ripple */
+.rvnm-ripple {
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  transform: scale(0);
+  position: absolute;
+  opacity: 1;
+}
+.rvnm-rippleEffect {
+    animation: rvnm-rippleDrop .6s linear;
+}
+
+@keyframes rvnm-rippleDrop {
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.rvnm-navbar-box{
+    position: absolute;
+    left: 0px;
+    top:0;
+    width: 220px;
+    background: #A0AEC4 ;
+    min-height: 50vh;
+    overflow-y: hidden;
+    z-index: 99;
+}
+
+.rvnm-wrapper{
+    margin-left: 220px;
+}
+
+
+.rvnm-navbar-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+.rvnm-navbar-box ul li{
+    background: #eee ;
+    border-bottom:1px solid #e0e0e0;
+}
+
+.rvnm-navbar-box ul li:hover{
+    background: #A0AEC4 ;
+}
+
+.rvnm-navbar-box ul li.rvnm-collapseable{
+    background: #e1e1e1;
+}
+
+.rvnm-navbar-box ul li ul{
+    overflow: hidden;
+    display: none;
+    padding-left: 10px;
+}
+
+.rvnm-navbar-box .fa{
+    font-size: 16px;
+}
+.rvnm-navbar-box a{
+    text-decoration: none;
+}
+
+.rvnm-navbar-box .search{
+    padding: 4px;
+    height: 25px;
+    max-height: 25px;
+}
+
+.rvnm-navbar-box .search .fa{
+    margin-left: 7px;
+    margin-right: 3px !important;
+    margin-top: 4px;
+}
+
+.rvnm-navbar-box .search input{
+    padding: 6px;
+    background: transparent;
+    border: none;
+    width: calc(100% - 40px);
+    outline: 0;
+    box-sizing: border-box;
+}
+
+
+.rvnm-navbar-box ul li a,.rvnm-navbar-box ul li a:visited{
+    display: block;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 100;
+    color: #333 ;
+    position: relative;
+    overflow: hidden;
+    height: 45px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing:border-box;
+    line-height: 1.75em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rvnm-navbar-box ul li:hover a,.rvnm-navbar-box ul li:hover a:visited{
+    color: #000;
+}
+
+.rvnm-navbar-box ul li span.spliter{
+    display: block;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #eaeaea ;
+    color: #1d4686;
+    /*text-align: center;*/
+}
+
+.rvnm-navbar-box li .fa{
+    margin-right: 10px;
+}
+
+.rvnm-navbar-box ul li.rvnm-expandable{
+    background-image: url(img/rb.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 10px;
+}
+
+.rvnm-navbar-box ul li.rvnm-collapseable{
+    background-image: url(img/db.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 10px;
+}
+.rvnm-navbar-box ul li.rvnm-collapseable > ul{
+
+}
+
+
+/*minmal mode*/
+
+.rvnm-minimal{
+
+}
+
+.rvnm-minimal .search input {
+    display: none;
+}
+
+.rvnm-minimal .search:hover input{
+    display: inline-block;
+    width: calc(100% - 45px);
+}
+.rvnm-minimal .search input:focus {
+    display: inline-block;
+    width: calc(100% - 45px);
+}
+
+.rvnm-navbar-box.rvnm-minimal{
+    width: 40px;
+    overflow: visible;
+}
+
+.rvnm-wrapper.rvnm-minimal{
+    margin-left: 40px;
+}
+
+
+.rvnm-navbar-box.rvnm-minimal > li{
+    text-align: center;
+}
+.rvnm-navbar-box.rvnm-minimal li > a,.rvnm-navbar-box.rvnm-minimal li > .spliter{
+    font-size: 0;
+}
+
+.rvnm-navbar-box.rvnm-minimal > ul > li.rvnm-expandable{
+    background-image: none ;
+}
+
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand{
+    width: 240px;
+    height: 36px;
+    overflow: visible;
+    position: relative;
+}
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand  a,.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand  .spliter{
+    font-size: 14px;
+}
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > a,.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > .spliter{
+    background: rgba(0,0,0,0.2) ;
+}
+
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand .fa{
+    margin-right: 20px;
+}
+
+.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > ul{
+    display: block;
+    z-index: 9;
+    position: absolute;
+    left:40px;
+    padding-left: 0;
+    top:100%;
+    width: 200px;
+    padding-top: 1px;
+    border-left: 1px solid #e0e0e0;
+}
+
+/*mobile mode*/
+
+.rvnm-navbar-box.rvnm-mobile{
+    min-height: 0;
+    position: absolute;
+    left: 0px;
+    top:0;
+    width: 40px;
+    height:35px;
+    overflow: hidden;
+    opacity: 0.6;
+    -o-transition:.6s;
+    -ms-transition:.6s;
+    -moz-transition:.6s;
+    -webkit-transition:.6s;
+    transition:.6s;
+    background: #fff url(img/mb.png) center no-repeat ;
+    z-index: 9999;
+}
+
+.rvnm-navbar-box.rvnm-mobile:hover{
+    opacity: 1;
+}
+
+.rvnm-navbar-box.rvnm-mobile > ul{
+    display: none;
+}
+
+.rvnm-wrapper.rvnm-mobile{
+    margin-left: 0;
+}
+
+.rvnm-navbar-box.rvnm-mobile.rvnm-mobile-expand{
+    overflow: visible;
+    background: #fff url(img/cb.png) no-repeat ;
+    background-position: 5px 5px;
+    opacity: 1 ;
+    padding-top: 40px;
+    width: 100%;
+}
+.rvnm-navbar-box.rvnm-mobile.rvnm-mobile-expand > ul{
+    display: block;
+}
+
+
+/* Dark theme */
+.rvnm-navbar-box.dark{
+    background: #353C48 ;
+}
+
+.rvnm-navbar-box.dark ul li{
+    background: #353C48 ;
+    border-bottom: 0 ;
+}
+.rvnm-navbar-box.dark .fa, .rvnm-navbar-box.dark .search input {
+    color: #eee;
+}
+/*.rvnm-navbar-box.dark ul li*/
+
+.rvnm-navbar-box.dark ul li:hover,.rvnm-navbar-box.dark ul li.rvnm-collapseable{
+    background-color: rgba(0, 0, 0, 0.07) ;
+}
+.rvnm-navbar-box.dark ul li a,.rvnm-navbar-box.dark ul li a:visited,.rvnm-navbar-box.dark ul li span.spliter{
+    background: transparent  ;
+    color: rgb(150, 162, 180);
+    padding-top: 15px ;
+    padding-bottom: 15px;
+}
+
+.rvnm-navbar-box.dark ul li span.spliter{
+    opacity: .60;
+}
+
+.rvnm-navbar-box.dark ul li:hover a,.rvnm-navbar-box.dark ul li:hover a:visited{
+    color: rgb(150, 162, 180);
+}
+
+
+.rvnm-navbar-box.dark ul li.rvnm-expandable{
+    background-image: url(img/rw.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 15px;
+}
+
+.rvnm-navbar-box.dark ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 15px;
+}
+ /*Dark theme minimal*/
+ .rvnm-navbar-box.rvnm-minimal.dark .rvnm-minimal-expand{
+     height: 46px;
+ }
+.rvnm-navbar-box.rvnm-minimal.dark .rvnm-minimal-expand > a,.rvnm-navbar-box.rvnm-minimal .rvnm-minimal-expand > .spliter{
+    background: rgba(0,0,0,0.2) ;
+}
+.rvnm-navbar-box.rvnm-minimal.dark ul li:hover,.rvnm-navbar-box.rvnm-minimal ul li.rvnm-collapseable{
+    background-color: #444859 ;
+    border-bottom: 0;
+}
+.rvnm-navbar-box.rvnm-minimal.dark > ul > li{
+    background-image: none !important;
+}
+
+.rvnm-navbar-box.rvnm-minimal.dark .rvnm-minimal-expand > ul{
+    top:100%;
+    background-color: #444859 ;
+    border-left: 0;
+    padding-top: 0;
+}
+.rvnm-navbar-box.rvnm-minimal.dark ul li ul li{
+    background-color: #393a48 ;
+}
+.rvnm-navbar-box.rvnm-minimal.dark ul li ul li:hover{
+    background-color: rgba(0,0,0,0.2);
+}
+
+/*Dark theme mobile mode*/
+
+.rvnm-navbar-box.rvnm-mobile.dark{
+    background: #393a48 url(img/mw.png) center no-repeat ;
+}
+
+.rvnm-navbar-box.rvnm-mobile.dark.rvnm-mobile-expand{
+    background: #393a48 url(img/cw.png) no-repeat ;
+    background-position: 5px 5px;
+}
+
+.rvnm-navbar-box.rvnm-mobile.dark.rvnm-mobile-expand  ul {
+    background-color: #393a48 ;
+}
+
+
+/* Dark ruby theme */
+.rvnm-navbar-box.dark-ruby{
+    background: #353C48 ;
+}
+
+.rvnm-navbar-box.dark-ruby ul li{
+    background: #353C48 ;
+    border-bottom: 0 ;
+}
+
+.rvnm-navbar-box.dark-ruby .fa, .rvnm-navbar-box.dark-ruby  .search input  {
+    color: #eee;
+}
+
+.rvnm-navbar-box.dark-ruby ul li:hover,.rvnm-navbar-box.dark-ruby ul li.rvnm-collapseable{
+    background-color: #f0544c;
+}
+.rvnm-navbar-box.dark-ruby ul li a,.rvnm-navbar-box.dark-ruby ul li a:visited,.rvnm-navbar-box.dark-ruby ul li span.spliter{
+    background: transparent  ;
+    color: rgb(150, 162, 180);
+    padding-top: 15px ;
+    padding-bottom: 15px;
+    font-weight: 700;
+}
+
+.rvnm-navbar-box.dark-ruby ul li span.spliter{
+    opacity: .60;
+}
+
+.rvnm-navbar-box.dark-ruby ul li span.spliter:hover{
+    color: #fff;
+}
+
+.rvnm-navbar-box.dark-ruby ul li:hover a,.rvnm-navbar-box.dark-ruby ul li:hover a:visited{
+    color: #ffffff;
+}
+
+
+.rvnm-navbar-box.dark-ruby ul li.rvnm-expandable{
+    background-image: url(img/rw.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 15px;
+}
+
+.rvnm-navbar-box.dark-ruby ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 15px;
+}
+ /*Dark ruby theme minimal*/
+ .rvnm-navbar-box.rvnm-minimal.dark-ruby .rvnm-minimal-expand{
+     height: 46px;
+ }
+
+.rvnm-navbar-box.rvnm-minimal.dark-ruby ul li:hover,.rvnm-navbar-box.rvnm-minimal ul li.rvnm-collapseable{
+    background-color: #f0544c ;
+    border-bottom: 0;
+}
+.rvnm-navbar-box.rvnm-minimal.dark-ruby > ul > li{
+    background-image: none !important;
+}
+
+.rvnm-navbar-box.rvnm-minimal.dark-ruby .rvnm-minimal-expand > ul{
+    top:100%;
+    background-color: #f0544c ;
+    border-left: 0;
+    padding-top: 0;
+}
+.rvnm-navbar-box.rvnm-minimal.dark-ruby ul li ul li{
+    background-color: #393a48 ;
+}
+
+
+/*Dark ruby theme mobile mode*/
+
+.rvnm-navbar-box.rvnm-mobile.dark-ruby{
+    background: #393a48 url(img/mw.png) center no-repeat ;
+}
+
+.rvnm-navbar-box.rvnm-mobile.dark-ruby.rvnm-mobile-expand{
+    background: #393a48 url(img/cw.png) no-repeat ;
+    background-position: 5px 5px;
+}
+
+.rvnm-navbar-box.rvnm-mobile.dark-ruby.rvnm-mobile-expand  ul {
+    background-color: #393a48 ;
+}
+
+
+/* Dark beryl theme */
+.rvnm-navbar-box.dark-beryl{
+    background: #353C48 ;
+}
+
+.rvnm-navbar-box.dark-beryl ul li{
+    background: #353C48 ;
+    border-bottom: 0 ;
+}
+
+.rvnm-navbar-box.dark-beryl .fa, .rvnm-navbar-box.dark-beryl  .search input {
+    color: #eee;
+}
+
+.rvnm-navbar-box.dark-beryl ul li:hover,.rvnm-navbar-box.dark-beryl ul li.rvnm-collapseable{
+    background-color: #0fd1ab;
+}
+.rvnm-navbar-box.dark-beryl ul li a,.rvnm-navbar-box.dark-beryl ul li a:visited,.rvnm-navbar-box.dark-beryl ul li span.spliter{
+    background: transparent  ;
+    color: #eee;
+    padding-top: 15px ;
+    padding-bottom: 15px;
+}
+
+.rvnm-navbar-box.dark-beryl ul li span.spliter{
+    opacity: .60;
+}
+
+.rvnm-navbar-box.dark-beryl ul li span.spliter:hover{
+    color: #fff;
+}
+
+.rvnm-navbar-box.dark-beryl ul li:hover a,.rvnm-navbar-box.dark-beryl ul li:hover a:visited{
+    color: #ffffff;
+}
+
+
+.rvnm-navbar-box.dark-beryl ul li.rvnm-expandable{
+    background-image: url(img/rw.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 15px;
+}
+
+.rvnm-navbar-box.dark-beryl ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 15px;
+}
+ /*Dark beryl theme minimal*/
+ .rvnm-navbar-box.rvnm-minimal.dark-beryl .rvnm-minimal-expand{
+     height: 46px;
+ }
+
+.rvnm-navbar-box.rvnm-minimal.dark-beryl ul li:hover,.rvnm-navbar-box.rvnm-minimal ul li.rvnm-collapseable{
+    background-color: #0fd1ab ;
+    border-bottom: 0;
+}
+.rvnm-navbar-box.rvnm-minimal.dark-beryl > ul > li{
+    background-image: none !important;
+}
+
+.rvnm-navbar-box.rvnm-minimal.dark-beryl .rvnm-minimal-expand > ul{
+    top:100%;
+    background-color: #0fd1ab ;
+    border-left: 0;
+    padding-top: 0;
+}
+.rvnm-navbar-box.rvnm-minimal.dark-beryl ul li ul li{
+    background-color: #393a48 ;
+}
+
+
+/*Dark beryl theme mobile mode*/
+
+.rvnm-navbar-box.rvnm-mobile.dark-beryl{
+    background: #393a48 url(img/mw.png) center no-repeat ;
+}
+
+.rvnm-navbar-box.rvnm-mobile.dark-beryl.rvnm-mobile-expand{
+    background: #393a48 url(img/cw.png) no-repeat ;
+    background-position: 5px 5px;
+}
+
+.rvnm-navbar-box.rvnm-mobile.dark-beryl.rvnm-mobile-expand  ul {
+    background-color: #393a48 ;
+}
+
+
+/* Dark doder theme */
+.rvnm-navbar-box.dark-doder{
+    background: #353C48 ;
+}
+
+.rvnm-navbar-box.dark-doder ul li{
+    background: #353C48 ;
+    border-bottom: 0 ;
+}
+
+.rvnm-navbar-box.dark-doder .fa, .rvnm-navbar-box.dark-doder  .search input  {
+    color: #eee;
+}
+
+
+.rvnm-navbar-box.dark-doder ul li:hover,.rvnm-navbar-box.dark-doder ul li.rvnm-collapseable{
+    background-color: #4285f4;
+}
+.rvnm-navbar-box.dark-doder ul li a,.rvnm-navbar-box.dark-doder ul li a:visited,.rvnm-navbar-box.dark-doder ul li span.spliter{
+    background: transparent  ;
+    color: #eee;
+    padding-top: 15px ;
+    padding-bottom: 15px;
+}
+
+.rvnm-navbar-box.dark-doder ul li span.spliter{
+    opacity: .60;
+}
+
+.rvnm-navbar-box.dark-doder ul li span.spliter:hover{
+    color: #fff;
+}
+
+.rvnm-navbar-box.dark-doder ul li:hover a,.rvnm-navbar-box.dark-doder ul li:hover a:visited{
+    color: #ffffff;
+}
+
+
+.rvnm-navbar-box.dark-doder ul li.rvnm-expandable{
+    background-image: url(img/rw.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 15px;
+}
+
+.rvnm-navbar-box.dark-doder ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 15px;
+}
+ /*Dark doder theme minimal*/
+ .rvnm-navbar-box.rvnm-minimal.dark-doder .rvnm-minimal-expand{
+     height: 46px;
+ }
+
+.rvnm-navbar-box.rvnm-minimal.dark-doder ul li:hover,.rvnm-navbar-box.rvnm-minimal ul li.rvnm-collapseable{
+    background-color: #4285f4 ;
+    border-bottom: 0;
+}
+.rvnm-navbar-box.rvnm-minimal.dark-doder > ul > li{
+    background-image: none !important;
+}
+
+.rvnm-navbar-box.rvnm-minimal.dark-doder .rvnm-minimal-expand > ul{
+    top:100%;
+    background-color: #4285f4 ;
+    border-left: 0;
+    padding-top: 0;
+}
+.rvnm-navbar-box.rvnm-minimal.dark-doder ul li ul li{
+    background-color: #393a48 ;
+}
+
+
+/*Dark doder theme mobile mode*/
+
+.rvnm-navbar-box.rvnm-mobile.dark-doder{
+    background: #393a48 url(img/mw.png) center no-repeat ;
+}
+
+.rvnm-navbar-box.rvnm-mobile.dark-doder.rvnm-mobile-expand{
+    background: #393a48 url(img/cw.png) no-repeat ;
+    background-position: 5px 5px;
+}
+
+.rvnm-navbar-box.rvnm-mobile.dark-doder.rvnm-mobile-expand  ul {
+    background-color: #393a48 ;
+}
+
+
+/* Dark lesb theme */
+.rvnm-navbar-box.dark-lesb{
+    background: #353C48 ;
+}
+
+.rvnm-navbar-box.dark-lesb ul li{
+    background: #353C48 ;
+    border-bottom: 0 ;
+}
+
+.rvnm-navbar-box.dark-lesb .fa, .rvnm-navbar-box.dark-lesb  .search input  {
+    color: #eee;
+}
+
+
+
+.rvnm-navbar-box.dark-lesb ul li:hover,.rvnm-navbar-box.dark-lesb ul li.rvnm-collapseable{
+    background-color: #f442b3;
+}
+.rvnm-navbar-box.dark-lesb ul li a,.rvnm-navbar-box.dark-lesb ul li a:visited,.rvnm-navbar-box.dark-lesb ul li span.spliter{
+    background: transparent  ;
+    color: #eee;
+    padding-top: 15px ;
+    padding-bottom: 15px;
+}
+
+.rvnm-navbar-box.dark-lesb ul li span.spliter{
+    opacity: .60;
+}
+
+.rvnm-navbar-box.dark-lesb ul li span.spliter:hover{
+    color: #fff;
+}
+
+.rvnm-navbar-box.dark-lesb ul li:hover a,.rvnm-navbar-box.dark-lesb ul li:hover a:visited{
+    color: #ffffff;
+}
+
+
+.rvnm-navbar-box.dark-lesb ul li.rvnm-expandable{
+    background-image: url(img/rw.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 15px;
+}
+
+.rvnm-navbar-box.dark-lesb ul li.rvnm-collapseable{
+    background-image: url(img/dw.png) ;
+    background-repeat: no-repeat;
+    background-position: 95% 15px;
+}
+ /*Dark lesb theme minimal*/
+ .rvnm-navbar-box.rvnm-minimal.dark-lesb .rvnm-minimal-expand{
+     height: 46px;
+ }
+
+.rvnm-navbar-box.rvnm-minimal.dark-lesb ul li:hover,.rvnm-navbar-box.rvnm-minimal ul li.rvnm-collapseable{
+    background-color: #f442b3 ;
+    border-bottom: 0;
+}
+.rvnm-navbar-box.rvnm-minimal.dark-lesb > ul > li{
+    background-image: none !important;
+}
+
+.rvnm-navbar-box.rvnm-minimal.dark-lesb .rvnm-minimal-expand > ul{
+    top:100%;
+    background-color: #f442b3 ;
+    border-left: 0;
+    padding-top: 0;
+}
+.rvnm-navbar-box.rvnm-minimal.dark-lesb ul li ul li{
+    background-color: #393a48 ;
+}
+
+
+/*Dark lesb theme mobile mode*/
+
+.rvnm-navbar-box.rvnm-mobile.dark-lesb{
+    background: #393a48 url(img/mw.png) center no-repeat ;
+}
+
+.rvnm-navbar-box.rvnm-mobile.dark-lesb.rvnm-mobile-expand{
+    background: #393a48 url(img/cw.png) no-repeat ;
+    background-position: 5px 5px;
+}
+
+.rvnm-navbar-box.rvnm-mobile.dark-lesb.rvnm-mobile-expand  ul {
+    background-color: #393a48 ;
+}
