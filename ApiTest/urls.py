@@ -59,10 +59,11 @@ urlpatterns = [
     url(r'^add_new_step/$', add_new_step),  # 新增小步骤接口
     url(r'^delete_step/(?P<eid>.*)/$', delete_step),  # 删除小步骤接口
     url(r'^get_step/$', get_step),  #获取小步骤
-
     url(r'^save_step/$', save_step),  # 保存小步骤
+    url(r'^step_get_api/$', step_get_api),  # 步骤详情页获取接口数据
+    url(r'^Run_Case/$', Run_Case),  # 运行大用例
 
-
+    url(r'^look_report/(?P<eid>.*)/$', look_report),  # 查看报告
 
 ]
 

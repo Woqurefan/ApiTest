@@ -5,6 +5,7 @@ Bootstable
  @autor Tito Hinostroza
 */
   //Global variables
+
   var params = null;  		//Parameters
   var colsEdi =null;
   var newColHtml = '<div class="btn-group pull-right">'+
@@ -24,6 +25,7 @@ Bootstable
   var colEdicHtml = '<td name="buttons">'+newColHtml+'</td>'; 
     
   $.fn.SetEditable = function (options) {
+    var c = 0;
     var defaults = {
         columnsEd: null,         //Index to editable columns. If null all td editables. Ex.: "1,2,3,4,5"
         $addButton: null,        //Jquery object of "Add" button
@@ -39,7 +41,9 @@ Bootstable
     //Process "addButton" parameter
     if (params.$addButton != null) {
         //Se proporcionó parámetro
+        console.log(c);
         params.$addButton.click(function() {
+            console.log('运行了')
             rowAddNew($tabedi.attr("id"));
         });
     }
@@ -140,7 +144,7 @@ function rowElim(but) {  //Elimina la fila actual
     params.onDelete();
 }
 function rowAddNew(tabId) {  //Agrega fila a la tabla indicada.
-var $tab_en_edic = $("#" + tabId);  //Table to edit
+    var $tab_en_edic = $("#" + tabId);  //Table to edit
     var $filas = $tab_en_edic.find('tbody tr');
     if ($filas.length==0) {
         //No hay filas de datos. Hay que crearlas completas
