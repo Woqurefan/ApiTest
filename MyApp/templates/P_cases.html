@@ -282,8 +282,14 @@
 
     {# 提取返回值功能 ⬇️  #}
     <br>
-    <textarea id="get_path" rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="提取返回值-路径法"></textarea>
-    <textarea  id="get_zz"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="提取返回值-正则法"></textarea>
+    <textarea id="get_path" rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="提取返回值-路径法：
+参数名的字符串=路径 这种​方式提取,多个用换行分隔，例子如：
+name=/data/[3]/username
+id=/data/[2]/userid"></textarea>
+    <textarea  id="get_zz"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="提取返回值-正则法：
+参数名的字符串=左边界字符串(.*?)右边界，多个用换行分隔，例子如：
+name=username':(.*?),
+id=d':(.*?),"></textarea>
     <textarea  id="assert_zz"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="断言返回值-路径法"></textarea>
     <textarea  id="assert_qz"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="断言返回值-正则法"></textarea>
     <textarea  id="assert_path"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="断言返回值-全文检索"></textarea>
