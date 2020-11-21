@@ -374,6 +374,10 @@ color: white;padding-left: 10px;">
             alert('host必须以http://或https://开头！');return
         }
         if(ts_header != ''){
+             if (tanchuang_header.slice(0, 1) != '[' && tanchuang_header.slice(0, 1) != '{') {
+                alert('header请求头不符合json规范！');
+                return
+            }
             try {
                 JSON.parse(ts_header)
             }catch (e) {
@@ -460,6 +464,10 @@ color: white;padding-left: 10px;">
             alert('host必须以http://或https://开头！');return
         }
         if(ts_header != ''){
+             if (tanchuang_header.slice(0, 1) != '[' && tanchuang_header.slice(0, 1) != '{') {
+                alert('header请求头不符合json规范！');
+                return
+            }
             try {
                 JSON.parse(ts_header)
             }catch (e) {
