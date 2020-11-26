@@ -28,13 +28,13 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>id</th> <th style="width: 40%">接口名称</th> <th style="width: 20%">url</th> <th style="width: 350px">操作</th>
+            <th>id</th> <th style="width: 30%">接口名称</th> <th style="width: 30%">url</th> <th style="width: 350px">操作</th>
         </tr>
     </thead>
     <tbody>
          {% for i in apis %}
              <tr>
-                <td>{{ i.id }}</td><td>{{ i.name }}</td> <td>{{ i.api_url }}</td>
+                <td>{{ i.id }}</td><td>{{ i.name }}</td> <td>{{ i.short_url }}</td>
 
              <td>
                 <div class="btn-group" style="z-index: 0">

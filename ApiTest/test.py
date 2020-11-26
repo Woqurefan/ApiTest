@@ -1,0 +1,1 @@
+from ..MyApp.tests import *
