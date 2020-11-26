@@ -289,10 +289,21 @@ id=/data/[2]/userid"></textarea>
     <textarea  id="get_zz"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="提取返回值-正则法：
 参数名的字符串=左边界字符串(.*?)右边界，多个用换行分隔，例子如：
 name=username':(.*?),
-id=d':(.*?),"></textarea>
-    <textarea  id="assert_zz"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="断言返回值-路径法"></textarea>
-    <textarea  id="assert_qz"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="断言返回值-正则法"></textarea>
-    <textarea  id="assert_path"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="断言返回值-全文检索"></textarea>
+id=uid':(.*?),"></textarea>
+    <textarea  id="assert_path"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="断言返回值-路径法：
+路径=预期值,字符串必须写引号,等号右侧会被求值。 多个用换行分隔，例如：
+/data/[3]/username='wangzijia'
+/data/[2]/userid=0123
+/data=[1,2,3]"></textarea>
+    <textarea  id="assert_zz"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="断言返回值-正则法：
+左边界字符串(.*?)右边界 = 预期值，预期值全部会被按照字符串处理,所以请不要额外加引号，多个用换行分隔，例如：
+username':(.*?),='wangzijia'
+uid':(.*?),=12345"></textarea>
+    <textarea  id="assert_qz"  rows="3" style="width: 90%;background-color: rgba(245,236,222,0.29)" placeholder="断言返回值-全文检索：
+进行全文检索，存在即通过，全部按照字符串检索，不要加引号，多个用换行分隔，例如：
+123495
+请求成功
+code:200"></textarea>
     <br><br><br><br>
     <p style="position: absolute;bottom: 0;left: 5px">
         步骤id： <span id="step_id"></span>
@@ -511,14 +522,7 @@ id=d':(.*?),"></textarea>
                 if(step_host.slice(0,7) != 'http://' && step_host.slice(0,8) != 'https://'){
                     alert('host必须以http://或https://开头！');return
                 }
-                if(step_header != ''){
-                    try {
-                        JSON.parse(step_header)
-                    }catch (e) {
-                        alert('header请求头不符合json规范！');
-                        return
-                    }
-                }
+
                 var step_body_method = $('ul#myTab li[class="active"]')[0].innerText;
                 if(step_body_method == 'none'){
                     var step_api_body = ''

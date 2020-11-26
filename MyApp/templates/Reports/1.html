@@ -236,9 +236,9 @@ function showOutput(id, name) {
     <div style="border: 1px solid #ffffff;border-radius: 10px;box-shadow: 2px 2px 12px #aeaeae;padding-left: 30px;width: 500px">
 <p class='attribute'>接口自动化测试平台提供</p>
 <p class='attribute'><strong>注意:</strong> 出现问题请联系管理员！</p>
-<p class='attribute'><strong>报告生成日期:</strong> 2020-11-18 09:05:05</p>
-<p class='attribute'><strong>用例执行时间:</strong> 0:00:06.006252秒</p>
-<p class='attribute'><strong>用例执行结果:</strong> 通过 2,</p>
+<p class='attribute'><strong>报告生成日期:</strong> 2020-11-26 11:02:01</p>
+<p class='attribute'><strong>用例执行时间:</strong> 0:00:06.396000秒</p>
+<p class='attribute'><strong>用例执行结果:</strong> 通过 1, 失败 1,</p>
 <p class='attribute'><strong>执行系统:</strong> darwin</p>
 
 <br>
@@ -277,31 +277,43 @@ function showOutput(id, name) {
 
 </tr>
 
-<tr class='passClass'>
+<tr class='failClass'>
     <td>MyApp.run_case.Test: 测试类</td>
     <td>2</td>
-    <td>2</td>
-    <td>0</td>
+    <td>1</td>
+    <td>1</td>
     <td>0</td>
     <td><button class="wqrf_button" style="background-color: #ffd1e7"  onclick="javascript:showClassDetail('c1',2)">详细</button></td>
 
 </tr>
 
-<tr id='pt1.1' class='hiddenRow'>
-    <td class='none'><div class='testcase'>test_001: 1111</div></td>
+<tr id='ft1.1' class='none'>
+    <td class='failCase'><div class='testcase'>test_001: 我是用来调试提取返回值的步骤</div></td>
     <td colspan='5' align='center'>
 
     <!--css div popup start-->
-    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.1')" >
-        <button class="wqrf_button" style="width: auto">通过详情</button></a>
-    <div id='div_pt1.1' class="popup_window">
+    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_ft1.1')" >
+        <button class="wqrf_button" style="width: auto">失败详情</button></a>
+    <div id='div_ft1.1' class="popup_window">
         <div style='text-align: right; color:red;cursor:pointer'>
-        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.1').style.display = 'none' " >
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft1.1').style.display = 'none' " >
            [x]</a>
         </div>
         <pre>
         
-pt1.1: /1111/111
+ft1.1: 【host】： https://www.baidu.com
+【url】： /sugrec?prod=pc_his&amp;from=pc_web&amp;json=1&amp;sid=32812_1464_33049_33059_33099_33101_32962_32846_22160&amp;hisdata=&amp;_t=1606109114553&amp;req=2&amp;csor=0
+【header】： {}
+【method】： get
+【body_method】： none
+【body】： 
+【返回体】： {"err_no":0,"errmsg":"","queryid":"0x3168888355eada"}
+Traceback (most recent call last):
+  File "/Users/zijiawang/PycharmProjects/ApiTest/MyApp/run_case.py", line 178, in tool
+    Test.demo(self,step)
+  File "/Users/zijiawang/PycharmProjects/ApiTest/MyApp/run_case.py", line 168, in demo
+    raise AssertionError('字符串不存在：%s'%i)
+AssertionError: 字符串不存在：测试开发干货
 
 
          <div id="div100">
@@ -314,7 +326,7 @@ pt1.1: /1111/111
 </tr>
 
 <tr id='pt1.2' class='hiddenRow'>
-    <td class='none'><div class='testcase'>test_002: 我是222</div></td>
+    <td class='none'><div class='testcase'>test_002: 我是用来测试接收的步骤</div></td>
     <td colspan='5' align='center'>
 
     <!--css div popup start-->
@@ -327,7 +339,20 @@ pt1.1: /1111/111
         </div>
         <pre>
         
-pt1.2: /2222/
+pt1.2: 【host】： https://www.baidu.com
+【url】： /aaaaa/0x3168888355eadabbbbbb?error=0
+【header】： {"a":'0x3168888355eada',"b":'0'}
+【method】： get
+【body_method】： none
+【body】： 
+【返回体】： &lt;!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN"&gt;
+&lt;html&gt;&lt;head&gt;
+&lt;title&gt;404 Not Found&lt;/title&gt;
+&lt;/head&gt;&lt;body&gt;
+&lt;h1&gt;Not Found&lt;/h1&gt;
+&lt;p&gt;The requested URL /aaaaa/0x3168888355eadabbbbbb was not found on this server.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+
 
 
          <div id="div100">
@@ -342,8 +367,8 @@ pt1.2: /2222/
 <tr id='total_row'>
     <td>总计</td>
     <td>2</td>
-    <td>2</td>
-    <td>0</td>
+    <td>1</td>
+    <td>1</td>
     <td>0</td>
     <td><button class="wqrf_button" style="background-color: #ffc2e6" onclick='javascript:location.reload()'>刷新</button></td>
 

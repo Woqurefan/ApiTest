@@ -1,11 +1,12 @@
-s = '21312313'
-import json
+import json,re,requests
 
+import unittest
 
-a = {"aa":1}
+h1 = "{'a':'a'}"
+print(h1,type(h1))
 
-b = {"b":2}
+h1 = json.dumps(eval(h1))
+print(h1,type(h1))
 
-
-# a.update(b)
-print({"a":1,**b})
+h1 = json.loads(h1)
+print(h1,type(h1))
