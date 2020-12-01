@@ -35,7 +35,10 @@ def child_json(eid,oid='',ooid=''):
         apis = DB_apis.objects.filter(project_id=oid)
 
         for i in apis:
-            i.short_url = i.api_url.split('?')[0][:50]
+            try:
+                i.short_url = i.api_url.split('?')[0][:50]
+            except:
+                i.short_url = ''
 
         res = {"project":project,'apis':apis}
 
@@ -172,7 +175,7 @@ def save_project_set(requset,id):
 # 新增接口
 def project_api_add(request,Pid):
     project_id = Pid
-    DB_apis.objects.create(project_id=project_id,api_method='none')
+    DB_apis.objects.create(project_id=project_id,api_method='none',api_url='')
     return HttpResponseRedirect('/apis/%s/'%project_id)
 
 # 删除接口
@@ -549,9 +552,11 @@ def save_step(request):
     step_url = request.GET['step_url']
     step_host = request.GET['step_host']
     step_header = request.GET['step_header']
+
+    mock_res = request.GET['mock_res']
+
     step_body_method = request.GET['step_body_method']
     step_api_body = request.GET['step_api_body']
-
     get_path = request.GET['get_path']
     get_zz = request.GET['get_zz']
     assert_zz = request.GET['assert_zz']
@@ -564,6 +569,7 @@ def save_step(request):
                                               api_url=step_url,
                                               api_host=step_host,
                                               api_header=step_header,
+                                              mock_res = mock_res,
                                               api_body_method=step_body_method,
                                               api_body=step_api_body,
 

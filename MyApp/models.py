@@ -88,6 +88,6 @@ class DB_step(models.Model):
     assert_zz = models.CharField(max_length=500,null=True) #断言返回值-正则
     assert_qz = models.CharField(max_length=500,null=True) #断言返回值-全文检索存在
     assert_path = models.CharField(max_length=500,null=True) #断言返回值-路径法
-
+    mock_res = models.CharField(max_length=1000,null=True) #mock返回值
     def __str__(self):
         return self.name

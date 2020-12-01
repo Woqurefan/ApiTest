@@ -304,6 +304,11 @@ uid':(.*?),=12345"></textarea>
 123495
 请求成功
 code:200"></textarea>
+
+    <textarea  id="mock_res" rows="5" style="width: 90%;background-color: rgba(245,236,222,0.29)"
+               placeholder="若想mock(写死)返回值，请在此直接写好保存。
+为空则不启用mock功能。"></textarea>
+
     <br><br><br><br>
     <p style="position: absolute;bottom: 0;left: 5px">
         步骤id： <span id="step_id"></span>
@@ -314,11 +319,11 @@ code:200"></textarea>
 <script>
      $(document).ready(function () {
         $("#apis").change(function () {
-            //这里写只要触发后要执行的代码，就是把下面输入框全部填充的代码
             document.getElementById('step_method').value = 'none';
             document.getElementById('step_url').value = '';
             document.getElementById('step_host').value = '';
             document.getElementById('step_header').value='{}';
+            document.getElementById('mock_res').value = '';
             // 开始初始化请求体编码格式部分：
             document.getElementById('mytbody').innerHTML='<tr>\n' +
                     '                                                <td></td>\n' +
@@ -439,7 +444,7 @@ code:200"></textarea>
             document.getElementById('step_url').value = ret.api_url;
             document.getElementById('step_host').value = ret.api_host;
             document.getElementById('step_header').value = ret.api_header;
-
+            document.getElementById('mock_res').value = ret.mock_res;
             document.getElementById('get_path').value = ret.get_path ;
             document.getElementById('get_zz').value = ret.get_zz ;
             document.getElementById('assert_zz').value = ret.assert_zz ;
@@ -512,6 +517,7 @@ code:200"></textarea>
                 var step_host = document.getElementById('step_host').value ;
                 var step_header = document.getElementById('step_header').value ;
                 var index = document.getElementById('step_index').value;
+                var mock_res = document.getElementById('mock_res').value;
                 // 判断顶部的数据是否填充完
                 if(name == ''){alert('请输入接口名字！');return}
                 if(step_method == 'null'){alert('请选择请求方式！');return}
@@ -578,9 +584,9 @@ code:200"></textarea>
                     'step_url':step_url,
                     'step_host':step_host,
                     'step_header':step_header,
+                    'mock_res':mock_res,
                     'step_body_method':step_body_method,
                     'step_api_body':step_api_body,
-
                     'get_path':$("#get_path").val(),
                     'get_zz':$("#get_zz").val(),
                     'assert_zz':$("#assert_zz").val(),
@@ -607,6 +613,8 @@ code:200"></textarea>
         document.getElementById('step_url').value = '';
         document.getElementById('step_host').value = '';
         document.getElementById('step_header').value='{}';
+        document.getElementById('mock_res').value = '';
+
         // 开始初始化请求体编码格式部分：
         document.getElementById('mytbody').innerHTML='<tr>\n' +
                     '                                                <td></td>\n' +
