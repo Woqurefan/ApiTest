@@ -33,14 +33,14 @@ def child_json(eid,oid='',ooid=''):
     if eid == 'P_apis.html':
         project = DB_project.objects.filter(id= oid)[0]
         apis = DB_apis.objects.filter(project_id=oid)
-
         for i in apis:
             try:
                 i.short_url = i.api_url.split('?')[0][:50]
             except:
                 i.short_url = ''
+        project_header = DB_project_header.objects.filter(project_id=oid)
 
-        res = {"project":project,'apis':apis}
+        res = {"project":project,'apis':apis,'project_header':project_header}
 
     if eid == 'P_project_set.html':
         project = DB_project.objects.filter(id= oid)[0]
@@ -51,14 +51,15 @@ def child_json(eid,oid='',ooid=''):
         project = DB_project.objects.filter(id= oid)[0]
         Cases = DB_cases.objects.filter(project_id=oid)
         apis = DB_apis.objects.filter(project_id=oid)
-        res  = {"project":project,"Cases":Cases,"apis":apis}
+        project_header = DB_project_header.objects.filter(project_id=oid)
+        res  = {"project":project,"Cases":Cases,"apis":apis,'project_header':project_header}
 
     return res
 
 # 返回子页面
 def child(request, eid, oid,ooid):
     res = child_json(eid,oid,ooid)
-    return render(request, eid,res)
+    return render(request,eid,res)
 
 
 # 获取公共参数
@@ -72,7 +73,6 @@ def glodict(request):
 @login_required
 def home(request,log_id=''):
     return render(request,'welcome.html',{"whichHTML": "Home.html","oid":request.user.id,"ooid":log_id,**glodict(request) })
-
 
 
 # 进入登陆页面
@@ -147,7 +147,6 @@ def add_project(request):
     DB_project.objects.create(name=project_name,remark='',user=request.user.username,other_user='')
     return HttpResponse('')
 
-
 # 进入接口库
 def open_apis(request,id):
     project_id = id
@@ -208,6 +207,7 @@ def Api_save(request):
     ts_header = request.GET['ts_header']
     api_name = request.GET['api_name']
     ts_body_method = request.GET['ts_body_method']
+    ts_project_headers = request.GET['ts_project_headers']
 
     if ts_body_method == '返回体':
         api = DB_apis.objects.filter(id=api_id)[0]
@@ -225,6 +225,7 @@ def Api_save(request):
         body_method = ts_body_method,
         api_body = ts_api_body,
         name = api_name,
+        public_header = ts_project_headers
     )
     # 返回
     return HttpResponse('success')
@@ -245,6 +246,9 @@ def Api_send(request):
     ts_header = request.GET['ts_header']
     api_name = request.GET['api_name']
     ts_body_method = request.GET['ts_body_method']
+    ts_project_headers = request.GET['ts_project_headers'].split(',')
+
+
     if ts_body_method == '返回体':
         api = DB_apis.objects.filter(id=api_id)[0]
         ts_body_method = api.last_body_method
@@ -260,6 +264,12 @@ def Api_send(request):
         header = json.loads(ts_header) #处理header
     except:
         return HttpResponse('请求头不符合json格式！')
+
+    for i in ts_project_headers:
+        project_header = DB_project_header.objects.filter(id=i)[0]
+        header[project_header.key] = project_header.value
+
+    # print(header)
 
     # 拼接完整url
     if ts_host[-1] == '/' and ts_url[0] =='/': #都有/
@@ -552,9 +562,8 @@ def save_step(request):
     step_url = request.GET['step_url']
     step_host = request.GET['step_host']
     step_header = request.GET['step_header']
-
+    ts_project_headers = request.GET['ts_project_headers']
     mock_res = request.GET['mock_res']
-
     step_body_method = request.GET['step_body_method']
     step_api_body = request.GET['step_api_body']
     get_path = request.GET['get_path']
@@ -569,10 +578,10 @@ def save_step(request):
                                               api_url=step_url,
                                               api_host=step_host,
                                               api_header=step_header,
+                                              public_header = ts_project_headers,
                                               mock_res = mock_res,
                                               api_body_method=step_body_method,
                                               api_body=step_api_body,
-
                                               get_path=get_path,
                                               get_zz=get_zz,
                                               assert_zz=assert_zz,
@@ -595,9 +604,6 @@ def look_report(request,eid):
 
     return render(request,'Reports/%s.html'%Case_id)
 
-
-
-
 # 运行大用例
 def Run_Case(request):
     Case_id = request.GET['Case_id']
@@ -610,6 +616,38 @@ def Run_Case(request):
 
     return HttpResponse('')
 
+# 保存项目公共请求头
+def save_project_header(request):
+    project_id = request.GET['project_id']
+    req_names = request.GET['req_names']
+    req_keys = request.GET['req_keys']
+    req_values = request.GET['req_values']
+    req_ids = request.GET['req_ids']
 
+    names = req_names.split(',')
+    keys = req_keys.split(',')
+    values = req_values.split(',')
+    ids = req_ids.split(',')
+
+    for i in range(len(ids)):
+        if names[i] != '':
+            if ids[i] == 'new':
+                DB_project_header.objects.create(project_id=project_id,name=names[i],key=keys[i],value=values[i])
+            else:
+                DB_project_header.objects.filter(id=ids[i]).update(name=names[i],key=keys[i],value=values[i])
+        else:
+            try:
+                DB_project_header.objects.filter(id=ids[i]).delete()
+            except:
+                pass
+
+    return HttpResponse('')
+
+# 保存用例名字
+def save_caes_name(request):
+    id = request.GET['id']
+    name = request.GET['name']
+    DB_cases.objects.filter(id=id).update(name=name)
+    return HttpResponse('')
 
 

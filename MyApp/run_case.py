@@ -3,6 +3,13 @@
 import unittest,time,re,json,requests
 from MyApp.A_WQRFhtmlRunner import HTMLTestRunner
 
+import sys,os,django
+path = "../ApiTest"
+sys.path.append(path)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ApiTest.settings")
+django.setup()
+from MyApp.models import *
+
 class Test(unittest.TestCase):
     '测试类'
 
@@ -20,8 +27,8 @@ class Test(unittest.TestCase):
         assert_zz = step.assert_zz
         assert_qz = step.assert_qz
         assert_path = step.assert_path
-
         mock_res = step.mock_res
+        ts_project_headers = step.public_header.split(',')  # 获取公共请求头
 
         if mock_res not in ['',None,'None']:
             res = mock_res
@@ -53,19 +60,27 @@ class Test(unittest.TestCase):
                 for i in rlist_body:
                     api_body = api_body.replace("##" + i + "##", str(eval(i)))
 
-            ## 输出请求数据
-            print('【host】：',api_host)
-            print('【url】：',api_url)
-            print('【header】：',api_header )
-            print('【method】：',api_method)
-            print('【body_method】：',api_body_method)
-            print('【body】：',api_body)
-
             ## 实际发送请求
+
+            # 处理header
             try:
                 header = json.loads(api_header)  # 处理header
             except:
                 header = eval(api_header)
+
+            # 在这遍历公共请求头，并把其加入到header的字典中。
+
+            for i in ts_project_headers:
+                project_header = DB_project_header.objects.filter(id=i)[0]
+                header[project_header.key] = project_header.value
+
+            ## 输出请求数据
+            print('\n【host】：', api_host)
+            print('【url】：', api_url)
+            print('【header】：', header)
+            print('【method】：', api_method)
+            print('【body_method】：', api_body_method)
+            print('【body】：', api_body)
 
 
             # 拼接完整url
@@ -191,9 +206,7 @@ def make_def(steps):
 
 
 def run(Case_id,Case_name,steps):
-
     make_def(steps)
-
     suit = unittest.makeSuite(Test)
     filename = 'MyApp/templates/Reports/%s.html'%Case_id
     fp = open(filename,'wb')
