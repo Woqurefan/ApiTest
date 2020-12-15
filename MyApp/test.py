@@ -2,11 +2,17 @@ import json,re,requests
 
 import unittest
 
-h1 = "{'a':'a'}"
-print(h1,type(h1))
+from allpairspy import AllPairs
+old = [['a','b'],['c','d'],['e','f']]
 
-h1 = json.dumps(eval(h1))
-print(h1,type(h1))
+ready = []
+for pairs in AllPairs(old[:2]):
+    ready.append(''.join(pairs))
+for i in range(2, len(old)):
+  new_r= []
+  for pairs in AllPairs([ready, old[i]]):
+    new_r.append(''.join(pairs))
+    ready=new_r
 
-h1 = json.loads(h1)
-print(h1,type(h1))
+print(ready)
+print(len(ready))

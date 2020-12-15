@@ -79,7 +79,7 @@
     </div>
     <p style="position: absolute;bottom: 0;left: 5px">
         用例id： <span id="Case_id"></span>
-        用例名称：<span id="Case_name"></span>
+        用例名：<input type="text" id="Case_name" style="width: 50%" placeholder="可输入新名称" onblur="save_case_name()">
     </p>
 </div>
 
@@ -145,15 +145,22 @@
             $("#left_div").animate({right:'65%'},'fast');
         }
         document.getElementById('Case_id').innerText = case_id;
-        document.getElementById('Case_name').innerText = Case_name;
+        document.getElementById('Case_name').value = Case_name;
         refresh_left_div(case_id);
     }
     //关闭左侧div
     function close_left_div() {
-        $("#left_div").animate({right:'100%'},'fast');
-        $("#left_div").css("display","none");
-        close_right_div();
+       document.location.reload()
 
+    }
+    //失去焦点
+    function save_case_name(){
+      $.get('/save_caes_name/',{
+          'id':document.getElementById('Case_id').innerText,
+          'name':document.getElementById('Case_name').value ,
+      },function (ret) {
+
+      })
     }
 </script>
 
@@ -199,8 +206,17 @@
     </div>
      <div class="input-group" style="margin-top: 5px;margin-left: 5%;width: 90%">
         <span class="input-group-addon">header</span>
-        <input id="step_header" type="text" class="form-control">
+        <input id="step_header" type="text" class="form-control" style="width: -webkit-calc(100% - 61px)">
+         <button type="button" onclick="ts_show_project_header()" style="height: 34px;width: 60px;" class="btn btn-default"><span>▼️</span></button>
+
     </div>
+
+        <li id="ts_project_header_li" style="display: none">
+          {% for i in project_header %}
+              <label style="margin-right: 5px"><input id="checkbox_{{ i.id }}" value="{{ i.id }}" type="checkbox">{{ i.name }}</label>
+          {% endfor %}
+        </li>
+
     <ul id="myTab" class="nav nav-tabs" style="padding-left: 5%;margin-top: 5px">
         <li class="active"><a id="click_none" href="#none" data-toggle="tab" >none</a></li>
         <li ><a href="#form-data" data-toggle="tab" >form-data</a></li>
@@ -316,6 +332,13 @@ code:200"></textarea>
     </p>
 </div>
 
+{# 请求头相关js函数 #}
+<script>
+    function ts_show_project_header() {
+        document.getElementById('ts_project_header_li').style.display = 'block';
+    }
+</script>
+
 <script>
      $(document).ready(function () {
         $("#apis").change(function () {
@@ -324,6 +347,12 @@ code:200"></textarea>
             document.getElementById('step_host').value = '';
             document.getElementById('step_header').value='{}';
             document.getElementById('mock_res').value = '';
+
+             var project_headers = document.getElementById('ts_project_header_li').children;
+             for(var i=0;i<project_headers.length;i++){
+                 project_headers[i].children[0].checked=false;
+             }
+
             // 开始初始化请求体编码格式部分：
             document.getElementById('mytbody').innerHTML='<tr>\n' +
                     '                                                <td></td>\n' +
@@ -360,6 +389,14 @@ code:200"></textarea>
                         document.getElementById('step_url').value = ret.api_url;
                         document.getElementById('step_host').value = ret.api_host;
                         document.getElementById('step_header').value = ret.api_header;
+                        // 公共请求头
+                        var project_headers = ret.public_header.split(',');
+                        for(var i=0;i<project_headers.length;i++){
+                            try {
+                                document.getElementById('checkbox_'+project_headers[i]).checked='checked';
+                            }catch (e) {
+                            }
+                        }
                         // 请求体编码格式
                         var body_method = '#'+ret.body_method;
                         $("li a[href="+body_method+"]").click();
@@ -438,6 +475,18 @@ code:200"></textarea>
         },function (ret) {
             var ret = eval(ret);
             console.log(ret);
+
+          // 公共请求头
+            if(ret.public_header != null){
+                var project_headers = ret.public_header.split(',');
+                for(var i=0;i<project_headers.length;i++){
+                    try {
+                        document.getElementById('checkbox_'+project_headers[i]).checked='checked';
+                    }catch (e) {
+                    }
+                }
+            }
+
             document.getElementById('step_index').value = ret.index ;
             document.getElementById('step_name').value = ret.name ;
             document.getElementById('step_method').value = ret.api_method;
@@ -518,6 +567,14 @@ code:200"></textarea>
                 var step_header = document.getElementById('step_header').value ;
                 var index = document.getElementById('step_index').value;
                 var mock_res = document.getElementById('mock_res').value;
+                //公共请求头
+                  var project_headers = document.getElementById('ts_project_header_li').children;
+                  var ts_project_headers = [];
+                  for(var i=0;i<project_headers.length;i++){
+                        if(project_headers[i].children[0].checked==true){
+                            ts_project_headers.push(project_headers[i].children[0].value)
+                        }
+                    }
                 // 判断顶部的数据是否填充完
                 if(name == ''){alert('请输入接口名字！');return}
                 if(step_method == 'null'){alert('请选择请求方式！');return}
@@ -592,7 +649,7 @@ code:200"></textarea>
                     'assert_zz':$("#assert_zz").val(),
                     'assert_qz':$("#assert_qz").val(),
                     'assert_path':$("#assert_path").val(),
-
+                    'ts_project_headers':ts_project_headers.toString(),
 
                 },function (ret) {
                     case_id = document.getElementById('Case_id').innerText;
@@ -614,6 +671,11 @@ code:200"></textarea>
         document.getElementById('step_host').value = '';
         document.getElementById('step_header').value='{}';
         document.getElementById('mock_res').value = '';
+
+         var project_headers = document.getElementById('ts_project_header_li').children;
+             for(var i=0;i<project_headers.length;i++){
+                 project_headers[i].children[0].checked=false;
+             }
 
         // 开始初始化请求体编码格式部分：
         document.getElementById('mytbody').innerHTML='<tr>\n' +

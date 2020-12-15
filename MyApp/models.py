@@ -89,5 +89,23 @@ class DB_step(models.Model):
     assert_qz = models.CharField(max_length=500,null=True) #断言返回值-全文检索存在
     assert_path = models.CharField(max_length=500,null=True) #断言返回值-路径法
     mock_res = models.CharField(max_length=1000,null=True) #mock返回值
+    public_header =  models.CharField(max_length=1000,null=True) #全局变量-请求头
+
     def __str__(self):
         return self.name
+
+class DB_project_header(models.Model):
+    project_id = models.CharField(max_length=10,null=True) #所属项目id
+    name = models.CharField(max_length=20,null=True) #请求头变量名字
+    key =  models.CharField(max_length=20,null=True) #请求头header的 key
+    value = models.TextField(null=True) #请求头的value，因为有可能cookie较大，达到几千字符，所以采用大文本方式存储
+
+    def __str__(self):
+        return self.name
+
+
+class DB_host(models.Model):
+    host = models.CharField(max_length=100,null=True) #域名内容
+    des = models.CharField(max_length=100,null=True) #域名描述
+    def __str__(self):
+        return self.host
