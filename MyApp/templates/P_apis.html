@@ -57,7 +57,7 @@ border: 1px solid #e7e7e7">
     <div class="btn-group">
         <button type="button" class="btn btn-primary" onclick="document.location.href='/project_api_add/{{ project.id }}/'">新增接口</button>
         <button type="button" onclick="project_header_div_show()" class="btn btn-default">全局请求头</button>
-        <button type="button" class="btn btn-default">全局域名</button>
+        <button type="button" onclick="project_host_div_show()" class="btn btn-default">全局域名</button>
         <button type="button" class="btn btn-default">接口文档导入</button>
         <button type="button" class="btn btn-default">抓包导入</button>
         <button type="button" class="btn btn-default">加密算法</button>
@@ -143,7 +143,17 @@ color: white;padding-left: 10px;">
     <br><br><br>
     <ul class="nav navbar-nav" style="width: 98%">
         <li style=" width: -webkit-calc(100% - 63px)">
-             <input id="ts_host"  style="color: black;padding-left: 10px;width: 100%;height: 40px;" type="text" placeholder='host: 如http(s)://xxxx.ccc.com' value="">
+                <datalist id="datalist_1">
+
+                    {% for i in project_host %}
+                        <option id="project_host_{{ i.id }}" value="全局域名-{{ i.id }}">{{ i.name }}：{{ i.host }}</option>
+                    {% endfor %}
+
+                    {% for i in hosts %}
+                        <option id="host_{{ i.id }}" value="{{ i.host }}">{{ i.host }}</option>
+                    {% endfor %}
+                </datalist>
+             <input list="datalist_1" autocomplete="off" id="ts_host"  style="color: black;padding-left: 10px;width: 100%;height: 40px;" type="text" placeholder='host: 如http(s)://xxxx.ccc.com' value="">
         </li>
          <li >
             <button type="button" onclick="ts_clear_host()"
@@ -151,9 +161,7 @@ color: white;padding-left: 10px;">
                     class="btn btn-default"><span>Clear</span></button>
         </li>
     </ul>
-
     <br><br><br>
-
     <ul class="nav navbar-nav" style="width: 98%">
         <li style="width:  -webkit-calc(100% - 127px)">
              <input id="ts_header"  style="color: black;padding-left: 10px;width: 100%;height: 40px;" type="text"
@@ -173,9 +181,7 @@ color: white;padding-left: 10px;">
           {% endfor %}
         </li>
     </ul>
-
     <br><br><br>
-
     <ul id="myTab" class="nav nav-tabs" >
         <li class="active"><a id="click_none" href="#none" data-toggle="tab" >none</a></li>
         <li ><a href="#form-data" data-toggle="tab" >form-data</a></li>
@@ -190,6 +196,9 @@ color: white;padding-left: 10px;">
                 <li><a href="#Xml" tabindex="-1" data-toggle="tab">Xml</a></li>
             </ul>
         </li>
+
+        <li ><a href="#GraphQL" data-toggle="tab" >GraphQL</a> </li>
+
         <li ><a href="#response" data-toggle="tab" >返回体</a></li>
     </ul>
     <div id="myTabContent" class="tab-content">
@@ -254,6 +263,24 @@ color: white;padding-left: 10px;">
         <div class="tab-pane fade" id="Xml">
             <textarea name="" id="raw_Xml" style="color: black;width: 98%;height: 300px"></textarea>
         </div>
+
+         <div class="tab-pane fade" id="GraphQL">
+             <table style="width: 98%">
+               <thead>
+                    <tr>
+                        <td style="width: 55%"><span >QUERY</span></td>
+                        <td style="width: 40%"><span >GRAPHQL VARIABLES</span></td>
+                      </tr>
+               </thead>
+                <tbody style="color: black">
+                  <tr>
+                    <td><textarea id="body_plan_G_Q"  rows="14" style="padding-left: 3px;border-radius: 5px;width: 99%"></textarea></td>
+                    <td><textarea id="body_plan_G_G"  rows="14" style="padding-left: 3px;border-radius: 5px;width: 100%"></textarea></td>
+                  </tr>
+                </tbody>
+            </table>
+         </div>
+
         <div class="tab-pane fade" id="response">
             <textarea name="" id="ts_response_body" disabled="disabled" style="background-color: #e4f3f5;color: black;width: 98%;height: 300px"></textarea>
         </div>
@@ -312,7 +339,7 @@ color: white;padding-left: 10px;">
                 try {
                     document.getElementById('checkbox_'+project_headers[i]).checked='checked';
                 }catch (e) {
-                    
+
                 }
             }
             // 请求体编码格式
@@ -366,6 +393,13 @@ color: white;padding-left: 10px;">
                     }
                 }
             }
+
+            if(ret.body_method == "GraphQL"){
+                body_plan_G_Q =  ret.api_body.split('*WQRF*')[0];
+                body_plan_G_G =  ret.api_body.split('*WQRF*')[1];
+                document.getElementById('body_plan_G_Q').value =body_plan_G_Q;
+                document.getElementById('body_plan_G_G').value = body_plan_G_G;
+            }
         })
     }
     function ts_close() {
@@ -394,7 +428,7 @@ color: white;padding-left: 10px;">
         if(ts_host == ''){alert('请输入host！');return}
 
         //判断关键数据是否符合规则
-        if(ts_host.slice(0,7) != 'http://' && ts_host.slice(0,8) != 'https://'){
+        if(ts_host.slice(0,7) != 'http://' && ts_host.slice(0,8) != 'https://' && ts_host.slice(0,4) !='全局域名' ){
             alert('host必须以http://或https://开头！');return
         }
         if(ts_header != ''){
@@ -451,6 +485,12 @@ color: white;padding-left: 10px;">
         if(ts_body_method == 'Xml'){
             var ts_api_body = document.getElementById('raw_Xml').value;
         }
+        if(ts_body_method == 'GraphQL'){
+            body_plan_G_Q = document.getElementById('body_plan_G_Q').value;
+            body_plan_G_G = document.getElementById('body_plan_G_G').value;
+             var ts_api_body = body_plan_G_Q+ '*WQRF*' + body_plan_G_G
+        }
+
         var api_id = document.getElementById('ts_api_id').innerText ; //获取到了接口id
 
         $.get('/Api_save/',{
@@ -490,7 +530,7 @@ color: white;padding-left: 10px;">
         if(ts_host == ''){alert('请输入host！');return}
 
          //判断关键数据是否符合规则
-        if(ts_host.slice(0,7) != 'http://' && ts_host.slice(0,8) != 'https://'){
+        if(ts_host.slice(0,7) != 'http://' && ts_host.slice(0,8) != 'https://' && ts_host.slice(0,4) !='全局域名'){
             alert('host必须以http://或https://开头！');return
         }
         if(ts_header != ''){
@@ -545,6 +585,15 @@ color: white;padding-left: 10px;">
         if(ts_body_method == 'Xml'){
             var ts_api_body = document.getElementById('raw_Xml').value;
         }
+
+
+        if(ts_body_method == 'GraphQL'){
+            body_plan_G_Q = document.getElementById('body_plan_G_Q').value;
+            body_plan_G_G = document.getElementById('body_plan_G_G').value;
+             var ts_api_body = body_plan_G_Q+ '*WQRF*' + body_plan_G_G
+        }
+
+
         var api_id = document.getElementById('ts_api_id').innerText ; //获取到了接口id
         // 发送请求给后台
          $.get('/Api_send/',{
@@ -788,6 +837,83 @@ padding-left: 10px;background-color: white">
         header_plan.appendChild(document.createElement("br"));
     }
 </script>
+
+
+{# 全局域名 #}
+<div id="project_host_div" style="display: none;border-radius:5px;width: 70%;height: 70%;
+position: absolute;left: 15%;top: 15%;box-shadow: 4px 4px 8px grey;
+padding-left: 10px;background-color: white">
+    <div class="btn-group" style="float: right">
+        <button onclick="project_host_save()" type="button" class="btn btn-success">保存</button>
+        <button onclick="project_host_close()" type="button" class="btn btn-default">取消</button>
+    </div>
+    <h4>请设置本项目的全局公共请求头：</h4>
+    <div id="host_plan">
+        {% for i in project_host %}
+            <input type="text" name="host_id" value="{{ i.id }}" style="display: none;">
+            <input type="text" name="host_name" value="{{ i.name }}" style="width: 20%;margin-top: 3px" placeholder="name"> = "
+            <input type="text" name="host_host" value="{{ i.host }}" style="width: 70%" placeholder="host"> "
+            <br>
+        {% endfor %}
+    </div>
+    <br>
+    <button onclick="add_project_host()">新增</button>
+
+</div>
+<script>
+    function project_host_div_show() {
+        document.getElementById('project_host_div').style.display = 'block';
+    }
+    function project_host_close() {
+        document.location.reload()
+    }
+    function project_host_save() {
+        var names = document.getElementsByName('host_name');
+        var hosts = document.getElementsByName('host_host');
+        var ids = document.getElementsByName('host_id');
+        var req_names= [];
+        var req_hosts=[];
+        var req_ids=[];
+        for(var i=0;i<names.length;i++){
+            req_names.push(names[i].value);
+            req_hosts.push(hosts[i].value);
+            req_ids.push(ids[i].value)
+
+        }
+        $.get('/save_project_host/',{
+            "project_id":"{{ project.id }}",
+            "req_names":req_names.toString(),
+            "req_hosts":req_hosts.toString(),
+            "req_ids":req_ids.toString(),
+        },function (ret) {
+            document.location.reload();
+        })
+    }
+    function add_project_host() {
+        var host_plan = document.getElementById('host_plan');
+        var i0 = document.createElement('input');
+        i0.name = 'host_id';
+        i0.value = 'new';
+        i0.style.display ='none';
+        var i1 = document.createElement('input');
+        i1.style='width: 20%;margin-top: 3px';
+        i1.placeholder='name';
+        i1.name='host_name';
+        var i2 = document.createElement('input');
+        i2.style='width: 70%';
+        i2.placeholder='host';
+        i2.name='host_host';
+        host_plan.appendChild(i0);
+        host_plan.appendChild(i1);
+        host_plan.appendChild(document.createTextNode(' = " '));
+        host_plan.appendChild(i2);
+        host_plan.appendChild(document.createTextNode(' "'));
+        host_plan.appendChild(document.createElement("br"));
+    }
+</script>
+
+
+
 
 
 <div id="mengceng" style="display: none;opacity:0.5;position: absolute;left: 0;top: 100px;
