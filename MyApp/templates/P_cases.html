@@ -201,8 +201,20 @@
         </li>
     </ul>
      <div class="input-group" style="margin-top: 45px;margin-left: 5%;width: 90%">
+
+           <datalist id="datalist_1">
+
+                 {% for i in project_host %}
+                        <option id="project_host_{{ i.id }}" value="全局域名-{{ i.id }}">{{ i.name }}：{{ i.host }}</option>
+                    {% endfor %}
+
+                {% for i in hosts %}
+                    <option id="host_{{ i.id }}" value="{{ i.host }}">{{ i.host }}</option>
+                {% endfor %}
+            </datalist>
+
         <span class="input-group-addon">host</span>
-        <input id="step_host" type="text" class="form-control">
+        <input list="datalist_1" autocomplete="off" id="step_host" type="text" class="form-control">
     </div>
      <div class="input-group" style="margin-top: 5px;margin-left: 5%;width: 90%">
         <span class="input-group-addon">header</span>
@@ -231,6 +243,8 @@
                 <li><a href="#Xml" tabindex="-1" data-toggle="tab">Xml</a></li>
             </ul>
         </li>
+        <li ><a href="#GraphQL" data-toggle="tab" >GraphQL</a> </li>
+
     </ul>
     <div id="myTabContent" class="tab-content">
         <div class="tab-pane fade in active" id="none" style="text-align: center;color: grey">
@@ -294,6 +308,22 @@
         <div class="tab-pane fade" id="Xml">
             <textarea name="" id="raw_Xml" style="color: black;width: 98%;height: 300px"></textarea>
         </div>
+        <div class="tab-pane fade" id="GraphQL">
+             <table style="width: 98%">
+               <thead>
+                    <tr>
+                        <td style="width: 55%"><span >QUERY</span></td>
+                        <td style="width: 40%"><span >GRAPHQL VARIABLES</span></td>
+                      </tr>
+               </thead>
+                <tbody style="color: black">
+                  <tr>
+                    <td><textarea id="body_plan_G_Q"  rows="14" style="padding-left: 3px;border-radius: 5px;width: 99%"></textarea></td>
+                    <td><textarea id="body_plan_G_G"  rows="14" style="padding-left: 3px;border-radius: 5px;width: 100%"></textarea></td>
+                  </tr>
+                </tbody>
+            </table>
+         </div>
     </div>
 
     {# 提取返回值功能 ⬇️  #}
@@ -370,6 +400,9 @@ code:200"></textarea>
             document.getElementById('raw_Json').value = '';
             document.getElementById('raw_Html').value = '';
             document.getElementById('raw_Xml').value = '';
+
+            document.getElementById('body_plan_G_Q').value = '';
+            document.getElementById('body_plan_G_G').value = '';
 
             document.getElementById('get_path').value = '' ;
             document.getElementById('get_zz').value = '' ;
@@ -500,7 +533,6 @@ code:200"></textarea>
             document.getElementById('assert_qz').value = ret.assert_qz ;
             document.getElementById('assert_path').value = ret.assert_path ;
 
-
             // 请求体编码格式
             var body_method = '#'+ret.api_body_method;
             $("li a[href="+body_method+"]").click();
@@ -553,6 +585,12 @@ code:200"></textarea>
                 }
             }
 
+            if(ret.api_body_method == "GraphQL"){
+                body_plan_G_Q =  ret.api_body.split('*WQRF*')[0];
+                body_plan_G_G =  ret.api_body.split('*WQRF*')[1];
+                document.getElementById('body_plan_G_Q').value =body_plan_G_Q;
+                document.getElementById('body_plan_G_G').value = body_plan_G_G;
+                 }
         })
     }
     //关闭右侧div
@@ -582,7 +620,7 @@ code:200"></textarea>
                 if(step_host == ''){alert('请输入host！');return}
 
                 //判断关键数据是否符合规则
-                if(step_host.slice(0,7) != 'http://' && step_host.slice(0,8) != 'https://'){
+                if(step_host.slice(0,7) != 'http://' && step_host.slice(0,8) != 'https://' && step_host.slice(0,4) !='全局域名'){
                     alert('host必须以http://或https://开头！');return
                 }
 
@@ -631,6 +669,13 @@ code:200"></textarea>
                 if(step_body_method == 'Xml'){
                     var step_api_body = document.getElementById('raw_Xml').value;
                 }
+
+                if(step_body_method == 'GraphQL'){
+                        body_plan_G_Q = document.getElementById('body_plan_G_Q').value;
+                        body_plan_G_G = document.getElementById('body_plan_G_G').value;
+                         var step_api_body = body_plan_G_Q+ '*WQRF*' + body_plan_G_G
+                    }
+
                 var step_id = document.getElementById('step_id').innerText ; //获取到了接口id
 
                 $.get('/save_step/',{
@@ -692,7 +737,8 @@ code:200"></textarea>
         document.getElementById('raw_Json').value = '';
         document.getElementById('raw_Html').value = '';
         document.getElementById('raw_Xml').value = '';
-
+        document.getElementById('body_plan_G_Q').value = '';
+        document.getElementById('body_plan_G_G').value = '';
 
         document.getElementById('get_path').value = '' ;
         document.getElementById('get_zz').value = '' ;

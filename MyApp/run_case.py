@@ -62,6 +62,12 @@ class Test(unittest.TestCase):
 
             ## 实际发送请求
 
+            # 处理host域名
+            if api_host[:4] == '全局域名':
+                project_host_id = api_host.split('-')[1]
+                api_host = DB_project_host.objects.filter(id=project_host_id)[0].host
+
+
             # 处理header
             try:
                 header = json.loads(api_header)  # 处理header
@@ -80,7 +86,7 @@ class Test(unittest.TestCase):
             print('【header】：', header)
             print('【method】：', api_method)
             print('【body_method】：', api_body_method)
-            print('【body】：', api_body)
+            print('【body】：', api_body) #目前graphQL方法的显示上仍然未优化过
 
 
             # 拼接完整url
@@ -108,6 +114,17 @@ class Test(unittest.TestCase):
                     payload[i[0]] = i[1]
                 response = requests.request(api_method.upper(), url, headers=header, data=payload)
 
+            elif api_body_method == 'GraphQL':
+                header['Content-Type'] = 'application/json'
+                query = api_body.split('*WQRF*')[0]
+                graphql = api_body.split('*WQRF*')[1]
+                try:
+                    int(graphql)
+                except:
+                    graphql = '{}'
+                payload = '{"query":"%s","variables":%s}' % (query, graphql)
+                response = requests.request(api_method.upper(), url, headers=header, data=payload)
+
             else:  # 这时肯定是raw的五个子选项：
                 if api_body_method == 'Text':
                     header['Content-Type'] = 'text/plain'
@@ -126,6 +143,8 @@ class Test(unittest.TestCase):
                 response = requests.request(api_method.upper(), url, headers=header, data=api_body.encode('utf-8'))
             response.encoding = "utf-8"
             res = response.text
+
+            DB_host.objects.update_or_create(host=api_host)
 
         print('【返回体】：',res )
 

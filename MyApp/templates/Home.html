@@ -22,7 +22,7 @@
 </div>
 
 <div style="position: absolute;top: 100px;left: 380px;width: -webkit-calc(100% - 390px);">
-    {# 调试弹层及函数 #}
+
         <ul class="nav navbar-nav" style="width: 98%">
             <li>
                 <select id="ts_method" style="height: 40px;" class="form-control">
@@ -47,7 +47,13 @@
         <br><br><br>
         <ul class="nav navbar-nav" style="width: 98%">
             <li style=" width: -webkit-calc(100% - 63px)">
-                 <input id="ts_host"  style="color: black;padding-left: 10px;width: 100%;height: 40px;" type="text" placeholder='host: 如http(s)://xxxx.ccc.com' value="{{ log.api_host }}">
+
+                <datalist id="datalist_1">
+                    {% for i in hosts %}
+                        <option id="host_{{ i.id }}" value="{{ i.host }}">{{ i.host }}</option>
+                    {% endfor %}
+                </datalist>
+                 <input list="datalist_1" autocomplete="off"  id="ts_host"  style="color: black;padding-left: 10px;width: 100%;height: 40px;" type="text" placeholder='host: 如http(s)://xxxx.ccc.com' value="{{ log.api_host }}">
             </li>
              <li >
                 <button type="button"
@@ -82,6 +88,9 @@
                     <li><a href="#Xml" tabindex="-1" data-toggle="tab">Xml</a></li>
                 </ul>
             </li>
+
+            <li ><a href="#GraphQL" data-toggle="tab" >GraphQL</a> </li>
+
             <li ><a href="#response" data-toggle="tab" >返回体</a></li>
         </ul>
         <div id="myTabContent" class="tab-content">
@@ -146,6 +155,24 @@
             <div class="tab-pane fade" id="Xml">
                 <textarea name="" id="raw_Xml" style="color: black;width: 98%;height: 300px"></textarea>
             </div>
+
+            <div class="tab-pane fade" id="GraphQL">
+                 <table style="width: 98%">
+                   <thead>
+                        <tr>
+                            <td style="width: 55%"><span >QUERY</span></td>
+                            <td style="width: 40%"><span >GRAPHQL VARIABLES</span></td>
+                          </tr>
+                   </thead>
+                    <tbody>
+                      <tr>
+                        <td><textarea id="body_plan_G_Q"  rows="14" style="padding-left: 3px;border-radius: 5px;width: 99%"></textarea></td>
+                        <td><textarea id="body_plan_G_G"  rows="14" style="padding-left: 3px;border-radius: 5px;width: 100%"></textarea></td>
+                      </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <div class="tab-pane fade" id="response">
                 <textarea name="" id="ts_response_body" disabled="disabled" style="background-color: #e4f3f5;color: black;width: 98%;height: 300px"></textarea>
             </div>
@@ -210,6 +237,12 @@
                         document.getElementById('add2').click()
                     }
                 }
+            }
+            if("{{ log.body_method }}" == 'GraphQL'){
+                body_plan_G_Q =  "{{ log.api_body }}".split('*WQRF*')[0];
+                body_plan_G_G = "{{ log.api_body }}".split('*WQRF*')[1];
+                document.getElementById('body_plan_G_Q').value =body_plan_G_Q;
+                document.getElementById('body_plan_G_G').value = body_plan_G_G;
             }
         }
     </script>
@@ -286,6 +319,13 @@
             if(ts_body_method == 'Xml'){
                 var ts_api_body = document.getElementById('raw_Xml').value;
             }
+
+            if(ts_body_method == 'GraphQL'){
+                body_plan_G_Q = document.getElementById('body_plan_G_Q').value;
+                body_plan_G_G = document.getElementById('body_plan_G_G').value;
+                 var ts_api_body = body_plan_G_Q+ '*WQRF*' + body_plan_G_G
+            }
+
             // 发送请求给后台
              $.get('/Api_send_home/',{
                 'ts_method':ts_method,
@@ -293,7 +333,7 @@
                 'ts_host':ts_host,
                 'ts_header':ts_header,
                 'ts_body_method':ts_body_method,
-                'ts_api_body':ts_api_body
+                'ts_api_body':ts_api_body,
             },function (ret) {
                  log_refersh();
                 $("li a[href=#response]").click(); //点击一下返回体按钮
