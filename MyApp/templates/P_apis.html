@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-
     <style>
 
     </style>
@@ -61,7 +60,7 @@ border: 1px solid #e7e7e7">
         <button type="button" class="btn btn-default">接口文档导入</button>
         <button type="button" class="btn btn-default">抓包导入</button>
         <button type="button" class="btn btn-default">加密算法</button>
-        <button type="button" class="btn btn-default">登陆态接口</button>
+        <button type="button" onclick="login_show()" class="btn btn-default">登录态接口</button>
     </div>
 </div>
 
@@ -80,8 +79,6 @@ border: 1px solid #e7e7e7">
             document.location.reload()
         })
     }
-
-
     function open_bz(id) {
         document.getElementById('bz_value').value = ''; //这是清空上一个打开的接口的内容
         $.get('/get_bz/',{
@@ -319,7 +316,6 @@ color: white;padding-left: 10px;">
         document.getElementById('mengceng').style.display='block';
         document.getElementById('mengceng').style.zIndex='998';
         document.getElementById('ts').style.zIndex='999';
-
         clear_ts_api();
         document.getElementById('ts').style.display = 'block';
         document.getElementById('ts_api_id').innerText = id;
@@ -393,7 +389,6 @@ color: white;padding-left: 10px;">
                     }
                 }
             }
-
             if(ret.body_method == "GraphQL"){
                 body_plan_G_Q =  ret.api_body.split('*WQRF*')[0];
                 body_plan_G_G =  ret.api_body.split('*WQRF*')[1];
@@ -912,6 +907,353 @@ padding-left: 10px;background-color: white">
     }
 </script>
 
+
+{# 登陆态接口 #}
+<div id="login_set_div" style="display: none;border-radius:5px;width: 80%;background-color: white;
+position: absolute;left: 10%;top: 10%;box-shadow: 4px 4px 8px grey;padding-left: 10px">
+    <div class="btn-group" style="float: right">
+        <button onclick="login_save()" type="button" class="btn btn-success">保存</button>
+        <button onclick="login_close()" type="button" class="btn btn-default">取消</button>
+    </div>
+    <h4>请设置该项目的登陆态接口：</h4>
+    <ul class="nav navbar-nav" style="width: 98%">
+        <li>
+            <select id="login_method" style="height: 40px;" class="form-control">
+                <option value="none"> 请求方式</option>
+                <option value="post" > POST</option>
+                <option value="get" > GET</option>
+                <option value="put" > PUT</option>
+                <option value="delete"> DELETE</option>
+            </select>
+        </li>
+
+        <li style="width: -webkit-calc(100% - 225px)">
+            <input id="login_url" style="color: black;padding-left: 10px;width: 100%;height: 40px;"
+                   type="text" placeholder='url: 如 /abcd/efgh/' value="">
+        </li>
+
+        <li >
+            <button onclick="" type="button"
+                    style="height: 40px;width: 120px;"
+                    class="btn btn-default"><span style="font-size: large">Send</span></button>
+        </li>
+    </ul>
+    <br><br><br>
+    <ul class="nav navbar-nav" style="width: 98%">
+        <li style=" width: 100%">
+             <input list="datalist_1" autocomplete="off" id="login_host"  style="color: black;
+             padding-left: 10px;width: 100%;height: 40px;" type="text" placeholder='host: 如http(s)://xxxx.ccc.com' value="">
+        </li>
+    </ul>
+    <br><br><br>
+    <ul class="nav navbar-nav" style="width: 98%">
+        <li style="width: 100%">
+             <input id="login_header"  style="color: black;padding-left: 10px;width: 100%;height: 40px;" type="text"
+                   placeholder='header请求头：如{"Content":"application/json"}' value="">
+        </li>
+    </ul>
+    <br><br><br>
+    <ul id="login_myTab" class="nav nav-tabs" >
+        <li class="active"><a id="login_click_none" href="#login_none" data-toggle="tab" >none</a></li>
+        <li ><a href="#login_form-data" data-toggle="tab" >form-data</a></li>
+        <li ><a href="#login_x-www-form-urlencoded" data-toggle="tab" >x-www-form-urlencoded</a></li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">raw <b class="caret"></b></a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="login_myTabDrop1">
+                <li><a href="#login_Text" tabindex="-1" data-toggle="tab">Text</a></li>
+                <li><a href="#login_JavaScript" tabindex="-1" data-toggle="tab">JavaScript</a></li>
+                <li><a href="#login_Json" tabindex="-1" data-toggle="tab">Json</a></li>
+                <li><a href="#login_Html" tabindex="-1" data-toggle="tab">Html</a></li>
+                <li><a href="login_#Xml" tabindex="-1" data-toggle="tab">Xml</a></li>
+            </ul>
+        </li>
+        <li ><a href="#login_GraphQL" data-toggle="tab" >GraphQL</a> </li>
+        <li ><a href="#login_response" data-toggle="tab" >返回体</a></li>
+    </ul>
+    <div id="login_myTabContent" class="tab-content">
+        <div class="tab-pane fade in active" id="login_none" style="text-align: center;color: grey">
+            <h3>这个请求将不会携带任何请求体</h3>
+            <h5>This request will not carry any request-body</h5>
+        </div>
+        <div class="tab-pane fade" id="login_form-data">
+            <div class="table-responsive" style="width: 98%;color: black">
+                <table class="table table-bordered table-striped" id="login_mytable" style="background-color:white">
+                    <thead style="color: #337ab7;font-size: x-small">
+                      <tr>
+                        <td style="width: 30%">Key</td>
+                        <td style="width: 50%">Value</td>
+                      </tr>
+                    </thead>
+                    <tbody id="login_mytbody">
+                      <tr>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-default" id="login_add"><i class="fa fa-plus"></i> 添加新参数</button>
+            <script>window.jQuery || document.write('<script src="/static/201801271505/js/jquery-1.11.0.min.js"><\/script>')</script>
+            <script type="text/javascript" src="/static/201801271505/js/bootstable.js"></script>
+        </div>
+        <div class="tab-pane fade" id="login_x-www-form-urlencoded">
+            <div class="table-responsive" style="width: 98%;color: black">
+                <table class="table table-bordered table-striped" id="login_mytable2" style="background-color:white">
+                    <thead style="color: #337ab7;font-size: x-small">
+                      <tr>
+                        <td style="width: 30%">Key</td>
+                        <td style="width: 50%">Value</td>
+                      </tr>
+                    </thead>
+                    <tbody id="login_mytbody2">
+                      <tr>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-default" id="login_add2"><i class="fa fa-plus"></i> 添加新参数</button>
+            <script>window.jQuery || document.write('<script src="/static/201801271505/js/jquery-1.11.0.min.js"><\/script>')</script>
+            <script type="text/javascript" src="/static/201801271505/js/bootstable.js"></script>
+        </div>
+        <div class="tab-pane fade" id="login_Text">
+            <textarea name="" id="login_raw_Text" style="color: black;width: 98%;height: 300px"></textarea>
+        </div>
+        <div class="tab-pane fade" id="login_JavaScript">
+            <textarea name="" id="login_raw_JavaScript" style="color: black;width: 98%;height: 300px"></textarea>
+        </div>
+        <div class="tab-pane fade" id="login_Json">
+            <textarea name="" id="login_raw_Json" style="color: black;width: 98%;height: 300px"></textarea>
+        </div>
+        <div class="tab-pane fade" id="login_Html">
+            <textarea name="" id="login_raw_Html" style="color: black;width: 98%;height: 300px"></textarea>
+        </div>
+        <div class="tab-pane fade" id="login_Xml">
+            <textarea name="" id="login_raw_Xml" style="color: black;width: 98%;height: 300px"></textarea>
+        </div>
+        <div class="tab-pane fade" id="login_GraphQL">
+             <table style="width: 98%">
+               <thead>
+                    <tr>
+                        <td style="width: 55%"><span >QUERY</span></td>
+                        <td style="width: 40%"><span >GRAPHQL VARIABLES</span></td>
+                      </tr>
+               </thead>
+                <tbody style="color: black">
+                  <tr>
+                    <td><textarea id="login_body_plan_G_Q"  rows="14" style="padding-left: 3px;border-radius: 5px;width: 99%"></textarea></td>
+                    <td><textarea id="login_body_plan_G_G"  rows="14" style="padding-left: 3px;border-radius: 5px;width: 100%"></textarea></td>
+                  </tr>
+                </tbody>
+            </table>
+         </div>
+        <div class="tab-pane fade" id="login_response">
+            <ul class="nav navbar-nav" style="width: 98%">
+                <li style="width: 33%;">
+                    <textarea name="" id="login_response_body" disabled="disabled"
+                              style="background-color: #e4f3f5;color: black;width: 100%;height: 300px"
+                               placeholder="返回体"></textarea>
+                </li>
+                <li style="width: 33%;">
+                     <textarea name="" id="login_response_set"
+                              style="color: black;width: 100%;height: 300px"
+                               placeholder="请输入提取设置，=号左边写变量名，右边写绝对路径，多个用换行分开，格式例如：
+sessId=/content/sessId
+token=/data/token"></textarea>
+                </li>
+                <li style="width: 33%;">
+                     <textarea name="" id="login_response_result" disabled="disabled"
+                              style="background-color: #f5eeec;color: black;width: 100%;height: 300px"
+                               placeholder="提取结果"></textarea>
+
+                </li>
+            </ul>
+        </div>
+    </div>
+    <br>
+</div>
+<script>
+    function login_show() {
+        //显示蒙层，并设置好蒙层的层级关系，让其在调试层之下，其他元素之上
+        document.getElementById('mengceng').style.display='block';
+        document.getElementById('mengceng').style.zIndex='998';
+        document.getElementById('login_set_div').style.zIndex='999';
+        document.getElementById('login_set_div').style.display = 'block';
+        $.get("/project_get_login/",{
+            "project_id":"{{ project.id }}"
+        },function (ret) {
+            console.log(ret);
+             // 运行第三方表格插件的函数：
+            $('#login_mytable').SetEditable({
+                $addButton: $('#login_add'),
+            });
+            $('#login_mytable2').SetEditable({
+                $addButton: $('#login_add2'),
+            });
+            document.getElementById('login_method').value = ret.api_method;
+            document.getElementById('login_url').value = ret.api_url;
+            document.getElementById('login_host').value = ret.api_host;
+            document.getElementById('login_header').value = ret.api_header;
+            document.getElementById('login_response_set').value = ret.set;
+            // 请求体编码格式
+            var body_method = '#login_'+ret.body_method;
+            $("li a[href="+body_method+"]").click();
+            // 请求体显示
+            if(ret.body_method == 'Text'){
+                document.getElementById('login_raw_Text').value = ret.api_body;
+            }
+            if(ret.body_method == 'JavaScript'){
+                document.getElementById('login_raw_JavaScript').value = ret.api_body;
+            }
+            if(ret.body_method == 'Json'){
+                document.getElementById('login_raw_Json').value = ret.api_body;
+            }
+            if(ret.body_method == 'Html'){
+                document.getElementById('login_raw_Html').value = ret.api_body;
+            }
+            if(ret.body_method == 'Xml'){
+                document.getElementById('login_raw_Xml').value = ret.api_body;
+            }
+            if(ret.body_method == 'form-data'){
+                var tbody = document.getElementById('login_mytbody'); // 定位表格中的tbody部分
+                body = eval(ret.api_body); //把这个像列表的字符串请求体变成真正的列表
+                for(var i=0;i<body.length;i++){ // 遍历这个请求体列表
+                    key = body[i][0]; //拿出每一个键值对的key
+                    value = body[i][1];//拿出每一个键值对的value
+                    var childs_tr = tbody.children ;//获取到这个表格下面所有的tr组成的大列表
+                    // 每个tr下的children得到的是 td列表，只有俩个。
+                    childs_tr[i].children[0].innerText = key; //第一个td放key
+                    childs_tr[i].children[1].innerText = value;//第二个td放value
+                    //判断是否是最后一次遍历，来决定是否点击新增参数按钮
+                    if(i<body.length-1){
+                        document.getElementById('login_add').click()
+                    }
+                }
+            }
+            if(ret.body_method == 'x-www-form-urlencoded'){
+                var tbody = document.getElementById('login_mytbody2'); // 定位表格中的tbody部分
+                body = eval(ret.api_body); //把这个像列表的字符串请求体变成真正的列表
+                for(var i=0;i<body.length;i++){ // 遍历这个请求体列表
+                    key = body[i][0]; //拿出每一个键值对的key
+                    value = body[i][1];//拿出每一个键值对的value
+                    var childs_tr = tbody.children ;//获取到这个表格下面所有的tr组成的大列表
+                    // 每个tr下的children得到的是 td列表，只有俩个。
+                    childs_tr[i].children[0].innerText = key; //第一个td放key
+                    childs_tr[i].children[1].innerText = value;//第二个td放value
+                    //判断是否是最后一次遍历，来决定是否点击新增参数按钮
+                    if(i<body.length-1){
+                        document.getElementById('login_add2').click()
+                    }
+                }
+            }
+            if(ret.body_method == "GraphQL"){
+                body_plan_G_Q =  ret.api_body.split('*WQRF*')[0];
+                body_plan_G_G =  ret.api_body.split('*WQRF*')[1];
+                document.getElementById('login_body_plan_G_Q').value =body_plan_G_Q;
+                document.getElementById('login_body_plan_G_G').value = body_plan_G_G;
+            }
+        })
+    }
+    function login_close() {
+        document.location.reload()
+    }
+    function login_save(){
+        // 获取所有接口设置数据
+        var login_method = document.getElementById('login_method').value ;
+        var login_url = document.getElementById('login_url').value ;
+        var login_host = document.getElementById('login_host').value ;
+        var login_header = document.getElementById('login_header').value ;
+        var login_response_set = document.getElementById('login_response_set').value;
+
+        // 判断顶部的数据是否填充完
+        if(ts_method == 'none'){alert('请选择请求方式！');return}
+        if(ts_url == ''){alert('请输入url！');return}
+        if(ts_host == ''){alert('请输入host！');return}
+
+        //判断关键数据是否符合规则
+        if(login_host.slice(0,7) != 'http://' && login_host.slice(0,8) != 'https://' && login_host.slice(0,4) !='全局域名' ){
+            alert('host必须以http://或https://开头！');return
+        }
+        if(login_header != ''){
+            try {
+                JSON.parse(login_header)
+            }catch (e) {
+                alert('header请求头不符合json规范！');
+                return
+            }
+        }
+
+        var login_body_method = $('ul#login_myTab li[class="active"]')[0].innerText;
+        if(login_body_method == '返回体'){
+            alert('请切换到请求体tab再保存！');
+            return
+        }
+
+        if(login_body_method == 'none'){
+            var login_api_body = ''
+        }
+        if(login_body_method == 'form-data'){
+            var login_api_body = []; //新建这个空列表用来存放后续的数据
+            var tbody_ = $("table#login_mytable tbody")[0]; //获取该表格的内容部分
+            var trlist = tbody_.children ; //获取下面所有tr，每个tr就是一个键值对实际上
+            for(var i=0;i<trlist.length;i++) {
+                var tdarr = trlist[i].children; // 获取tr下的俩个td
+                var key = tdarr[0].innerText; // 获取key
+                var value = tdarr[1].innerText; // 获取value
+                login_api_body.push([key, value]);// 作为一个数组，存放到这个大数组里。
+            }
+            var login_api_body = JSON.stringify(login_api_body);
+        }
+        if(login_body_method == 'x-www-form-urlencoded'){
+            var login_api_body = []; //新建这个空列表用来存放后续的数据
+            var tbody_ = $("table#login_mytable2 tbody")[0]; //获取该表格的内容部分
+            var trlist = tbody_.children ; //获取下面所有tr，每个tr就是一个键值对实际上
+            for(var i=0;i<trlist.length;i++) {
+                var tdarr = trlist[i].children; // 获取tr下的俩个td
+                var key = tdarr[0].innerText; // 获取key
+                var value = tdarr[1].innerText; // 获取value
+                login_api_body.push([key, value]);// 作为一个数组，存放到这个大数组里。
+            }
+            var login_api_body = JSON.stringify(login_api_body);
+        }
+        if(login_body_method == 'Text'){
+            var login_api_body = document.getElementById('login_raw_Text').value;
+        }
+        if(login_body_method == 'JavaScript'){
+            var login_api_body = document.getElementById('login_raw_JavaScript').value;
+        }
+        if(login_body_method == 'Json'){
+            var login_api_body = document.getElementById('login_raw_Json').value;
+
+        }
+        if(login_body_method == 'Html'){
+            var login_api_body = document.getElementById('login_raw_Html').value;
+
+        }
+        if(login_body_method == 'Xml'){
+            var login_api_body = document.getElementById('login_raw_Xml').value;
+        }
+        if(login_body_method == 'GraphQL'){
+            body_plan_G_Q = document.getElementById('login_body_plan_G_Q').value;
+            body_plan_G_G = document.getElementById('login_body_plan_G_G').value;
+             var login_api_body = body_plan_G_Q+ '*WQRF*' + body_plan_G_G
+        }
+
+        $.get('/project_login_save/',{
+            'project_id':'{{ project.id }}',
+            'login_method':login_method,
+            'login_url':login_url,
+            'login_host':login_host,
+            'login_header':login_header,
+            'login_body_method':login_body_method,
+            'login_api_body':login_api_body,
+            'login_response_set':login_response_set,
+        },function (ret) {
+            document.location.reload();
+        })
+    }
+</script>
 
 
 

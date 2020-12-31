@@ -119,7 +119,7 @@ class Test(unittest.TestCase):
                 query = api_body.split('*WQRF*')[0]
                 graphql = api_body.split('*WQRF*')[1]
                 try:
-                    int(graphql)
+                    eval(graphql)
                 except:
                     graphql = '{}'
                 payload = '{"query":"%s","variables":%s}' % (query, graphql)

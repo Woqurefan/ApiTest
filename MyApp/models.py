@@ -117,3 +117,18 @@ class DB_project_host(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class DB_login(models.Model):
+    project_id = models.CharField(max_length=10,null=True) #项目id
+    api_method =  models.CharField(max_length=10,null=True) #请求方式
+    api_url =  models.CharField(max_length=1000,null=True) #url
+    api_header =  models.CharField(max_length=1000,null=True) #请求头
+    api_host =  models.CharField(max_length=100,null=True) #域名
+    body_method =  models.CharField(max_length=20,null=True) #请求体编码格式
+    api_body =  models.CharField(max_length=1000,null=True) #请求体
+    sign =  models.CharField(max_length=10,null=True) #是否验签
+    set = models.CharField(max_length=300,null=True) #提取设置
+
+    def __str__(self):
+        return self.project_id
