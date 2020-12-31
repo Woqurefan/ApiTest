@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from MyApp.views import *
+from MyApp.views_tools import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -65,6 +66,12 @@ urlpatterns = [
     url(r'^save_project_header/$', save_project_header),  # 保存项目公共请求头
     url(r'^save_caes_name/$', save_caes_name),  # 保存用例名字
     url(r'^save_project_host/$', save_project_host),  # 保存项目公域名
+    url(r'^project_get_login/$', project_get_login),  # 获取项目登陆态接口
+    url(r'^project_login_save/$', project_login_save),  # 保存项目登陆态接口
+
+    # ------------ 小工具 --------------- #
+    url(r'^tools_zhengjiao/$', zhengjiao),  # 进入小公举页面
+
 
 ]
 
