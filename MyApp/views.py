@@ -738,3 +738,95 @@ def project_login_save(request):
     # 返回
     return HttpResponse('success')
 
+# 调试登陆态接口
+def project_login_send(request):
+    # 第一步，获取前端数据
+    login_method = request.GET['login_method']
+    login_url = request.GET['login_url']
+    login_host = request.GET['login_host']
+    login_header = request.GET['login_header']
+    login_body_method = request.GET['login_body_method']
+    login_api_body = request.GET['login_api_body']
+    login_response_set = request.GET['login_response_set']
+    # 第二步，发送请求
+    try:
+        header = json.loads(login_header) #处理header
+    except:
+        return HttpResponse('请求头不符合json格式！')
+
+    # 拼接完整url
+    if login_host[-1] == '/' and login_url[0] =='/': #都有/
+        url = login_host[:-1] + login_url
+    elif login_host[-1] != '/' and login_url[0] !='/': #都没有/
+        url = login_host+ '/' + login_url
+    else: #肯定有一个有/
+        url = login_host + login_url
+    try:
+        if login_body_method == 'none':
+            response = requests.request(login_method.upper(), url, headers=header, data={} )
+        elif login_body_method == 'form-data':
+            files = []
+            payload = {}
+            for i in eval(login_api_body):
+                payload[i[0]] = i[1]
+            response = requests.request(login_method.upper(), url, headers=header, data=payload, files=files )
+
+        elif login_body_method == 'x-www-form-urlencoded':
+            header['Content-Type'] = 'application/x-www-form-urlencoded'
+            payload = {}
+            for i in eval(login_api_body):
+                payload[i[0]] = i[1]
+            response = requests.request(login_method.upper(), url, headers=header, data=payload )
+
+        elif login_body_method == 'GraphQL':
+            header['Content-Type'] = 'application/json'
+            query = login_api_body.split('*WQRF*')[0]
+            graphql = login_api_body.split('*WQRF*')[1]
+            try:
+                eval(graphql)
+            except:
+                graphql = '{}'
+            payload = '{"query":"%s","variables":%s}' % (query, graphql)
+            response = requests.request(login_method.upper(), url, headers=header, data=payload )
+
+
+        else: #这时肯定是raw的五个子选项：
+            if login_body_method == 'Text':
+                header['Content-Type'] = 'text/plain'
+
+            if login_body_method == 'JavaScript':
+                header['Content-Type'] = 'text/plain'
+
+            if login_body_method == 'Json':
+                header['Content-Type'] = 'text/plain'
+
+            if login_body_method == 'Html':
+                header['Content-Type'] = 'text/plain'
+
+            if login_body_method == 'Xml':
+                header['Content-Type'] = 'text/plain'
+            response = requests.request(login_method.upper(), url, headers=header, data=login_api_body.encode('utf-8'))
+        # 把返回值传递给前端页面
+        response.encoding = "utf-8"
+        DB_host.objects.update_or_create(host=login_host)
+        res = response.json()
+        # 第三步，对返回值进行提取
+        get_res = '' #声明提取结果存放
+        for i in login_response_set.split('\n'):
+            if i == "":
+                continue
+            else:
+                i = i.replace(' ','')
+                key = i.split('=')[0] #拿出key
+                path = i.split('=')[1]  #拿出路径
+                value = res
+                for j in path.split('/')[1:]:
+                    value = value[j]
+                get_res += key + '="' + value +'"\n'
+        end_res = {"response":response.text,"get_res":get_res}
+        return HttpResponse(json.dumps(end_res),content_type='application/json')
+
+    except Exception as e:
+        end_res = {"response":str(e),"get_res":''}
+        return HttpResponse(json.dumps(end_res),content_type='application/json')
+
