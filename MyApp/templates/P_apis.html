@@ -114,7 +114,11 @@ color: white;padding-left: 10px;">
         <button onclick="ts_close()" type="button" class="btn btn-default">取消</button>
     </div>
     <h4>接口: <small style="color: greenyellow" id="ts_api_id"></small>-
-    <input placeholder="请在此输入接口名称" type="text" id="ts_api_name" style="padding-left: 5px;width: 50%;color: #329104">
+    <input placeholder="请在此输入接口名称" type="text" id="ts_api_name" style="padding-left: 5px;width: 30%;color: #329104">
+        <select name="ts_login" id="ts_login" style="color: black;font-size:medium">
+            <option value="no" id="ts_login_no">不加登陆态</option>
+            <option value="yes" id="ts_login_yes">加登陆态</option>
+        </select>
     </h4>
     <ul class="nav navbar-nav" style="width: 98%">
         <li>
@@ -292,6 +296,7 @@ color: white;padding-left: 10px;">
         document.getElementById('ts_url').value = '';
         document.getElementById('ts_host').value = '';
         document.getElementById('ts_header').value='{}';
+        document.getElementById('ts_login').value = 'no';
         // 开始初始化请求体编码格式部分：
         document.getElementById('click_none').click() ; // 点击none子标签
         document.getElementById('mytbody').innerHTML='<tr><td></td><td></td></tr>';
@@ -329,15 +334,21 @@ color: white;padding-left: 10px;">
             document.getElementById('ts_url').value = ret.api_url;
             document.getElementById('ts_host').value = ret.api_host;
             document.getElementById('ts_header').value = ret.api_header;
+            if(ret.api_login != null && ret.api_login != ''){
+                document.getElementById('ts_login').value = ret.api_login;
+            }
             // 公共请求头
-            var project_headers = ret.public_header.split(',');
-            for(var i=0;i<project_headers.length;i++){
-                try {
-                    document.getElementById('checkbox_'+project_headers[i]).checked='checked';
-                }catch (e) {
+            if(ret.public_header != null){
+                var project_headers = ret.public_header.split(',');
+                for(var i=0;i<project_headers.length;i++){
+                    try {
+                        document.getElementById('checkbox_'+project_headers[i]).checked='checked';
+                    }catch (e) {
 
+                    }
                 }
             }
+
             // 请求体编码格式
             var body_method = '#'+ret.body_method;
             $("li a[href="+body_method+"]").click();
@@ -407,7 +418,7 @@ color: white;padding-left: 10px;">
         var ts_url = document.getElementById('ts_url').value ;
         var ts_host = document.getElementById('ts_host').value ;
         var ts_header = document.getElementById('ts_header').value ;
-
+        var ts_login = document.getElementById('ts_login').value;
         var project_headers = document.getElementById('ts_project_header_li').children;
         var ts_project_headers = [];
         for(var i=0;i<project_headers.length;i++){
@@ -494,6 +505,7 @@ color: white;padding-left: 10px;">
             'ts_method':ts_method,
             'ts_url':ts_url,
             'ts_host':ts_host,
+            'ts_login':ts_login,
             'ts_header':ts_header,
             'ts_body_method':ts_body_method,
             'ts_api_body':ts_api_body,
@@ -509,7 +521,7 @@ color: white;padding-left: 10px;">
         var ts_url = document.getElementById('ts_url').value ;
         var ts_host = document.getElementById('ts_host').value ;
         var ts_header = document.getElementById('ts_header').value ;
-
+        var ts_login = document.getElementById('ts_login').value;
         var project_headers = document.getElementById('ts_project_header_li').children;
         var ts_project_headers = [];
         for(var i=0;i<project_headers.length;i++){
@@ -517,7 +529,6 @@ color: white;padding-left: 10px;">
                 ts_project_headers.push(project_headers[i].children[0].value)
             }
         }
-
 
          // 判断顶部的数据是否填充完
         if(ts_method == 'none'){alert('请选择请求方式！');return}
@@ -580,20 +591,18 @@ color: white;padding-left: 10px;">
         if(ts_body_method == 'Xml'){
             var ts_api_body = document.getElementById('raw_Xml').value;
         }
-
-
         if(ts_body_method == 'GraphQL'){
             body_plan_G_Q = document.getElementById('body_plan_G_Q').value;
             body_plan_G_G = document.getElementById('body_plan_G_G').value;
              var ts_api_body = body_plan_G_Q+ '*WQRF*' + body_plan_G_G
         }
 
-
         var api_id = document.getElementById('ts_api_id').innerText ; //获取到了接口id
         // 发送请求给后台
          $.get('/Api_send/',{
             'api_id':api_id,
             'api_name':api_name,
+             'ts_login':ts_login,
             'ts_method':ts_method,
             'ts_url':ts_url,
             'ts_host':ts_host,
@@ -615,7 +624,6 @@ color: white;padding-left: 10px;">
     function ts_show_project_header() {
         document.getElementById('ts_project_header_li').style.display = 'block';
     }
-
 </script>
 
 {# 异常值测试 #}
@@ -933,7 +941,7 @@ position: absolute;left: 10%;top: 10%;box-shadow: 4px 4px 8px grey;padding-left:
         </li>
 
         <li >
-            <button onclick="" type="button"
+            <button onclick="login_send()" type="button"
                     style="height: 40px;width: 120px;"
                     class="btn btn-default"><span style="font-size: large">Send</span></button>
         </li>
@@ -964,7 +972,7 @@ position: absolute;left: 10%;top: 10%;box-shadow: 4px 4px 8px grey;padding-left:
                 <li><a href="#login_JavaScript" tabindex="-1" data-toggle="tab">JavaScript</a></li>
                 <li><a href="#login_Json" tabindex="-1" data-toggle="tab">Json</a></li>
                 <li><a href="#login_Html" tabindex="-1" data-toggle="tab">Html</a></li>
-                <li><a href="login_#Xml" tabindex="-1" data-toggle="tab">Xml</a></li>
+                <li><a href="#login_Xml" tabindex="-1" data-toggle="tab">Xml</a></li>
             </ul>
         </li>
         <li ><a href="#login_GraphQL" data-toggle="tab" >GraphQL</a> </li>
@@ -1058,7 +1066,9 @@ position: absolute;left: 10%;top: 10%;box-shadow: 4px 4px 8px grey;padding-left:
                 <li style="width: 33%;">
                      <textarea name="" id="login_response_set"
                               style="color: black;width: 100%;height: 300px"
-                               placeholder="请输入提取设置，=号左边写变量名，右边写绝对路径，多个用换行分开，格式例如：
+                               placeholder="若选用cookie持久化操作，请只输入cookie后保存。
+
+若想使用登陆接口的返回值字段，请输入提取设置，=号左边写变量名，右边写绝对路径，多个用换行分开，格式例如：
 sessId=/content/sessId
 token=/data/token"></textarea>
                 </li>
@@ -1251,6 +1261,101 @@ token=/data/token"></textarea>
             'login_response_set':login_response_set,
         },function (ret) {
             document.location.reload();
+        })
+    }
+    function login_send() {
+        // 获取接口的所有数据
+        var login_method = document.getElementById('login_method').value ;
+        var login_url = document.getElementById('login_url').value ;
+        var login_host = document.getElementById('login_host').value ;
+        var login_header = document.getElementById('login_header').value ;
+        var login_response_set = document.getElementById('login_response_set').value;
+
+         // 判断顶部的数据是否填充完
+        if(login_method == 'none'){alert('请选择请求方式！');return}
+        if(login_url == ''){alert('请输入url！');return}
+        if(login_host == ''){alert('请输入host！');return}
+
+         //判断关键数据是否符合规则
+        if(login_host.slice(0,7) != 'http://' && login_host.slice(0,8) != 'https://' && login_host.slice(0,4) !='全局域名'){
+            alert('host必须以http://或https://开头！');return
+        }
+        if(login_header != ''){
+            try {
+                JSON.parse(login_header)
+            }catch (e) {
+                alert('header请求头不符合json规范！');
+                return
+            }
+        }
+        var login_body_method = $('ul#login_myTab li[class="active"]')[0].innerText;
+        if(login_body_method == '返回体'){
+            alert('请切换到请求体tab再保存！');
+            return
+        }
+
+        if(login_body_method == 'none'){
+            var login_api_body = ''
+        }
+        if(login_body_method == 'form-data'){
+            var login_api_body = []; //新建这个空列表用来存放后续的数据
+            var tbody_ = $("table#login_mytable tbody")[0]; //获取该表格的内容部分
+            var trlist = tbody_.children ; //获取下面所有tr，每个tr就是一个键值对实际上
+            for(var i=0;i<trlist.length;i++) {
+                var tdarr = trlist[i].children; // 获取tr下的俩个td
+                var key = tdarr[0].innerText; // 获取key
+                var value = tdarr[1].innerText; // 获取value
+                login_api_body.push([key, value]);// 作为一个数组，存放到这个大数组里。
+            }
+            login_api_body = JSON.stringify(login_api_body);
+        }
+        if(login_body_method == 'x-www-form-urlencoded'){
+            var login_api_body = []; //新建这个空列表用来存放后续的数据
+            var tbody_ = $("table#login_mytable2 tbody")[0]; //获取该表格的内容部分
+            var trlist = tbody_.children ; //获取下面所有tr，每个tr就是一个键值对实际上
+            for(var i=0;i<trlist.length;i++) {
+                var tdarr = trlist[i].children; // 获取tr下的俩个td
+                var key = tdarr[0].innerText; // 获取key
+                var value = tdarr[1].innerText; // 获取value
+                login_api_body.push([key, value]);// 作为一个数组，存放到这个大数组里。
+            }
+            login_api_body = JSON.stringify(login_api_body);
+        }
+        if(login_body_method == 'Text'){
+            var login_api_body = document.getElementById('login_raw_Text').value;
+        }
+        if(login_body_method == 'JavaScript'){
+            var login_api_body = document.getElementById('login_raw_JavaScript').value;
+        }
+        if(login_body_method == 'Json'){
+            var login_api_body = document.getElementById('login_raw_Json').value;
+        }
+        if(login_body_method == 'Html'){
+            var login_api_body = document.getElementById('login_raw_Html').value;
+        }
+        if(login_body_method == 'Xml'){
+            var login_api_body = document.getElementById('login_raw_Xml').value;
+        }
+
+        if(login_body_method == 'GraphQL'){
+            body_plan_G_Q = document.getElementById('login_body_plan_G_Q').value;
+            body_plan_G_G = document.getElementById('login_body_plan_G_G').value;
+             var login_api_body = body_plan_G_Q+ '*WQRF*' + body_plan_G_G
+        }
+
+         $.get('/project_login_send/',{
+            'login_method':login_method,
+            'login_url':login_url,
+            'login_host':login_host,
+            'login_header':login_header,
+            'login_body_method':login_body_method,
+            'login_api_body':login_api_body,
+            'login_response_set':login_response_set,
+        },function (ret) {
+            $("li a[href=#login_response]").click(); //点击一下返回体按钮
+            ret = eval(ret);
+            document.getElementById('login_response_body').value = ret.response ;//把返回值显示到返回值多行文本框中
+             document.getElementById('login_response_result').value = ret.get_res; //把提取结果也展示到对应文本框中
         })
     }
 </script>

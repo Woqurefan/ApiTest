@@ -236,9 +236,9 @@ function showOutput(id, name) {
     <div style="border: 1px solid #ffffff;border-radius: 10px;box-shadow: 2px 2px 12px #aeaeae;padding-left: 30px;width: 500px">
 <p class='attribute'>接口自动化测试平台提供</p>
 <p class='attribute'><strong>注意:</strong> 出现问题请联系管理员！</p>
-<p class='attribute'><strong>报告生成日期:</strong> 2020-12-24 14:01:51</p>
-<p class='attribute'><strong>用例执行时间:</strong> 0:12:43.211177秒</p>
-<p class='attribute'><strong>用例执行结果:</strong> 失败 1, 报错 1</p>
+<p class='attribute'><strong>报告生成日期:</strong> 2021-01-20 09:55:29</p>
+<p class='attribute'><strong>用例执行时间:</strong> 0:00:06.744153秒</p>
+<p class='attribute'><strong>用例执行结果:</strong> 通过 2,</p>
 <p class='attribute'><strong>执行系统:</strong> darwin</p>
 
 <br>
@@ -277,44 +277,40 @@ function showOutput(id, name) {
 
 </tr>
 
-<tr class='errorClass'>
+<tr class='passClass'>
     <td>MyApp.run_case.Test: 测试类</td>
     <td>2</td>
+    <td>2</td>
     <td>0</td>
-    <td>1</td>
-    <td>1</td>
+    <td>0</td>
     <td><button class="wqrf_button" style="background-color: #ffd1e7"  onclick="javascript:showClassDetail('c1',2)">详细</button></td>
 
 </tr>
 
-<tr id='ft1.1' class='none'>
-    <td class='failCase'><div class='testcase'>test_001: 我是用来调试提取返回值的步骤</div></td>
+<tr id='pt1.1' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_001: 我是用来调试提取返回值的步骤</div></td>
     <td colspan='5' align='center'>
 
     <!--css div popup start-->
-    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_ft1.1')" >
-        <button class="wqrf_button" style="width: auto">失败详情</button></a>
-    <div id='div_ft1.1' class="popup_window">
+    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.1')" >
+        <button class="wqrf_button" style="width: auto">通过详情</button></a>
+    <div id='div_pt1.1' class="popup_window">
         <div style='text-align: right; color:red;cursor:pointer'>
-        <a onfocus='this.blur();' onclick="document.getElementById('div_ft1.1').style.display = 'none' " >
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.1').style.display = 'none' " >
            [x]</a>
         </div>
         <pre>
         
-ft1.1: 
+pt1.1: 
 【host】： https://www.baidu.com
 【url】： /sugrec?prod=pc_his&amp;from=pc_web&amp;json=1&amp;sid=32812_1464_33049_33059_33099_33101_32962_32846_22160&amp;hisdata=&amp;_t=1606109114553&amp;req=2&amp;csor=0
 【header】： {'bbb': '222'}
 【method】： get
 【body_method】： none
 【body】： 
-【返回体】： {"err_no":0,"errmsg":"","queryid":"0x2af4b1e6513fe8"}
-Traceback (most recent call last):
-  File "/Users/zijiawang/PycharmProjects/ApiTest/MyApp/run_case.py", line 217, in tool
-    Test.demo(self,step)
-  File "/Users/zijiawang/PycharmProjects/ApiTest/MyApp/run_case.py", line 207, in demo
-    raise AssertionError('字符串不存在：%s'%i)
-AssertionError: 字符串不存在：测试开发干货
+未调用过
+{'token': 'lI0HYKnKHrWBid4PyKeMuAU'}
+【返回体】： {"err_no":0,"errmsg":"","queryid":"0x17676a85dff9c4b"}
 
 
          <div id="div100">
@@ -326,78 +322,30 @@ AssertionError: 字符串不存在：测试开发干货
     </td>
 </tr>
 
-<tr id='ft1.2' class='none'>
-    <td class='errorCase'><div class='testcase'>test_002: 我是用来测试接收的步骤</div></td>
+<tr id='pt1.2' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_002: 我是新步骤</div></td>
     <td colspan='5' align='center'>
 
     <!--css div popup start-->
-    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_ft1.2')" >
-        <button class="wqrf_button" style="width: auto">错误详情</button></a>
-    <div id='div_ft1.2' class="popup_window">
+    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.2')" >
+        <button class="wqrf_button" style="width: auto">通过详情</button></a>
+    <div id='div_pt1.2' class="popup_window">
         <div style='text-align: right; color:red;cursor:pointer'>
-        <a onfocus='this.blur();' onclick="document.getElementById('div_ft1.2').style.display = 'none' " >
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.2').style.display = 'none' " >
            [x]</a>
         </div>
         <pre>
         
-ft1.2: 
-【host】： https://www.11111.com
-【url】： /aaaaa/0x2af4b1e6513fe8bbbbbb?error=0
-【header】： {'a': '0x2af4b1e6513fe8', 'b': '0', 'newaaaa': 'new1111', 'bbb': '222'}
+pt1.2: 
+【host】： https://www.baidu.com
+【url】： /sugrec?prod=pc_his&amp;from=pc_web&amp;json=1&amp;sid=32812_1464_33049_33059_33099_33101_32962_32846_22160&amp;hisdata=&amp;_t=1606109114553&amp;req=2&amp;csor=0
+【header】： {'bbb': '222'}
 【method】： get
-【body_method】： GraphQL
-【body】： 111*WQRF*222
-Traceback (most recent call last):
-  File "/usr/local/lib/python3.7/site-packages/urllib3/connection.py", line 160, in _new_conn
-    (self._dns_host, self.port), self.timeout, **extra_kw)
-  File "/usr/local/lib/python3.7/site-packages/urllib3/util/connection.py", line 80, in create_connection
-    raise err
-  File "/usr/local/lib/python3.7/site-packages/urllib3/util/connection.py", line 70, in create_connection
-    sock.connect(sa)
-TimeoutError: [Errno 60] Operation timed out
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/usr/local/lib/python3.7/site-packages/urllib3/connectionpool.py", line 603, in urlopen
-    chunked=chunked)
-  File "/usr/local/lib/python3.7/site-packages/urllib3/connectionpool.py", line 344, in _make_request
-    self._validate_conn(conn)
-  File "/usr/local/lib/python3.7/site-packages/urllib3/connectionpool.py", line 843, in _validate_conn
-    conn.connect()
-  File "/usr/local/lib/python3.7/site-packages/urllib3/connection.py", line 316, in connect
-    conn = self._new_conn()
-  File "/usr/local/lib/python3.7/site-packages/urllib3/connection.py", line 169, in _new_conn
-    self, "Failed to establish a new connection: %s" % e)
-urllib3.exceptions.NewConnectionError: &lt;urllib3.connection.VerifiedHTTPSConnection object at 0x103b26860&gt;: Failed to establish a new connection: [Errno 60] Operation timed out
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/usr/local/lib/python3.7/site-packages/requests/adapters.py", line 449, in send
-    timeout=timeout
-  File "/usr/local/lib/python3.7/site-packages/urllib3/connectionpool.py", line 641, in urlopen
-    _stacktrace=sys.exc_info()[2])
-  File "/usr/local/lib/python3.7/site-packages/urllib3/util/retry.py", line 399, in increment
-    raise MaxRetryError(_pool, url, error or ResponseError(cause))
-urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='www.11111.com', port=443): Max retries exceeded with url: /aaaaa/0x2af4b1e6513fe8bbbbbb?error=0 (Caused by NewConnectionError('&lt;urllib3.connection.VerifiedHTTPSConnection object at 0x103b26860&gt;: Failed to establish a new connection: [Errno 60] Operation timed out'))
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/zijiawang/PycharmProjects/ApiTest/MyApp/run_case.py", line 217, in tool
-    Test.demo(self,step)
-  File "/Users/zijiawang/PycharmProjects/ApiTest/MyApp/run_case.py", line 126, in demo
-    response = requests.request(api_method.upper(), url, headers=header, data=payload)
-  File "/usr/local/lib/python3.7/site-packages/requests/api.py", line 60, in request
-    return session.request(method=method, url=url, **kwargs)
-  File "/usr/local/lib/python3.7/site-packages/requests/sessions.py", line 533, in request
-    resp = self.send(prep, **send_kwargs)
-  File "/usr/local/lib/python3.7/site-packages/requests/sessions.py", line 646, in send
-    r = adapter.send(request, **kwargs)
-  File "/usr/local/lib/python3.7/site-packages/requests/adapters.py", line 516, in send
-    raise ConnectionError(e, request=request)
-requests.exceptions.ConnectionError: HTTPSConnectionPool(host='www.11111.com', port=443): Max retries exceeded with url: /aaaaa/0x2af4b1e6513fe8bbbbbb?error=0 (Caused by NewConnectionError('&lt;urllib3.connection.VerifiedHTTPSConnection object at 0x103b26860&gt;: Failed to establish a new connection: [Errno 60] Operation timed out'))
+【body_method】： none
+【body】： 
+已调用过
+{'token': 'lI0HYKnKHrWBid4PyKeMuAU'}
+【返回体】： {"err_no":0,"errmsg":"","queryid":"0xf23b31d5ca8ef0"}
 
 
          <div id="div100">
@@ -412,9 +360,9 @@ requests.exceptions.ConnectionError: HTTPSConnectionPool(host='www.11111.com', p
 <tr id='total_row'>
     <td>总计</td>
     <td>2</td>
+    <td>2</td>
     <td>0</td>
-    <td>1</td>
-    <td>1</td>
+    <td>0</td>
     <td><button class="wqrf_button" style="background-color: #ffc2e6" onclick='javascript:location.reload()'>刷新</button></td>
 
 </tr>

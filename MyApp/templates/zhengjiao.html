@@ -3,15 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <title>正交生成工具</title>
-
     <style>
 
     </style>
-
 </head>
 <body>
 
-    <h4>欢迎使用正交生成小工具</h4>
+<div style="width: 90%;background-color: #f9f9f9;box-shadow: 1px 2px 5px grey;
+            margin-left: 5%;padding: 10px;">
+    <h2 style="text-align: center">欢迎使用正交小工具</h2>
+    <div  id="input_div">
+        <div class="input-group" id="input_g">
+            <span class="input-group-addon">输入条件和子状态</span>
+            <input name="keys" style="width: 30%" type="text" class="form-control" placeholder="输入条件的名字">
+            <input name="values" style="width: 70%" type="text" class="form-control" placeholder="多个子状态用 / 隔开">
+        </div>
+    </div>
+
+    <br>
+      <button onclick="add()" type="button" class="btn btn-default btn-lg ">添加</button>
+      <button onclick="play()" type="button" class="btn btn-default btn-lg ">运行</button>
+        <button onclick="excel()" style="float: right" type="button" class="btn btn-default btn-lg ">导出excel</button>
+
+    <br>
+
+    <br>
+    <div id="res_div" >
+
+    </div>
+
+
+</div>
+
+
+<script>
+    function add() {
+        var input_div = document.getElementById('input_div');
+        var ig = document.getElementById('input_g').cloneNode(true);
+        ig.children[1].value = '';
+        ig.children[2].value = '';
+        input_div.appendChild(ig)
+    }
+    function play() {
+        var keys = document.getElementsByName("keys");
+        var values = document.getElementsByName("values");
+        var end_keys = [];
+        var end_values = [];
+        for(var i=0;i<keys.length;i++){
+            if(values[i].value != ''){
+                end_keys.push(keys[i].value);
+                end_values.push(values[i].value);
+            }
+        }
+        $.get('/zhengjiao_play/',{
+            "end_values":end_values.toString(),
+        },function (ret) {
+            ret = eval(ret);
+            console.log(ret.res);
+            var res_div = document.getElementById('res_div');
+            res_div.innerHTML = '';
+
+            w = (100/end_keys.length).toString()+'%'; //计算输入框宽度
+
+            for(var j=0;j<ret.res.length;j++){
+                var div_group = document.createElement('div');
+                div_group.className = 'input-group';
+                var s = document.createElement('span');
+                s.className = 'input-group-addon';
+                s.innerText = '用例：'+(j+1).toString();
+                div_group.appendChild(s);
+                for(var i=0;i<end_keys.length;i++){
+                    var input = document.createElement('input');
+                    input.className = 'form-control';
+                    input.type="text" ;
+                    input.style = 'width: -webkit-calc('+w+')';
+                    input.disable = 'disabled';
+                    input.value = end_keys[i]+' : '+ret.res[j][i];
+                    div_group.appendChild(input);
+                }
+                res_div.appendChild(div_group);
+            }
+
+        })
+
+    }
+    function excel() {
+        var keys = document.getElementsByName("keys");
+        var values = document.getElementsByName("values");
+        var end_keys = [];
+        var end_values = [];
+        for(var i=0;i<keys.length;i++){
+            if(values[i].value != ''){
+                end_keys.push(keys[i].value);
+                end_values.push(values[i].value);
+            }
+        }
+        $.get('/zhengjiao_excel/',{
+            "end_keys":end_keys.toString(),
+            "end_values":end_values.toString(),
+        },function (ret) {
+            document.location.href = '/static/tmp_zhengjiao.xls'
+        })
+
+    }
+</script>
+
+
 
 </body>
 </html>

@@ -68,10 +68,12 @@ urlpatterns = [
     url(r'^save_project_host/$', save_project_host),  # 保存项目公域名
     url(r'^project_get_login/$', project_get_login),  # 获取项目登陆态接口
     url(r'^project_login_save/$', project_login_save),  # 保存项目登陆态接口
+    url(r'^project_login_send/$', project_login_send),  # 调试请求登陆态接口
 
     # ------------ 小工具 --------------- #
     url(r'^tools_zhengjiao/$', zhengjiao),  # 进入小公举页面
-
+    url(r'^zhengjiao_play/$', zhengjiao_play),  # 正交工具运行
+    url(r'^zhengjiao_excel/$', zhengjiao_excel),  # 正交工具导出
 
 ]
 
