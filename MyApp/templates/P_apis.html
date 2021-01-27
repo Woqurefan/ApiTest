@@ -114,7 +114,11 @@ color: white;padding-left: 10px;">
         <button onclick="ts_close()" type="button" class="btn btn-default">取消</button>
     </div>
     <h4>接口: <small style="color: greenyellow" id="ts_api_id"></small>-
-    <input placeholder="请在此输入接口名称" type="text" id="ts_api_name" style="padding-left: 5px;width: 50%;color: #329104">
+    <input placeholder="请在此输入接口名称" type="text" id="ts_api_name" style="padding-left: 5px;width: 30%;color: #329104">
+        <select name="ts_login" id="ts_login" style="color: black;font-size:medium">
+            <option value="no" id="ts_login_no">不加登陆态</option>
+            <option value="yes" id="ts_login_yes">加登陆态</option>
+        </select>
     </h4>
     <ul class="nav navbar-nav" style="width: 98%">
         <li>
@@ -292,6 +296,7 @@ color: white;padding-left: 10px;">
         document.getElementById('ts_url').value = '';
         document.getElementById('ts_host').value = '';
         document.getElementById('ts_header').value='{}';
+        document.getElementById('ts_login').value = 'no';
         // 开始初始化请求体编码格式部分：
         document.getElementById('click_none').click() ; // 点击none子标签
         document.getElementById('mytbody').innerHTML='<tr><td></td><td></td></tr>';
@@ -329,15 +334,21 @@ color: white;padding-left: 10px;">
             document.getElementById('ts_url').value = ret.api_url;
             document.getElementById('ts_host').value = ret.api_host;
             document.getElementById('ts_header').value = ret.api_header;
+            if(ret.api_login != null && ret.api_login != ''){
+                document.getElementById('ts_login').value = ret.api_login;
+            }
             // 公共请求头
-            var project_headers = ret.public_header.split(',');
-            for(var i=0;i<project_headers.length;i++){
-                try {
-                    document.getElementById('checkbox_'+project_headers[i]).checked='checked';
-                }catch (e) {
+            if(ret.public_header != null){
+                var project_headers = ret.public_header.split(',');
+                for(var i=0;i<project_headers.length;i++){
+                    try {
+                        document.getElementById('checkbox_'+project_headers[i]).checked='checked';
+                    }catch (e) {
 
+                    }
                 }
             }
+
             // 请求体编码格式
             var body_method = '#'+ret.body_method;
             $("li a[href="+body_method+"]").click();
@@ -407,7 +418,7 @@ color: white;padding-left: 10px;">
         var ts_url = document.getElementById('ts_url').value ;
         var ts_host = document.getElementById('ts_host').value ;
         var ts_header = document.getElementById('ts_header').value ;
-
+        var ts_login = document.getElementById('ts_login').value;
         var project_headers = document.getElementById('ts_project_header_li').children;
         var ts_project_headers = [];
         for(var i=0;i<project_headers.length;i++){
@@ -494,6 +505,7 @@ color: white;padding-left: 10px;">
             'ts_method':ts_method,
             'ts_url':ts_url,
             'ts_host':ts_host,
+            'ts_login':ts_login,
             'ts_header':ts_header,
             'ts_body_method':ts_body_method,
             'ts_api_body':ts_api_body,
@@ -509,7 +521,7 @@ color: white;padding-left: 10px;">
         var ts_url = document.getElementById('ts_url').value ;
         var ts_host = document.getElementById('ts_host').value ;
         var ts_header = document.getElementById('ts_header').value ;
-
+        var ts_login = document.getElementById('ts_login').value;
         var project_headers = document.getElementById('ts_project_header_li').children;
         var ts_project_headers = [];
         for(var i=0;i<project_headers.length;i++){
@@ -517,7 +529,6 @@ color: white;padding-left: 10px;">
                 ts_project_headers.push(project_headers[i].children[0].value)
             }
         }
-
 
          // 判断顶部的数据是否填充完
         if(ts_method == 'none'){alert('请选择请求方式！');return}
@@ -591,6 +602,7 @@ color: white;padding-left: 10px;">
          $.get('/Api_send/',{
             'api_id':api_id,
             'api_name':api_name,
+             'ts_login':ts_login,
             'ts_method':ts_method,
             'ts_url':ts_url,
             'ts_host':ts_host,
@@ -1054,7 +1066,9 @@ position: absolute;left: 10%;top: 10%;box-shadow: 4px 4px 8px grey;padding-left:
                 <li style="width: 33%;">
                      <textarea name="" id="login_response_set"
                               style="color: black;width: 100%;height: 300px"
-                               placeholder="请输入提取设置，=号左边写变量名，右边写绝对路径，多个用换行分开，格式例如：
+                               placeholder="若选用cookie持久化操作，请只输入cookie后保存。
+
+若想使用登陆接口的返回值字段，请输入提取设置，=号左边写变量名，右边写绝对路径，多个用换行分开，格式例如：
 sessId=/content/sessId
 token=/data/token"></textarea>
                 </li>
