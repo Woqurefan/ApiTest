@@ -13,7 +13,6 @@ def welcome(request):
     return render(request,'welcome.html',)
 
 
-
 # 控制不同的页面返回不同的数据：数据分发器
 def child_json(eid,oid='',ooid=''):
     res = {}
@@ -22,11 +21,27 @@ def child_json(eid,oid='',ooid=''):
         home_log = DB_apis_log.objects.filter(user_id=oid)[::-1]
         hosts = DB_host.objects.all()
 
+        from django.contrib.auth.models import User
+        user_projects = DB_project.objects.filter(user=User.objects.filter(id=oid)[0].username)
+
+        # 个人数据看板
+        new_res = {
+            "count_project":len(user_projects) ,
+            "count_api": sum([ len(DB_apis.objects.filter(project_id=i.id)) for i in user_projects]) ,
+            "count_case": sum([len(DB_cases.objects.filter(project_id=i.id)) for i in user_projects] ),
+            "count_report": '',
+        }
+
         if ooid == '':
-            res = {"hrefs":date,"home_log":home_log,"hosts":hosts}
+            res = {"hrefs":date,"home_log":home_log,"hosts":hosts,"user_projects":user_projects}
         else:
             log = DB_apis_log.objects.filter(id=ooid)[0]
-            res = {"hrefs":date,"home_log":home_log,"log":log,"hosts":hosts}
+            res = {"hrefs":date,"home_log":home_log,"log":log,"hosts":hosts,"user_projects":user_projects}
+
+        res.update(new_res)
+
+
+
 
     if eid == 'project_list.html':
         date =DB_project.objects.all()
@@ -296,36 +311,51 @@ def Api_send(request):
     ## url插入
     if '?' not in url:
         url += '?'
-        for i in login_res.keys():
-            url += i+'='+login_res[i]+'&'
+        if type(login_res) == dict:
+            for i in login_res.keys():
+                url += i+'='+login_res[i]+'&'
     else: #证明已经有参数了
-        for i in login_res.keys():
-            url += '&'+i+'='+login_res[i]
+        if type(login_res) == dict:
+            for i in login_res.keys():
+                url += '&'+i+'='+login_res[i]
 
     ## header插入
-    header.update(login_res)
+    if type(login_res) == dict:
+        header.update(login_res)
 
     try:
         if ts_body_method == 'none':
-            response = requests.request(ts_method.upper(), url, headers=header, data={} )
+            if type(login_res) == dict:
+                response = requests.request(ts_method.upper(), url, headers=header, data={} )
+            else:
+                response = login_res.request(ts_method.upper(), url, headers=header, data={} )
+
 
         elif ts_body_method == 'form-data':
             files = []
             payload = {}
             for i in eval(ts_api_body):
                 payload[i[0]] = i[1]
-            for i in login_res.keys():
-                payload[i] = login_res[i]
-            response = requests.request(ts_method.upper(), url, headers=header, data=payload, files=files )
+            if type(login_res) == dict:
+                for i in login_res.keys():
+                    payload[i] = login_res[i]
+                response = requests.request(ts_method.upper(), url, headers=header, data=payload, files=files )
+            else:
+                response = login_res.request(ts_method.upper(), url, headers=header, data=payload, files=files )
+
 
         elif ts_body_method == 'x-www-form-urlencoded':
             header['Content-Type'] = 'application/x-www-form-urlencoded'
             payload = {}
             for i in eval(ts_api_body):
                 payload[i[0]] = i[1]
-            for i in login_res.keys():
-                payload[i] = login_res[i]
-            response = requests.request(ts_method.upper(), url, headers=header, data=payload )
+            if type(login_res) == dict:
+                for i in login_res.keys():
+                    payload[i] = login_res[i]
+                response = requests.request(ts_method.upper(), url, headers=header, data=payload )
+            else:
+                response = login_res.request(ts_method.upper(), url, headers=header, data=payload )
+
 
         elif ts_body_method == 'GraphQL':
             header['Content-Type'] = 'application/json'
@@ -336,7 +366,11 @@ def Api_send(request):
             except:
                 graphql = '{}'
             payload = '{"query":"%s","variables":%s}' % (query, graphql)
-            response = requests.request(ts_method.upper(), url, headers=header, data=payload )
+            if type(login_res) == dict:
+                response = requests.request(ts_method.upper(), url, headers=header, data=payload )
+            else:
+                response = login_res.request(ts_method.upper(), url, headers=header, data=payload )
+
 
         else: #这时肯定是raw的五个子选项：
             if ts_body_method == 'Text':
@@ -357,7 +391,11 @@ def Api_send(request):
 
             if ts_body_method == 'Xml':
                 header['Content-Type'] = 'text/plain'
-            response = requests.request(ts_method.upper(), url, headers=header, data=ts_api_body.encode('utf-8'))
+            if type(login_res) == dict:
+                response = requests.request(ts_method.upper(), url, headers=header, data=ts_api_body.encode('utf-8'))
+            else:
+                response = login_res.request(ts_method.upper(), url, headers=header, data=ts_api_body.encode('utf-8'))
+
 
         # 把返回值传递给前端页面
         response.encoding = "utf-8"
@@ -898,20 +936,38 @@ def project_login_send_for_other(project_id):
         url = login_host + login_url
     try:
         if login_body_method == 'none':
-            response = requests.request(login_method.upper(), url, headers=header, data={} )
+            # 先判断是否是cookie持久化，若是，则不处理
+            if login_response_set == 'cookie':
+                a = requests.session()
+                a.request(login_method.upper(), url, headers=header, data={} )
+                return a
+            else:
+                response = requests.request(login_method.upper(), url, headers=header, data={} )
         elif login_body_method == 'form-data':
             files = []
             payload = {}
             for i in eval(login_api_body):
                 payload[i[0]] = i[1]
-            response = requests.request(login_method.upper(), url, headers=header, data=payload, files=files )
+            # 先判断是否是cookie持久化，若是，则不处理
+            if login_response_set == 'cookie':
+                a = requests.session()
+                a.request(login_method.upper(), url, headers=header, data=payload, files=files )
+                return a
+            else:
+                response = requests.request(login_method.upper(), url, headers=header, data=payload, files=files )
 
         elif login_body_method == 'x-www-form-urlencoded':
             header['Content-Type'] = 'application/x-www-form-urlencoded'
             payload = {}
             for i in eval(login_api_body):
                 payload[i[0]] = i[1]
-            response = requests.request(login_method.upper(), url, headers=header, data=payload )
+            # 先判断是否是cookie持久化，若是，则不处理
+            if login_response_set == 'cookie':
+                a = requests.session()
+                a.request(login_method.upper(), url, headers=header, data=payload )
+                return a
+            else:
+                response = requests.request(login_method.upper(), url, headers=header, data=payload )
 
         elif login_body_method == 'GraphQL':
             header['Content-Type'] = 'application/json'
@@ -922,7 +978,13 @@ def project_login_send_for_other(project_id):
             except:
                 graphql = '{}'
             payload = '{"query":"%s","variables":%s}' % (query, graphql)
-            response = requests.request(login_method.upper(), url, headers=header, data=payload )
+            # 先判断是否是cookie持久化，若是，则不处理
+            if login_response_set == 'cookie':
+                a = requests.session()
+                a.request(login_method.upper(), url, headers=header, data=payload )
+                return a
+            else:
+                response = requests.request(login_method.upper(), url, headers=header, data=payload )
 
         else: #这时肯定是raw的五个子选项：
             if login_body_method == 'Text':
@@ -939,7 +1001,13 @@ def project_login_send_for_other(project_id):
 
             if login_body_method == 'Xml':
                 header['Content-Type'] = 'text/plain'
-            response = requests.request(login_method.upper(), url, headers=header, data=login_api_body.encode('utf-8'))
+            # 先判断是否是cookie持久化，若是，则不处理
+            if login_response_set == 'cookie':
+                a = requests.session()
+                a.request(login_method.upper(), url, headers=header, data=login_api_body.encode('utf-8'))
+                return a
+            else:
+                response = requests.request(login_method.upper(), url, headers=header, data=login_api_body.encode('utf-8'))
         # 把返回值传递给前端页面
         response.encoding = "utf-8"
         DB_host.objects.update_or_create(host=login_host)
@@ -960,3 +1028,31 @@ def project_login_send_for_other(project_id):
         return get_res
     except Exception as e:
         return {}
+
+# 首页保存请求数据
+def Home_save_api(request):
+    project_id = request.GET['project_id']
+    ts_method = request.GET['ts_method']
+    ts_url = request.GET['ts_url']
+    ts_host = request.GET['ts_host']
+    ts_header = request.GET['ts_header']
+    ts_body_method = request.GET['ts_body_method']
+    ts_api_body = request.GET['ts_api_body']
+
+    DB_apis.objects.create(project_id=project_id,
+                           name = '首页保存接口',
+                           api_method = ts_method,
+                           api_url = ts_url,
+                           api_header = ts_header,
+                           api_host = ts_host,
+                           body_method = ts_body_method,
+                           api_body = ts_api_body,
+                           )
+
+    return HttpResponse('')
+
+
+
+
+
+
