@@ -69,6 +69,7 @@ urlpatterns = [
     url(r'^project_get_login/$', project_get_login),  # 获取项目登陆态接口
     url(r'^project_login_save/$', project_login_save),  # 保存项目登陆态接口
     url(r'^project_login_send/$', project_login_send),  # 调试请求登陆态接口
+    url(r'^Home_save_api/$', Home_save_api),  # 首页保存请求数据
 
     # ------------ 小工具 --------------- #
     url(r'^tools_zhengjiao/$', zhengjiao),  # 进入小公举页面
