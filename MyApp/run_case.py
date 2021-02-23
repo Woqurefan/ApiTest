@@ -268,7 +268,6 @@ class Test(unittest.TestCase):
 
 
 
-
 def make_defself(step):
     def tool(self):
         Test.demo(self,step)

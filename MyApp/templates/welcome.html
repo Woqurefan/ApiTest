@@ -12,13 +12,25 @@
          <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
 
         <link rel="shortcut icon" href="/static/bitbug_favicon.ico">
+
+    <style>
+        .chamfer{
+            background: linear-gradient(41deg, transparent 10px, #66defd 0) top left,
+                    linear-gradient(-90deg, transparent 0px, #adfdee 0) top right,
+                    linear-gradient(-90deg, transparent 0px, #cbffbd 0) bottom right,
+                    linear-gradient(45deg, transparent 21px, #b0fde2 0) bottom left;
+            background-size: 49% 48%;
+            background-repeat: no-repeat;
+
+        }
+    </style>
 <body>
 
 
 <nav id="navbar" class="">
     <div style="color: white;margin-top: 10px;margin-bottom: 5px;text-align: center">
 
-        欢迎你：<span>{{ username }}</span>
+        欢迎你：<span>{{ username }}</span> &nbsp;<a href="/logout/"  style="color: #8697b5;text-decoration: none"> 退出 </a>
         <br>
         <img id="img_1" src=""  alt="" style="width: 50%" class="img-circle img-thumbnail">
         <script>
@@ -94,11 +106,12 @@ background-color: #353c48;color: white;border: 0;font-size: x-large;text-decorat
 </script>
 
 
-<div style="font-size: large;position: absolute;top: 0px;right: 0px;box-shadow: 4px 4px 8px grey;
-            padding-left: 5px;padding-right: 5px">
-    <a href="/home/" style="color: black;text-decoration: none"> 主页 </a>
-    <a href="/logout/"  style="color: black;text-decoration: none"> 退出 </a>
+<div class="chamfer" style="height: 30px;width: 100px;position: fixed;right: 0px;top: 0px ">
+    <strong>
+        <a href="/home/" style="font-size: large;padding-left: 30px;color: #00372e;text-decoration: none"> HOME </a>
+    </strong>
 </div>
+
 
 <br>
 

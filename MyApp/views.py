@@ -25,12 +25,22 @@ def child_json(eid,oid='',ooid=''):
         user_projects = DB_project.objects.filter(user=User.objects.filter(id=oid)[0].username)
 
         # 个人数据看板
+        count_project = len(user_projects)
+        count_api = sum([ len(DB_apis.objects.filter(project_id=i.id)) for i in user_projects])
+        count_case = sum([len(DB_cases.objects.filter(project_id=i.id)) for i in user_projects] )
+
+        ziyuan_all = len(DB_project.objects.all())+len(DB_apis.objects.all())+len(DB_cases.objects.all())
+        ziyuan_user = count_project+count_api+count_case
+        ziyuan = ziyuan_user/ziyuan_all *100
+
         new_res = {
-            "count_project":len(user_projects) ,
-            "count_api": sum([ len(DB_apis.objects.filter(project_id=i.id)) for i in user_projects]) ,
-            "count_case": sum([len(DB_cases.objects.filter(project_id=i.id)) for i in user_projects] ),
+            "count_project":count_project ,
+            "count_api":  count_api,
+            "count_case": count_case,
             "count_report": '',
+            "ziyuan":ziyuan,
         }
+
 
         if ooid == '':
             res = {"hrefs":date,"home_log":home_log,"hosts":hosts,"user_projects":user_projects}
@@ -39,8 +49,6 @@ def child_json(eid,oid='',ooid=''):
             res = {"hrefs":date,"home_log":home_log,"log":log,"hosts":hosts,"user_projects":user_projects}
 
         res.update(new_res)
-
-
 
 
     if eid == 'project_list.html':
