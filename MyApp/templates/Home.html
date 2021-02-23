@@ -2,13 +2,75 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/bingxingtu/css/progresscircle.css">
     <style>
-
+        .circlechart {
+		 	float: left;
+			padding: 20px;
+            width: 90px;
+		}
+         .search_input {
+            width:100%;
+            height:42px;
+            padding-left:13px;
+        }
+        .search_button {
+            height:42px;
+            /*width:42px;*/
+            cursor:pointer;
+            position:absolute;
+        }
+        .bar input {
+            border:3px solid #66defd;
+            border-radius:5px;
+            background:transparent;
+            top:0;
+            right:0;
+        }
+        .bar button {
+            background-color: #66defd;;
+            /*background: linear-gradient(to right, #be0063, #ffcbd4);*/
+            border-radius:0 5px 5px 0;
+            width:160px;
+            top:0;
+            right:0;
+            color: white;
+        }
+        .bar button:before {
+            font-size:13px;
+            color:#a7eded;
+        }
+        button {
+            border:none;
+            outline:none;
+        }
     </style>
 </head>
 <body>
 
-<h2 style="margin-left: 400px;color: #03c9fb;">欢迎使用 接口测试平台</h2>
+
+<div class="search bar" style="position: absolute;top: 10px; left: 490px;width: -webkit-calc(100% - 980px)">
+    <div id="search_button"   >
+        <strong>
+        <input class="search_input" id="search_input" placeholder="输入搜索关键词" name="keys" type="text" value="{{keys}}">
+        </strong>
+        <button class="search_button" id="search_submit"  onclick="search()" style="width: 100px"> <strong><font size="5">搜 索</font></strong> </button>
+    </div>
+</div>
+
+
+<div style="z-index: 999;position: absolute;top: 80px;left: 15%;width: 70%;min-height: 200px;
+            background:linear-gradient(to bottom,#b8eafd,#e8ffdb) ;opacity:0.8;padding: 5px;
+            border-radius: 2px;box-shadow: 4px 4px 8px #bcbcbc">
+    <strong>
+        <a href="">我是搜索结果1</a> <br>
+        <a href="">我是搜索结果2</a> <br>
+
+    </strong>
+</div>
+
+
+
 
 
 <div  style="height: 400px;overflow-y: scroll;margin-left: 15px;width: 300px;" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -512,9 +574,23 @@
         当前用例数: <span>{{ count_case }}</span> <br>
         当前报告数: <span>{{ count_report }}</span>
     </div>
+
+    <div style="position: fixed;bottom: 3px;left: 470px;">
+      <div class="circlechart" data-percentage="{{ ziyuan }}"></div>
+      <div class="circlechart" data-percentage="30"></div>
+      <div class="circlechart" data-percentage="85"></div>
+        <span style="position: fixed;bottom: 5px;left: 500px;font-size: xx-small;color: #105f72">资源比</span>
+        <span style="position: fixed;bottom: 5px;left: 688px;font-size: xx-small;color: #105f72">待定</span>
+        <span style="position: fixed;bottom: 5px;left: 598px;font-size: xx-small;color: #105f72">待定</span>
+    </div>
+
+
 </div>
 
-
+<script src="/static/bingxingtu/js/progresscircle.js"></script>
+<script>
+    $('.circlechart').circlechart(); // Initialization
+</script>
 
 
 </body>
