@@ -19,6 +19,7 @@
             <li class="active"><a href="/apis/{{ project.id }}/">接口库</a></li>
             <li><a href="/cases/{{ project.id }}/">用例库</a></li>
             <li><a href="/project_set/{{ project.id }}/">项目设置</a></li>
+            <li><a href="/global_data/{{ project.id }}/">全局变量</a></li>
         </ul>
     </div>
     </div>
@@ -716,9 +717,32 @@ color: white;padding-left: 10px;">
                     }
                 }
             }catch (e) {
-                console.log(e)
-                //若也不是，那就不需要做异常值测试了
-                alert('当前接口的请求体类型不支持异常值测试！')
+                //判断是不是graphQl测试
+                try {
+                    body_plan_G_Q = api_body.split('*WQRF*')[0];
+                    body_plan_G_G = api_body.split('*WQRF*')[1];
+                    var s = JSON.parse(body_plan_G_G);
+                    for(var j=0;j<r.length;j++){
+                        var new_body = {};
+                        $.extend(true,new_body,s);
+                        new_body[i] = eval(r[j]);
+                        console.log(new_body);
+                        var span_text = '替换：' + i + '-->' + r[j]
+                        $.get('/error_request/',{
+                            "api_id":api_id,
+                            "new_body":JSON.stringify(new_body),
+                            "query":body_plan_G_Q,
+                            "span_text":span_text
+                        },function (ret) {
+                            res = eval(ret);
+                            error_show_response(res.span_text,res.response)
+                        });
+                    }
+                }catch (e) {
+                    console.log(e)
+                    //若也不是，那就不需要做异常值测试了
+                    alert('当前接口的请求体类型不支持异常值测试！')
+                }
             }
         }
     }

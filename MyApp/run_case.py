@@ -77,8 +77,9 @@ class Test(unittest.TestCase):
                 header = eval(api_header)
 
             # 在这遍历公共请求头，并把其加入到header的字典中。
-
             for i in ts_project_headers:
+                if i == '':
+                    continue
                 project_header = DB_project_header.objects.filter(id=i)[0]
                 header[project_header.key] = project_header.value
 
@@ -134,13 +135,16 @@ class Test(unittest.TestCase):
 
             elif api_body_method == 'form-data':
                 files = []
-                payload = {}
+
+
+                payload = ()
                 for i in eval(api_body):
-                    payload[i[0]] = i[1]
+                    payload += ((i[0], i[1]),)
 
                 if type(login_res) == dict:
                     for i in login_res.keys():
-                        payload[i] = login_res[i]
+                        payload += ((i, login_res[i]),)
+
                     response = requests.request(api_method.upper(), url, headers=header, data=payload, files=files)
                 else:
                     response = login_res.request(api_method.upper(), url, headers=header, data=payload, files=files)
@@ -148,11 +152,15 @@ class Test(unittest.TestCase):
 
             elif api_body_method == 'x-www-form-urlencoded':
                 header['Content-Type'] = 'application/x-www-form-urlencoded'
-                payload = {}
+
+                payload = ()
                 for i in eval(api_body):
-                    payload[i[0]] = i[1]
-                for i in login_res.keys():
-                    payload[i] = login_res[i]
+                    payload += ((i[0], i[1]),)
+
+                if type(login_res) == dict:
+                    for i in login_res.keys():
+                        payload += ((i, login_res[i]),)
+
                 if type(login_res) == dict:
                     response = requests.request(api_method.upper(), url, headers=header, data=payload)
                 else:
@@ -276,6 +284,11 @@ def make_defself(step):
 
 
 def make_def(steps):
+
+    for fun in dir(Test):
+        if 'test_' in fun:
+            delattr(Test,fun)
+
     for i in range(len(steps)):
         setattr(Test,'test_'+str(steps[i].index).zfill(3),make_defself(steps[i]))
 

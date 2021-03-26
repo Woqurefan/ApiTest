@@ -31,7 +31,8 @@ def child_json(eid,oid='',ooid=''):
 
         ziyuan_all = len(DB_project.objects.all())+len(DB_apis.objects.all())+len(DB_cases.objects.all())
         ziyuan_user = count_project+count_api+count_case
-        ziyuan = ziyuan_user/ziyuan_all *100
+
+        ziyuan = int(ziyuan_user/ziyuan_all *100)
 
         new_res = {
             "count_project":count_project ,
@@ -41,7 +42,6 @@ def child_json(eid,oid='',ooid=''):
             "ziyuan":ziyuan,
         }
 
-
         if ooid == '':
             res = {"hrefs":date,"home_log":home_log,"hosts":hosts,"user_projects":user_projects}
         else:
@@ -49,7 +49,6 @@ def child_json(eid,oid='',ooid=''):
             res = {"hrefs":date,"home_log":home_log,"log":log,"hosts":hosts,"user_projects":user_projects}
 
         res.update(new_res)
-
 
     if eid == 'project_list.html':
         date =DB_project.objects.all()
@@ -82,6 +81,11 @@ def child_json(eid,oid='',ooid=''):
         project_host = DB_project_host.objects.filter(project_id = oid)
         res  = {"project":project,"Cases":Cases,"apis":apis,'project_header':project_header,"hosts":hosts,"project_host":project_host}
 
+    if eid == 'P_global_data.html':
+        from django.contrib.auth.models import User
+        project = DB_project.objects.filter(id=oid)[0]
+        global_data = DB_global_data.objects.filter(user_id=project.user_id)
+        res = {"project":project,"global_data":global_data}
     return res
 
 # 返回子页面
@@ -172,7 +176,7 @@ def delete_project(request):
 # 新增项目
 def add_project(request):
     project_name = request.GET['project_name']
-    DB_project.objects.create(name=project_name,remark='',user=request.user.username,other_user='')
+    DB_project.objects.create(name=project_name,remark='',user=request.user.username,user_id=request.user.id,other_user='')
     return HttpResponse('')
 
 # 进入接口库
@@ -341,12 +345,15 @@ def Api_send(request):
 
         elif ts_body_method == 'form-data':
             files = []
-            payload = {}
+
+            payload = ()
             for i in eval(ts_api_body):
-                payload[i[0]] = i[1]
+                payload += ((i[0],i[1]),)
+
             if type(login_res) == dict:
                 for i in login_res.keys():
-                    payload[i] = login_res[i]
+                    payload += ((i,login_res[i]),)
+
                 response = requests.request(ts_method.upper(), url, headers=header, data=payload, files=files )
             else:
                 response = login_res.request(ts_method.upper(), url, headers=header, data=payload, files=files )
@@ -354,12 +361,15 @@ def Api_send(request):
 
         elif ts_body_method == 'x-www-form-urlencoded':
             header['Content-Type'] = 'application/x-www-form-urlencoded'
-            payload = {}
+
+            payload = ()
             for i in eval(ts_api_body):
-                payload[i[0]] = i[1]
+                payload += ((i[0], i[1]),)
+
             if type(login_res) == dict:
                 for i in login_res.keys():
-                    payload[i] = login_res[i]
+                    payload += ((i, login_res[i]),)
+
                 response = requests.request(ts_method.upper(), url, headers=header, data=payload )
             else:
                 response = login_res.request(ts_method.upper(), url, headers=header, data=payload )
@@ -470,19 +480,34 @@ def error_request(request):
     try:
         if body_method == 'form-data':
             files = []
-            payload = {}
+
+            payload = ()
             for i in eval(new_body):
-                payload[i[0]] = i[1]
+                payload += ((i[0], i[1]),)
+
             response = requests.request(method.upper(), url, headers=header, data=payload, files=files)
         elif body_method == 'x-www-form-urlencoded':
             header['Content-Type'] = 'application/x-www-form-urlencoded'
-            payload = {}
+
+            payload = ()
             for i in eval(new_body):
-                payload[i[0]] = i[1]
+                payload += ((i[0], i[1]),)
+
             response = requests.request(method.upper(), url, headers=header, data=payload)
         elif body_method == 'Json':
             header['Content-Type'] = 'text/plain'
             response = requests.request(method.upper(), url, headers=header, data=new_body.encode('utf-8'))
+        elif body_method == 'GraphQL':
+            header['Content-Type'] = 'applicatioon/json'
+            query = request.GET['query']
+            graphql = request.GET['new_body']
+            try:
+                eval(graphql)
+            except:
+                graphql = '{}'
+            payload = '{"query":"%s","variables":%s}'%(query,graphql)
+            response = requests.request(method.upper(),url,headers=header,data=payload)
+
         else:
             return HttpResponse('非法的请求体类型')
         # 把返回值传递给前端页面
@@ -536,16 +561,21 @@ def Api_send_home(request):
 
         elif ts_body_method == 'form-data':
             files = []
-            payload = {}
+
+            payload = ()
             for i in eval(ts_api_body):
-                payload[i[0]] = i[1]
+                payload += ((i[0], i[1]),)
+
             response = requests.request(ts_method.upper(), url, headers=header, data=payload, files=files )
 
         elif ts_body_method == 'x-www-form-urlencoded':
             header['Content-Type'] = 'application/x-www-form-urlencoded'
-            payload = {}
+
+            payload = ()
             for i in eval(ts_api_body):
-                payload[i[0]] = i[1]
+                payload += ((i[0], i[1]),)
+
+
             response = requests.request(ts_method.upper(), url, headers=header, data=payload )
 
         elif ts_body_method == 'GraphQL':
@@ -725,7 +755,6 @@ def Run_Case(request):
     Case_id = request.GET['Case_id']
     Case = DB_cases.objects.filter(id = Case_id)[0]
     steps = DB_step.objects.filter(Case_id=Case_id)
-
     from MyApp.run_case import run
 
     run(Case_id,Case.name,steps)
@@ -848,16 +877,19 @@ def project_login_send(request):
             response = requests.request(login_method.upper(), url, headers=header, data={} )
         elif login_body_method == 'form-data':
             files = []
-            payload = {}
+
+            payload = ()
             for i in eval(login_api_body):
-                payload[i[0]] = i[1]
+                payload += ((i[0], i[1]),)
+
             response = requests.request(login_method.upper(), url, headers=header, data=payload, files=files )
 
         elif login_body_method == 'x-www-form-urlencoded':
             header['Content-Type'] = 'application/x-www-form-urlencoded'
-            payload = {}
+            payload = ()
             for i in eval(login_api_body):
-                payload[i[0]] = i[1]
+                payload += ((i[0], i[1]),)
+
             response = requests.request(login_method.upper(), url, headers=header, data=payload )
 
         elif login_body_method == 'GraphQL':
@@ -953,9 +985,11 @@ def project_login_send_for_other(project_id):
                 response = requests.request(login_method.upper(), url, headers=header, data={} )
         elif login_body_method == 'form-data':
             files = []
-            payload = {}
+
+            payload = ()
             for i in eval(login_api_body):
-                payload[i[0]] = i[1]
+                payload += ((i[0], i[1]),)
+
             # 先判断是否是cookie持久化，若是，则不处理
             if login_response_set == 'cookie':
                 a = requests.session()
@@ -966,9 +1000,10 @@ def project_login_send_for_other(project_id):
 
         elif login_body_method == 'x-www-form-urlencoded':
             header['Content-Type'] = 'application/x-www-form-urlencoded'
-            payload = {}
+            payload = ()
             for i in eval(login_api_body):
-                payload[i[0]] = i[1]
+                payload += ((i[0], i[1]),)
+
             # 先判断是否是cookie持久化，若是，则不处理
             if login_response_set == 'cookie':
                 a = requests.session()
@@ -1060,7 +1095,43 @@ def Home_save_api(request):
     return HttpResponse('')
 
 
+# 首页搜索功能
+def search(request):
+    key = request.GET['key']
+
+    # 项目名搜哦所
+    projects = DB_project.objects.filter(name__contains=key) #获取name包含key的所有项目
+    plist = [{"url":"/apis/%s/"%i.id,"text":i.name,"type":"project"} for i in projects]
+    # 接口名搜索
+    apis = DB_apis.objects.filter(name__contains=key) #获取name包含key的所有接口
+    alist = [{"url":"/apis/%s/"%i.project_id,"text":i.name,"type":"api"} for i in apis]
+
+    res = {"results":plist + alist}
+    return HttpResponse(json.dumps(res),content_type='application/json')
 
 
+# 进入全局变量
+def global_data(request,id):
+    project_id = id
+    return render(request, 'welcome.html', {"whichHTML": "P_global_data.html", "oid": project_id,**glodict(request)})
 
+# 增加一个全局变量
+def global_data_add(request):
+    project_id = request.GET['project_id']
+    user_id = DB_project.objects.filter(id=project_id)[0].user_id
+    DB_global_data.objects.create(name='新变量',data='',user_id=user_id)
+    return HttpResponse('')
 
+# 删除一个全局变量
+def global_data_delete(request):
+    id = request.GET['id']
+    DB_global_data.objects.filter(id=id).delete()
+    return HttpResponse('')
+
+# 保存一个变量
+def global_data_save(request):
+    global_id = request.GET['global_id']
+    global_name = request.GET['global_name']
+    global_data = request.GET['global_data']
+    DB_global_data.objects.filter(id=global_id).update(name=global_name,data=global_data)
+    return HttpResponse('')

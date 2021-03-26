@@ -48,7 +48,7 @@
 </head>
 <body>
 
-
+{# 搜索功能⬇️ #}
 <div class="search bar" style="position: absolute;top: 10px; left: 490px;width: -webkit-calc(100% - 980px)">
     <div id="search_button"   >
         <strong>
@@ -58,21 +58,53 @@
     </div>
 </div>
 
-
-<div style="z-index: 999;position: absolute;top: 80px;left: 15%;width: 70%;min-height: 200px;
+<div id="search_result" style="display: none;z-index: 999;position: absolute;top: 80px;left: 15%;width: 70%;min-height: 200px;
             background:linear-gradient(to bottom,#b8eafd,#e8ffdb) ;opacity:0.8;padding: 5px;
             border-radius: 2px;box-shadow: 4px 4px 8px #bcbcbc">
-    <strong>
-        <a href="">我是搜索结果1</a> <br>
-        <a href="">我是搜索结果2</a> <br>
 
-    </strong>
 </div>
 
+<button id="search_close" onclick="search_close()" style="display: none;z-index: 999;position: absolute;
+top: 80px;right: 15%;background-color: black;color: white;border-radius: 2px">close</button>
 
 
+<script>
+    function search() {
+        //获取输入内容
+        key = document.getElementById('search_input').value;
+        // 清空搜索结果
+        document.getElementById('search_result').innerHTML = '';
+        // 判断是否继续进行
+        if(key == '' || key == ' '){
+            return
+        }
+        // 发送请求给后台
+        $.get('/search/',{
+            'key':key
+        },function (ret) {
+            // 把结果显示
+            document.getElementById('search_close').style.display= 'block';
 
+            var d = document.getElementById('search_result');
+            d.style.display = 'block';
+            results = ret.results; //ret.results是返回结果为列表
+            for(var i=0;i<results.length;i++){
+                var a =document.createElement('a');
+                a.href = results[i].url;
+                a.target = '__blank';
+                a.innerText =  '【'+results[i].type+'】：'+results[i].text;
+                d.appendChild(a);
+                d.appendChild(document.createElement('br'))
+            }
+        })
+    }
+    function search_close() {
+        document.getElementById('search_result').style.display= 'none';
+        document.getElementById('search_close').style.display= 'none';
 
+    }
+</script>
+{# 搜索功能⬆️ #}
 <div  style="height: 400px;overflow-y: scroll;margin-left: 15px;width: 300px;" class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     您的项目如下：
     {% for i in user_projects %}
