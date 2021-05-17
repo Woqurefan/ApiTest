@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        button{
+            border-radius: 5px; border: 1px solid black; box-shadow: 4px 4px 4px #cfcfcf;
+        }
+    </style>
 </head>
 <body>
 
@@ -29,17 +34,27 @@
 {% for i in global_data %}
     <button onclick="delete_one('{{ i.id }}')" class="btn-danger">删除</button>
     <button onclick="show('{{ i.id }}','{{ i.name }}','{{ i.data }}')" class="btn-default" style="margin-top: 5px;width:150px ">{{ i.name }}</button>
+    <input type="checkbox" id="check_{{ i.id }}" value="{{ i.id }}" name="check_names" onchange="change_check()">
     <br>
+
+    <script>
+        if("{{ project.global_datas }}" != "None" && "{{ project.global_datas }}" != ""){
+            if( $.inArray(  "{{ i.id }}", "{{ project.global_datas }}".split(',') ) != -1 ){
+                document.getElementById('check_{{ i.id }}').checked = 'checked'
+            }
+        }
+    </script>
+
 {% endfor %}
     <br>
 <button class="btn-primary" onclick="add_new()">新增</button>
 <button class="btn-success" onclick="save_one()" style="width:150px">保存当前</button>
 </div>
 
-<div style="position: absolute;left: 310px;top: 65px">
+<div style="position: absolute;left: 330px;top: 65px">
     <input type="text" id="id" style="display: none;">
-    <input id="name" type="text" style="width: 500px" placeholder="输入变量套的名字"> <br>
-    <textarea id="data" style="width: 500px;height: 500px;" placeholder="输入json格式的变量套内容"></textarea>
+    <input id="name" type="text" style="width: 500px" placeholder="输入变量组的名字"> <br>
+    <textarea id="data" style="width: 500px;height: 500px;" placeholder="输入json格式的变量组内容"></textarea>
 </div>
 
 
@@ -73,11 +88,30 @@
             "global_name":global_name,
             "global_data":global_data,
         },function (ret) {
+
+            if(ret == 'error'){
+                alert('无法保存！');
+                return
+            }
+
             document.location.reload()
         })
     }
+    function change_check() {
+        // 获取所有选中的checkbox的值 组成列表 chk_value
+        var chk_value =[];
+        $('input[name="check_names"]:checked').each(function(){
+        chk_value.push($(this).val());
+        }); //依然是jq的方法
 
-
+        // 把结果发送给后台
+        $.get("/global_data_change_check/",{
+            "project_id":"{{ project.id }}",
+            "global_datas": chk_value.toString()
+        },function (ret) {
+            document.location.reload()
+        })
+    }
 </script>
 
 

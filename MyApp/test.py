@@ -2,17 +2,9 @@ import json,re,requests
 
 import unittest
 
-from allpairspy import AllPairs
-old = [['a','b'],['c','d'],['e','f']]
+a = [1,2,3]
+b = [5,4,1]
 
-ready = []
-for pairs in AllPairs(old[:2]):
-    ready.append(''.join(pairs))
-for i in range(2, len(old)):
-  new_r= []
-  for pairs in AllPairs([ready, old[i]]):
-    new_r.append(''.join(pairs))
-    ready=new_r
+# c = list(set(a).difference(set(b)))
 
-print(ready)
-print(len(ready))
+print(set(a).intersection(set(b)) == set())

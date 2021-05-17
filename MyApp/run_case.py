@@ -9,19 +9,30 @@ sys.path.append(path)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ApiTest.settings")
 django.setup()
 from MyApp.models import *
+from MyApp.views import global_datas_replace
 
 class Test(unittest.TestCase):
     '测试类'
 
     def demo(self,step):
         time.sleep(3)
+        # 算出项目id
+        project_id = DB_cases.objects.filter(id=DB_step.objects.filter(id=step.id)[0].Case_id)[0].project_id
         # 提取所有请求数据
         api_method = step.api_method
         api_url = step.api_url
+        api_url = global_datas_replace(project_id,api_url)
+
         api_host = step.api_host
+        api_host = global_datas_replace(project_id,api_host)
+
         api_header = step.api_header
+        api_header = global_datas_replace(project_id,api_header)
+
         api_body_method = step.api_body_method
         api_body = step.api_body
+        api_body = global_datas_replace(project_id,api_body)
+
         get_path = step.get_path
         get_zz = step.get_zz
         assert_zz = step.assert_zz
@@ -107,7 +118,6 @@ class Test(unittest.TestCase):
                     eval("login_res")
                 except:
                     from MyApp.views import project_login_send_for_other
-                    project_id = DB_cases.objects.filter(id=DB_step.objects.filter(id=step.id)[0].Case_id)[0].project_id
                     global login_res
                     login_res = project_login_send_for_other(project_id)
                 ## url插入

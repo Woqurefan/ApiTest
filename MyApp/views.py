@@ -6,7 +6,9 @@ from django.shortcuts import render
 from MyApp.models import *
 import json
 import requests
+from MyApp.global_def import *
 
+from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
 
 @login_required
 def welcome(request):
@@ -65,7 +67,17 @@ def child_json(eid,oid='',ooid=''):
         project_header = DB_project_header.objects.filter(project_id=oid)
         hosts = DB_host.objects.all()
         project_host = DB_project_host.objects.filter(project_id = oid)
-        res = {"project":project,'apis':apis,'project_header':project_header,"hosts":hosts,"project_host":project_host}
+
+        P_apis = Paginator(apis,10,1)
+        page = ooid
+        try:
+            P_apis = P_apis.page(page)
+        except PageNotAnInteger:
+            P_apis = P_apis.page(1)
+        except EmptyPage:
+            P_apis = P_apis.page(P_apis.num_pages)
+
+        res = {"project":project,'apis':P_apis,'project_header':project_header,"hosts":hosts,"project_host":project_host}
 
     if eid == 'P_project_set.html':
         project = DB_project.objects.filter(id= oid)[0]
@@ -109,7 +121,7 @@ def home(request,log_id=''):
 
 # 进入登陆页面
 def login(request):
-    return render(request,'login.html')
+    return render(request, 'login.html')
 
 # 开始登陆
 def login_action(request):
@@ -182,7 +194,8 @@ def add_project(request):
 # 进入接口库
 def open_apis(request,id):
     project_id = id
-    return render(request, 'welcome.html', {"whichHTML": "P_apis.html", "oid": project_id,**glodict(request)})
+    page = request.GET.get('page')
+    return render(request, 'welcome.html', {"whichHTML": "P_apis.html", "oid": project_id,**glodict(request),"ooid":page})
 
 # 进入用例设置库
 def open_cases(request,id):
@@ -274,16 +287,25 @@ def get_api_data(request):
 def Api_send(request):
     # 提取所有数据
     api_id = request.GET['api_id']
+
+    project_id = DB_apis.objects.filter(id=api_id)[0].project_id
+
     ts_method = request.GET['ts_method']
-    ts_url = request.GET['ts_url']
+    ts_url = request.GET['ts_url'] #需要全局变量替换
+    ts_url = global_datas_replace(project_id,ts_url)
+
     ts_host = request.GET['ts_host']
-    ts_header = request.GET['ts_header']
+    ts_host = global_datas_replace(project_id,ts_host)
+    ts_header = request.GET['ts_header'] #需要全局变量替换
+    ts_header = global_datas_replace(project_id,ts_header)
+
     api_name = request.GET['api_name']
     ts_body_method = request.GET['ts_body_method']
+
     ts_project_headers = request.GET['ts_project_headers'].split(',')
     ts_login = request.GET['ts_login']
     if ts_login == 'yes': #说明要调用登陆态了
-        login_res = project_login_send_for_other(project_id=DB_apis.objects.filter(id=api_id)[0].project_id)
+        login_res = project_login_send_for_other(project_id=project_id)
     else:
         login_res = {}
     # 处理域名host
@@ -293,11 +315,13 @@ def Api_send(request):
     if ts_body_method == '返回体':
         api = DB_apis.objects.filter(id=api_id)[0]
         ts_body_method = api.last_body_method
-        ts_api_body = api.last_api_body
+        ts_api_body = api.last_api_body #需要全局变量替换
         if ts_body_method in ['',None]:
             return HttpResponse('请先选择好请求体编码格式和请求体，再点击Send按钮发送请求！')
     else:
-        ts_api_body = request.GET['ts_api_body']
+        ts_api_body = request.GET['ts_api_body'] #需要全局变量替换
+        ts_api_body = global_datas_replace(project_id,ts_api_body)
+        print(ts_api_body)
         api = DB_apis.objects.filter(id=api_id)
         api.update(last_body_method=ts_body_method,last_api_body=ts_api_body)
     # 发送请求获取返回值
@@ -850,12 +874,21 @@ def project_login_save(request):
 # 调试登陆态接口
 def project_login_send(request):
     # 第一步，获取前端数据
+    project_id = request.GET['project_id']
     login_method = request.GET['login_method']
     login_url = request.GET['login_url']
+    login_url = global_datas_replace(project_id,login_url)  #替换全局变量
+
     login_host = request.GET['login_host']
+    login_host = global_datas_replace(project_id,login_host)  #替换全局变量
+
     login_header = request.GET['login_header']
+    login_header = global_datas_replace(project_id,login_header)   #替换全局变量
+
     login_body_method = request.GET['login_body_method']
     login_api_body = request.GET['login_api_body']
+    login_api_body = global_datas_replace(project_id,login_api_body) #替换全局变量
+
     login_response_set = request.GET['login_response_set']
     if login_header == '':
         login_header = '{}'
@@ -954,10 +987,14 @@ def project_login_send_for_other(project_id):
     login_api= DB_login.objects.filter(project_id=project_id)[0]
     login_method = login_api.api_method
     login_url = login_api.api_url
+    login_url = global_datas_replace(project_id,login_url)  #替换全局变量
     login_host = login_api.api_host
+    login_host = global_datas_replace(project_id,login_host)  #替换全局变量
     login_header = login_api.api_header
+    login_header = global_datas_replace(project_id,login_header)   #替换全局变量
     login_body_method = login_api.body_method
     login_api_body = login_api.api_body
+    login_api_body = global_datas_replace(project_id,login_api_body) #替换全局变量
     login_response_set = login_api.set
     if login_header == '':
         login_header = '{}'
@@ -1094,7 +1131,6 @@ def Home_save_api(request):
 
     return HttpResponse('')
 
-
 # 首页搜索功能
 def search(request):
     key = request.GET['key']
@@ -1108,7 +1144,6 @@ def search(request):
 
     res = {"results":plist + alist}
     return HttpResponse(json.dumps(res),content_type='application/json')
-
 
 # 进入全局变量
 def global_data(request,id):
@@ -1131,7 +1166,26 @@ def global_data_delete(request):
 # 保存一个变量
 def global_data_save(request):
     global_id = request.GET['global_id']
+    if global_id == '':
+        return HttpResponse('error')
     global_name = request.GET['global_name']
     global_data = request.GET['global_data']
+
+    # 检查重名
+    datas = DB_global_data.objects.filter(name=global_name)
+    if len(datas) > 0: #则说明查到了，但是要看下是不是自己本身,而且最大肯定只有1个。
+        if str(datas[0].id) != global_id: #发现就这一个还和本身不同，那就是重名
+            return HttpResponse('error')
+
+
     DB_global_data.objects.filter(id=global_id).update(name=global_name,data=global_data)
     return HttpResponse('')
+
+# 更改项目的生效变量组
+def global_data_change_check(request):
+    project_id = request.GET['project_id']
+    global_datas = request.GET['global_datas']
+    DB_project.objects.filter(id=project_id).update(global_datas=global_datas)
+    return HttpResponse('')
+
+#
