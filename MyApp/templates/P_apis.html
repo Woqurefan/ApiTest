@@ -5,6 +5,8 @@
     <title>Title</title>
     <style>
 
+        a:link{ text-decoration:none;}
+
     </style>
 </head>
 <body>
@@ -19,6 +21,7 @@
             <li class="active"><a href="/apis/{{ project.id }}/">接口库</a></li>
             <li><a href="/cases/{{ project.id }}/">用例库</a></li>
             <li><a href="/project_set/{{ project.id }}/">项目设置</a></li>
+            <li><a href="/global_data/{{ project.id }}/">全局变量</a></li>
         </ul>
     </div>
     </div>
@@ -50,6 +53,35 @@
         {% endfor %}
     </tbody>
 </table>
+
+<div style="text-align:center ">
+    <div class="pagination">
+        <span class="step-links">
+            {% if apis.has_previous %}
+                <a href="?page={{ apis.previous_page_number }}" aria-labe="Previous">
+                    <span aria-hidden="true">&laquo;上一页</span>
+                </a>&nbsp;&nbsp;
+            {% endif %}
+            {% for pg in apis.paginator.page_range %}
+                {% if apis.number == pg  %}
+                    <a href="?page={{ pg }}">第{{ pg }}页</a>&nbsp;&nbsp;&nbsp;
+                {% else %}
+                    <a href="?page={{ pg }}">{{ pg }}</a>&nbsp;&nbsp;
+                {% endif %}
+            {% endfor %}
+            {% if apis.has_next %}
+                <a href="?page={{ apis.next_page_number }}" aria-label="Next">
+                    &nbsp;&nbsp;<span>下一页&raquo;</span>
+                </a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+
+
+
+
 <div style="position: fixed;bottom: 0px;
 width: 100%;background-color: #f8f8f8;text-align: center;
 border: 1px solid #e7e7e7">
@@ -437,14 +469,6 @@ color: white;padding-left: 10px;">
         if(ts_host.slice(0,7) != 'http://' && ts_host.slice(0,8) != 'https://' && ts_host.slice(0,4) !='全局域名' ){
             alert('host必须以http://或https://开头！');return
         }
-        if(ts_header != ''){
-            try {
-                JSON.parse(ts_header)
-            }catch (e) {
-                alert('header请求头不符合json规范！');
-                return
-            }
-        }
 
         var ts_body_method = $('ul#myTab li[class="active"]')[0].innerText;
         if(ts_body_method == 'none'){
@@ -539,14 +563,7 @@ color: white;padding-left: 10px;">
         if(ts_host.slice(0,7) != 'http://' && ts_host.slice(0,8) != 'https://' && ts_host.slice(0,4) !='全局域名'){
             alert('host必须以http://或https://开头！');return
         }
-        if(ts_header != ''){
-            try {
-                JSON.parse(ts_header)
-            }catch (e) {
-                alert('header请求头不符合json规范！');
-                return
-            }
-        }
+
 
         var ts_body_method = $('ul#myTab li[class="active"]')[0].innerText;
         if(ts_body_method == 'none'){
@@ -716,9 +733,32 @@ color: white;padding-left: 10px;">
                     }
                 }
             }catch (e) {
-                console.log(e)
-                //若也不是，那就不需要做异常值测试了
-                alert('当前接口的请求体类型不支持异常值测试！')
+                //判断是不是graphQl测试
+                try {
+                    body_plan_G_Q = api_body.split('*WQRF*')[0];
+                    body_plan_G_G = api_body.split('*WQRF*')[1];
+                    var s = JSON.parse(body_plan_G_G);
+                    for(var j=0;j<r.length;j++){
+                        var new_body = {};
+                        $.extend(true,new_body,s);
+                        new_body[i] = eval(r[j]);
+                        console.log(new_body);
+                        var span_text = '替换：' + i + '-->' + r[j]
+                        $.get('/error_request/',{
+                            "api_id":api_id,
+                            "new_body":JSON.stringify(new_body),
+                            "query":body_plan_G_Q,
+                            "span_text":span_text
+                        },function (ret) {
+                            res = eval(ret);
+                            error_show_response(res.span_text,res.response)
+                        });
+                    }
+                }catch (e) {
+                    console.log(e)
+                    //若也不是，那就不需要做异常值测试了
+                    alert('当前接口的请求体类型不支持异常值测试！')
+                }
             }
         }
     }
@@ -1185,14 +1225,7 @@ token=/data/token"></textarea>
         if(login_host.slice(0,7) != 'http://' && login_host.slice(0,8) != 'https://' && login_host.slice(0,4) !='全局域名' ){
             alert('host必须以http://或https://开头！');return
         }
-        if(login_header != ''){
-            try {
-                JSON.parse(login_header)
-            }catch (e) {
-                alert('header请求头不符合json规范！');
-                return
-            }
-        }
+
 
         var login_body_method = $('ul#login_myTab li[class="active"]')[0].innerText;
         if(login_body_method == '返回体'){
@@ -1280,14 +1313,7 @@ token=/data/token"></textarea>
         if(login_host.slice(0,7) != 'http://' && login_host.slice(0,8) != 'https://' && login_host.slice(0,4) !='全局域名'){
             alert('host必须以http://或https://开头！');return
         }
-        if(login_header != ''){
-            try {
-                JSON.parse(login_header)
-            }catch (e) {
-                alert('header请求头不符合json规范！');
-                return
-            }
-        }
+
         var login_body_method = $('ul#login_myTab li[class="active"]')[0].innerText;
         if(login_body_method == '返回体'){
             alert('请切换到请求体tab再保存！');
@@ -1344,6 +1370,7 @@ token=/data/token"></textarea>
         }
 
          $.get('/project_login_send/',{
+             'project_id': '{{ project.id }}',
             'login_method':login_method,
             'login_url':login_url,
             'login_host':login_host,

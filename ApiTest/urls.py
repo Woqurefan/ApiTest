@@ -70,6 +70,15 @@ urlpatterns = [
     url(r'^project_login_save/$', project_login_save),  # 保存项目登陆态接口
     url(r'^project_login_send/$', project_login_send),  # 调试请求登陆态接口
     url(r'^Home_save_api/$', Home_save_api),  # 首页保存请求数据
+    url(r'^search/$', search),  # 首页搜索功能
+    url(r'^global_data/(?P<id>.*)/$', global_data),  # 进入全局变量设页面
+
+    url(r'^global_data_add/$', global_data_add),  # 增加一个全局变量组
+    url(r'^global_data_delete/$', global_data_delete),  # 删除一个全局变量组
+    url(r'^global_data_save/$', global_data_save),  # 保存一个全局变量组
+    url(r'^global_data_change_check/$', global_data_change_check),  # 更改项目的生效变量组
+
+
 
     # ------------ 小工具 --------------- #
     url(r'^tools_zhengjiao/$', zhengjiao),  # 进入小公举页面

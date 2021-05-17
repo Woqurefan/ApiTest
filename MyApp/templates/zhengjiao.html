@@ -10,7 +10,9 @@
 <body>
 
 <div style="width: 90%;background-color: #f9f9f9;box-shadow: 1px 2px 5px grey;
-            margin-left: 5%;padding: 10px;">
+            margin-left: 5%;padding: 10px;
+            border:3px transparent solid;
+            border-image:linear-gradient(to right,#ff8cd0,#77a4cb,#ff8cd0,#fff5d3) 1 10;">
     <h2 style="text-align: center">欢迎使用正交小工具</h2>
     <div  id="input_div">
         <div class="input-group" id="input_g">
@@ -21,17 +23,19 @@
     </div>
 
     <br>
-      <button onclick="add()" type="button" class="btn btn-default btn-lg ">添加</button>
-      <button onclick="play()" type="button" class="btn btn-default btn-lg ">运行</button>
-        <button onclick="excel()" style="float: right" type="button" class="btn btn-default btn-lg ">导出excel</button>
+      <button onclick="add()" style="float: left" type="button" class="btn btn-default btn-lg ">添加</button>
+      <button onclick="play()" style="float: left" type="button" class="btn btn-default btn-lg ">运行</button>
+      <button onclick="excel()" style="float: right" type="button" class="btn btn-default btn-lg ">导出excel</button>
 
+        <textarea id="filter_input" cols="30" class="form-control" style="margin-left: 25%;width: 50%;height: 46px"
+                  placeholder="输入过滤规则：子状态A-子状态B表示需过滤,多个用中/英逗号隔开"></textarea>
     <br>
-
     <br>
     <div id="res_div" >
 
     </div>
-
+    <br>
+    <span id="bdgl" style="color: #b22d33;"></span>
 
 </div>
 
@@ -45,6 +49,7 @@
         input_div.appendChild(ig)
     }
     function play() {
+         document.getElementById('bdgl').innerText = ''
         var keys = document.getElementsByName("keys");
         var values = document.getElementsByName("values");
         var end_keys = [];
@@ -57,14 +62,20 @@
         }
         $.get('/zhengjiao_play/',{
             "end_values":end_values.toString(),
+            "filter_input":document.getElementById('filter_input').value,
         },function (ret) {
             ret = eval(ret);
+            // 处理bdgl
+            console.log(ret.bdgl);
+            if(ret.bdgl.length != []){
+                alert('有被动过滤')
+                document.getElementById('bdgl').innerText = '被动过滤无辜组合：' + ret.bdgl.toString()
+            }
+            // 处理res
             console.log(ret.res);
             var res_div = document.getElementById('res_div');
             res_div.innerHTML = '';
-
             w = (100/end_keys.length).toString()+'%'; //计算输入框宽度
-
             for(var j=0;j<ret.res.length;j++){
                 var div_group = document.createElement('div');
                 div_group.className = 'input-group';

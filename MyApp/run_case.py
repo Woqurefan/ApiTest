@@ -9,19 +9,30 @@ sys.path.append(path)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ApiTest.settings")
 django.setup()
 from MyApp.models import *
+from MyApp.views import global_datas_replace
 
 class Test(unittest.TestCase):
     '测试类'
 
     def demo(self,step):
         time.sleep(3)
+        # 算出项目id
+        project_id = DB_cases.objects.filter(id=DB_step.objects.filter(id=step.id)[0].Case_id)[0].project_id
         # 提取所有请求数据
         api_method = step.api_method
         api_url = step.api_url
+        api_url = global_datas_replace(project_id,api_url)
+
         api_host = step.api_host
+        api_host = global_datas_replace(project_id,api_host)
+
         api_header = step.api_header
+        api_header = global_datas_replace(project_id,api_header)
+
         api_body_method = step.api_body_method
         api_body = step.api_body
+        api_body = global_datas_replace(project_id,api_body)
+
         get_path = step.get_path
         get_zz = step.get_zz
         assert_zz = step.assert_zz
@@ -77,8 +88,9 @@ class Test(unittest.TestCase):
                 header = eval(api_header)
 
             # 在这遍历公共请求头，并把其加入到header的字典中。
-
             for i in ts_project_headers:
+                if i == '':
+                    continue
                 project_header = DB_project_header.objects.filter(id=i)[0]
                 header[project_header.key] = project_header.value
 
@@ -106,7 +118,6 @@ class Test(unittest.TestCase):
                     eval("login_res")
                 except:
                     from MyApp.views import project_login_send_for_other
-                    project_id = DB_cases.objects.filter(id=DB_step.objects.filter(id=step.id)[0].Case_id)[0].project_id
                     global login_res
                     login_res = project_login_send_for_other(project_id)
                 ## url插入
@@ -134,13 +145,16 @@ class Test(unittest.TestCase):
 
             elif api_body_method == 'form-data':
                 files = []
-                payload = {}
+
+
+                payload = ()
                 for i in eval(api_body):
-                    payload[i[0]] = i[1]
+                    payload += ((i[0], i[1]),)
 
                 if type(login_res) == dict:
                     for i in login_res.keys():
-                        payload[i] = login_res[i]
+                        payload += ((i, login_res[i]),)
+
                     response = requests.request(api_method.upper(), url, headers=header, data=payload, files=files)
                 else:
                     response = login_res.request(api_method.upper(), url, headers=header, data=payload, files=files)
@@ -148,11 +162,15 @@ class Test(unittest.TestCase):
 
             elif api_body_method == 'x-www-form-urlencoded':
                 header['Content-Type'] = 'application/x-www-form-urlencoded'
-                payload = {}
+
+                payload = ()
                 for i in eval(api_body):
-                    payload[i[0]] = i[1]
-                for i in login_res.keys():
-                    payload[i] = login_res[i]
+                    payload += ((i[0], i[1]),)
+
+                if type(login_res) == dict:
+                    for i in login_res.keys():
+                        payload += ((i, login_res[i]),)
+
                 if type(login_res) == dict:
                     response = requests.request(api_method.upper(), url, headers=header, data=payload)
                 else:
@@ -276,6 +294,11 @@ def make_defself(step):
 
 
 def make_def(steps):
+
+    for fun in dir(Test):
+        if 'test_' in fun:
+            delattr(Test,fun)
+
     for i in range(len(steps)):
         setattr(Test,'test_'+str(steps[i].index).zfill(3),make_defself(steps[i]))
 
