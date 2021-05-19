@@ -9,7 +9,14 @@ import ast #安全版eval求值
 # 替换全局变量
 def global_datas_replace(project_id:str,s:str) -> str :
     #根据项目变量去获得生效的变量组。
-    global_data_ids = DB_project.objects.filter(id=project_id)[0].global_datas.split(',') #获取所有生效的变量组id
+    try:
+        global_data_ids = DB_project.objects.filter(id=project_id)[0].global_datas.split(',') #获取所有生效的变量组id
+    except:
+        return s
+
+    if global_data_ids == ['']:
+        return s
+
     global_datas = {}
     for i in global_data_ids:
         global_data = ast.literal_eval(list(DB_global_data.objects.filter(id=i).values())[0]['data'])
