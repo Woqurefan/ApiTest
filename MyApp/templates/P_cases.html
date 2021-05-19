@@ -70,7 +70,7 @@
                             z-index: 2;display: none;width:35%;height:100%;text-align: center;
                             position:absolute;right:100%;top:0px;overflow-y: visible;">
     <button class="btn btn-default" onclick="add_new_step()" >新增小用例接口</button>
-    <button class="btn btn-default" >新增登陆态接口</button>
+{#    <button class="btn btn-default" >新增登陆态接口</button>#}
     <button class="btn btn-danger" style="float: right" onclick="close_left_div()">关闭</button>
     <div id="small_list" >
         {#   小用例都在这里了     #}
@@ -110,7 +110,7 @@
                 bu.id = 'step_btn_'+all_steps[i].id;
                 bu.onclick = function () {
                     show_step(this.id.split('_')[2],this.innerText);
-                }
+                };
                 //小步骤的删除按钮
                 var del = document.createElement('button');
                 del.className ='btn btn-default';

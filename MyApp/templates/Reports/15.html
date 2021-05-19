@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>接口测试平台测试报告: 项目A用例</title>
+    <meta name="generator" content="HTMLTestRunner 0.8.2"/>
+    <link rel="shortcut icon" href=" /static/images/favicon.ico" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    
+<style type="text/css" media="screen">
+body        { font-family: verdana, arial, helvetica, sans-serif; font-size: 80%; }
+table       { font-size: 100%; }
+pre         { }
+
+/* -- heading ---------------------------------------------------------------------- */
+h1 {
+	font-size: 16pt;
+	color: #c35b6e;
+	padding-left: 60px;
+}
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+}
+
+.heading .attribute {
+    margin-top: 1ex;
+    margin-bottom: 0;
+}
+
+.heading .description {
+    margin-top: 4ex;
+    margin-bottom: 6ex;
+}
+.wqrf_button {
+    border: 1px solid #28292c;
+    border-radius: 3px;
+    box-shadow: 2px 2px 12px #aeaeae;
+    width: 60px;
+}
+/* -- css div popup ------------------------------------------------------------------------ */
+a.popup_link {
+}
+
+a.popup_link:hover {
+    color: red;
+}
+
+.popup_window {
+    display: none;
+    position: relative;
+    left: 0px;
+    top: 0px;
+    /*border: solid #627173 1px; */
+    padding: 10px;
+    background: linear-gradient(to top, #fcf5e8, #e0e4ff);
+    border: 1px solid #ffffff;border-radius: 10px;box-shadow: 2px 2px 12px #aeaeae;
+    font-family: "Lucida Console", "Courier New", Courier, monospace;
+    text-align: left;
+    font-size: 8pt;
+    width: 500px;
+}
+
+}
+/* -- report ------------------------------------------------------------------------ */
+#show_detail_line {
+    margin-top: 3ex;
+    margin-bottom: 1ex;
+}
+#result_table {
+    width: 80%;
+    border-collapse: collapse;
+    border: 1px solid #777;
+}
+#header_row {
+    font-weight: bold;
+    color: white;
+    background-color: #5d7768;
+}
+#result_table td {
+    border: 1px solid #777;
+    padding: 2px;
+}
+#total_row  { font-weight: bold; }
+.passClass  { background-color: #6c6; }
+.failClass  { background-color: #c60; }
+.errorClass { background-color: #c00; }
+.passCase   { color: #6c6; }
+.failCase   { color: #c60; font-weight: bold; }
+.errorCase  { color: #c00; font-weight: bold; }
+.hiddenRow  { display: none; }
+.testcase   { margin-left: 2em; }
+
+#div100 img{
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+#div100 img:hover{
+  transform: scale(7);
+  }
+
+/* -- ending ---------------------------------------------------------------------- */
+#ending {
+}
+
+</style>
+
+</head>
+<body style="background: linear-gradient(to right, #caeef3, #fff6fc);">
+<script language="javascript" type="text/javascript"><!--
+output_list = Array();
+
+/* level - 0:Summary; 1:Failed; 2:Passed 3:All*/
+function showCase(level) {
+    trs = document.getElementsByTagName("tr");
+    for (var i = 0; i < trs.length; i++) {
+        tr = trs[i];
+        id = tr.id;
+        if (id.substr(0,2) == 'ft') {
+            if (level==0) {
+                tr.className = 'hiddenRow';
+            }
+            else if (level==2)  {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+        if (id.substr(0,2) == 'pt') {
+            if (level == 0) {
+                tr.className = 'hiddenRow';
+            }
+            else if (level == 1) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = ''
+            }
+        }
+    }
+}
+
+
+function showClassDetail(cid, count) {
+    var id_list = Array(count);
+    var toHide = 1;
+    for (var i = 0; i < count; i++) {
+        tid0 = 't' + cid.substr(1) + '.' + (i+1);
+        tid = 'f' + tid0;
+        tr = document.getElementById(tid);
+        if (!tr) {
+            tid = 'p' + tid0;
+            tr = document.getElementById(tid);
+        }
+        id_list[i] = tid;
+        if (tr.className) {
+            toHide = 0;
+        }
+    }
+    for (var i = 0; i < count; i++) {
+        tid = id_list[i];
+        if (toHide) {
+            document.getElementById('div_'+tid).style.display = 'none'
+            document.getElementById(tid).className = 'hiddenRow';
+        }
+        else {
+            document.getElementById(tid).className = '';
+        }
+    }
+}
+
+function bbbb(vu)
+{
+    window.location=vu;
+ }
+
+function showTestDetail(div_id){
+    var details_div = document.getElementById(div_id)
+    var displayState = details_div.style.display
+    // alert(displayState)
+    if (displayState != 'block' ) {
+        displayState = 'block'
+        details_div.style.display = 'block'
+    }
+    else {
+        details_div.style.display = 'none'
+    }
+}
+function showAllTest(){
+showCase(3);
+showAllTest0();
+}
+
+
+function showAllTest0(){
+    var x = document.getElementsByClassName("popup_window");
+    var i;
+    for (i=0;i<x.length;i++){
+        var displayState = x[i].style.display
+        if (displayState != 'block' ) {
+            displayState = 'block'
+            x[i].style.display = 'block'
+        }
+        else {
+            x[i].style.display = 'none'
+    }}
+}
+
+
+function html_escape(s) {
+    s = s.replace(/&/g,'&amp;');
+    s = s.replace(/</g,'&lt;');
+    s = s.replace(/>/g,'&gt;');
+    return s;
+}
+
+/* obsoleted by detail in <div>
+function showOutput(id, name) {
+    var w = window.open("", //url
+                    name,
+                    "resizable,scrollbars,status,width=800,height=450");
+    d = w.document;
+    d.write("<pre>");
+    d.write(html_escape(output_list[id]));
+    d.write("\n");
+    d.write("<a href='javascript:window.close()'>close</a>\n");
+    d.write("</pre>\n");
+    d.close();
+}
+*/
+--></script>
+
+<div class='heading'>
+<h1>报告标题: 用例描述 </h1>
+    <div style="border: 1px solid #ffffff;border-radius: 10px;box-shadow: 2px 2px 12px #aeaeae;padding-left: 30px;width: 500px">
+<p class='attribute'>接口自动化测试平台提供</p>
+<p class='attribute'><strong>注意:</strong> 出现问题请联系管理员！</p>
+<p class='attribute'><strong>报告生成日期:</strong> 2021-05-19 17:00:06</p>
+<p class='attribute'><strong>用例执行时间:</strong> 0:00:06.070865秒</p>
+<p class='attribute'><strong>用例执行结果:</strong> 通过 2,</p>
+<p class='attribute'><strong>执行系统:</strong> darwin</p>
+
+<br>
+</div>
+
+
+<p></p>
+<div class="btn">
+<p>查看:
+<button style="background-color: #ffffdc" class="wqrf_button" onclick='javascript:showCase(0)'>总结</button>
+<button style="background-color: #af2928;color: white" class="wqrf_button" onclick='javascript:showCase(1)'>失败</button>
+<button style="background-color: #2a980f;color: white" class="wqrf_button" onclick='javascript:showCase(2)'>通过</button>
+<button style="background-color: #203ee6;color: white"  class="wqrf_button" onclick='javascript:showCase(3)'>全部</button>
+<button style="background-color: #8ceeb8;position: absolute;top: 58px;left:560px;width: 295px;height: 170px;border-radius: 10px" id='showAllTest' class="wqrf_button"  onclick='javascript:showAllTest()'><span style="font-size: xx-large">全 部 展 开</span></button>
+
+
+</p>
+</div>
+<p></p>
+<table id='result_table'>
+<colgroup>
+<col align='left' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+</colgroup>
+<tr id='header_row'>
+    <td>测试套件/测试用例</td>
+    <td>总数量</td>
+    <td>通过的</td>
+    <td>失败的</td>
+    <td>报错的</td>
+    <td>查看</td>
+
+</tr>
+
+<tr class='passClass'>
+    <td>MyApp.run_case.Test: 测试类</td>
+    <td>2</td>
+    <td>2</td>
+    <td>0</td>
+    <td>0</td>
+    <td><button class="wqrf_button" style="background-color: #ffd1e7"  onclick="javascript:showClassDetail('c1',2)">详细</button></td>
+
+</tr>
+
+<tr id='pt1.1' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_001: 项目A的步骤</div></td>
+    <td colspan='5' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.1')" >
+        <button class="wqrf_button" style="width: auto">通过详情</button></a>
+    <div id='div_pt1.1' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.1').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <pre>
+        
+pt1.1: 没找到要创建
+{'uid': 'uA', 'Case_id': '15'}
+
+
+【url】： http://127.0.0.1:8000/test_api_A?uid=uA&amp;Case_id=15&amp;
+【header】： {"uid": "uA", "Case_id": "15"}
+【method】： get
+【body_method】： none
+【body】： 
+【返回体】： {"errcode": "0"}
+
+
+         <div id="div100">
+        </div>
+        </pre>
+    </div> <br>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt1.2' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_002: 我是新步骤</div></td>
+    <td colspan='5' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_liznk" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.2')" >
+        <button class="wqrf_button" style="width: auto">通过详情</button></a>
+    <div id='div_pt1.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <pre>
+        
+pt1.2: 找到了
+{'uid': 'uA', 'Case_id': '15'}
+
+
+【url】： http://127.0.0.1:8000/test_api_A?uid=uA&amp;Case_id=15&amp;
+【header】： {"uid": "uA", "Case_id": "15"}
+【method】： get
+【body_method】： none
+【body】： 
+【返回体】： {"errcode": "0"}
+
+
+         <div id="div100">
+        </div>
+        </pre>
+    </div> <br>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='total_row'>
+    <td>总计</td>
+    <td>2</td>
+    <td>2</td>
+    <td>0</td>
+    <td>0</td>
+    <td><button class="wqrf_button" style="background-color: #ffc2e6" onclick='javascript:location.reload()'>刷新</button></td>
+
+</tr>
+</table>
+
+<div id='ending'>
+   <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    </div>
+    
+
+</body>
+</html>

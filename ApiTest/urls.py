@@ -17,7 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from MyApp.views import *
 from MyApp.views_tools import *
-
+from MyApp.views_test import *
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^welcome/$',welcome) , #获取菜单
@@ -78,7 +78,11 @@ urlpatterns = [
     url(r'^global_data_save/$', global_data_save),  # 保存一个全局变量组
     url(r'^global_data_change_check/$', global_data_change_check),  # 更改项目的生效变量组
 
-
+    # ------------ 测试用接口
+    url(r'^test_login_A/$', test_login_A),  # 保存一个全局变量组
+    url(r'^test_login_B/$', test_login_B),  # 保存一个全局变量组
+    url(r'^test_api_A/$', test_api_A),  # 保存一个全局变量组
+    url(r'^test_api_B/$', test_api_B),  # 保存一个全局变量组
 
     # ------------ 小工具 --------------- #
     url(r'^tools_zhengjiao/$', zhengjiao),  # 进入小公举页面

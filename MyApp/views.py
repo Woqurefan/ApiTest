@@ -67,7 +67,6 @@ def child_json(eid,oid='',ooid=''):
         project_header = DB_project_header.objects.filter(project_id=oid)
         hosts = DB_host.objects.all()
         project_host = DB_project_host.objects.filter(project_id = oid)
-
         P_apis = Paginator(apis,10,1)
         page = ooid
         try:
@@ -844,8 +843,10 @@ def project_get_login(request):
     try:
         login = DB_login.objects.filter(project_id=project_id).values()[0]
     except:
-        login = {}
+        login = {"project_id":project_id,"api_method":"none","api_url":"","api_header":"{}","api_host":"","body_method":"none",
+                 "api_body":"","set":""}
     return HttpResponse(json.dumps(login),content_type='application/json')
+
 
 # 保存登陆态接口
 def project_login_save(request):
@@ -859,14 +860,17 @@ def project_login_save(request):
     login_api_body = request.GET['login_api_body']
     login_response_set = request.GET['login_response_set']
     # 保存数据
-    DB_login.objects.filter(project_id=project_id).update(
-        api_method=login_method,
-        api_url = login_url,
-        api_header = login_header,
-        api_host = login_host,
-        body_method = login_body_method,
-        api_body = login_api_body,
-        set = login_response_set
+    DB_login.objects.update_or_create(
+        defaults={
+            "api_method": login_method,
+            "api_url": login_url,
+            "api_header": login_header,
+            "api_host": login_host,
+            "body_method": login_body_method,
+            "api_body": login_api_body,
+            "set": login_response_set,
+            } ,
+        project_id = project_id
     )
     # 返回
     return HttpResponse('success')
@@ -878,17 +882,13 @@ def project_login_send(request):
     login_method = request.GET['login_method']
     login_url = request.GET['login_url']
     login_url = global_datas_replace(project_id,login_url)  #替换全局变量
-
     login_host = request.GET['login_host']
     login_host = global_datas_replace(project_id,login_host)  #替换全局变量
-
     login_header = request.GET['login_header']
     login_header = global_datas_replace(project_id,login_header)   #替换全局变量
-
     login_body_method = request.GET['login_body_method']
     login_api_body = request.GET['login_api_body']
     login_api_body = global_datas_replace(project_id,login_api_body) #替换全局变量
-
     login_response_set = request.GET['login_response_set']
     if login_header == '':
         login_header = '{}'
@@ -897,7 +897,6 @@ def project_login_send(request):
         header = json.loads(login_header) #处理header
     except:
         return HttpResponse('请求头不符合json格式！')
-
     # 拼接完整url
     if login_host[-1] == '/' and login_url[0] =='/': #都有/
         url = login_host[:-1] + login_url
@@ -954,8 +953,12 @@ def project_login_send(request):
             response = requests.request(login_method.upper(), url, headers=header, data=login_api_body.encode('utf-8'))
         # 把返回值传递给前端页面
         response.encoding = "utf-8"
-        DB_host.objects.update_or_create(host=login_host)
-        res = response.json()
+        DB_host.objects.update_or_create(host=login_host) # 偷偷储存好host
+        try:
+            res = response.json()
+        except:
+            end_res = {"response": response.text, "get_res": "只能提取json格式返回体！"}
+            return HttpResponse(json.dumps(end_res), content_type='application/json')
         # 第三步，对返回值进行提取
 
         # 先判断是否是cookie持久化，若是，则不处理
