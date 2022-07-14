@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        textarea{
+            border-image:linear-gradient(to right,#ff8cd0,#77a4cb,#ff8cd0, #ffb83f) 1 10;
+        }
+
+    </style>
 </head>
 <body>
 
-<nav class="navbar navbar-default" role="navigation" style="position: absolute;top: 0px;left: 80px;width:-webkit-calc(100% - 200px);z-index: 1">
+<nav class="navbar navbar-default" role="navigation" style="background-color: white;box-shadow: 4px 4px 6px darkgray;
+border-image:linear-gradient(to right,#ff8cd0,#77a4cb,#ff8cd0,#ffb658) 1 10;
+position: absolute;top: 0px;left: 80px;width:-webkit-calc(100% - 200px);">
     <div class="container-fluid">
     <div class="navbar-header">
         <span style="font-size: xx-small" class="navbar-brand" >项目名称：{{ project.name }}</span>
@@ -14,9 +22,9 @@
     </div>
     <div>
         <ul class="nav navbar-nav">
-            <li><a href="/apis/{{ project.id }}/">接口库</a></li>
-            <li><a href="/cases/{{ project.id }}/">用例库</a></li>
-            <li  class="active"><a href="/project_set/{{ project.id }}/">项目设置</a></li>
+            <li  ><a href="/apis/{{ project.id }}/" >接口库</a></li>
+            <li ><a href="/cases/{{ project.id }}/">用例库</a></li>
+            <li class="active"><a style="background: linear-gradient( to right,#a7e2ff,white,#ffd7e1)" href="/project_set/{{ project.id }}/">项目设置</a></li>
             <li><a href="/global_data/{{ project.id }}/">全局变量</a></li>
         </ul>
     </div>
@@ -25,17 +33,28 @@
 
 <br><br>
 
-<div style="text-align: center">
+<div style="text-align: center ">
 <h3>项目名称</h3>
 <textarea name="" id="name" placeholder="最大100字" style="width: 70%" rows="4">{{ project.name }}</textarea> <br>
 <h3>项目描述</h3>
 <textarea name="" id="remark" placeholder="最大500字"  style="width: 70%" rows="4">{{ project.remark }}</textarea> <br>
 <h3>其他管理员</h3>
 <textarea name="" id="other_user" placeholder="多个成员之间用英文逗号,来隔开"  style="width: 70%" rows="4">{{ project.other_user }}</textarea>
+<h3>上传client证书</h3>
+
+     <form  style="" id="upload_file" action="/cert_upload/{{ project.id }}/" method="post" enctype="multipart/form-data">
+    <input type="file" name="fileUpload" style="width: 20%;margin-left: 40%;border:1px solid #fcbfbf;"/>
+         <br>
+    <button type="submit" style="width: 20%;" class="btn" > 上传证书 </button>
+         <br>
+         <span>当前证书：{{ project.cert }}</span>
+    </form>
+
 </div>
 
 <br><br>
-<button onclick="save()" type="button" style="margin-left: 15%;width: 70%" class="btn btn-primary btn-lg btn-block">保存</button>
+<button onclick="save()" type="button" class="btn btn-default btn-lg btn-block"
+        style="background-image: linear-gradient(129deg, #edfaff 0%,white, #ffe7ef 100%);;margin-left: 15%;width: 70%" >保存</button>
 
 <script>
     function save() {

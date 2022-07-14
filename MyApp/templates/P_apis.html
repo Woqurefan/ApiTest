@@ -4,13 +4,32 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-
         a:link{ text-decoration:none;}
-
+        .box::before {
+        content: '';
+        border-radius: 5px;
+        position: absolute;
+        width: calc(100%);
+        height: calc(100%);
+        z-index: -1;
+        background-image: linear-gradient(50deg, aquamarine, cornflowerblue, goldenrod, hotpink, salmon, lightgreen, sandybrown, violet);
+        background-size: 300%;
+        animation: animate_bg 4s infinite;
+        }
+        @keyframes animate_bg {
+            0%, 100% {
+                background-position: 0%, 50%;
+            }
+            50% {
+                background-position: 100%, 50%;
+            }
+        }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-default" role="navigation" style="position: absolute;top: 0px;left: 80px;width:-webkit-calc(100% - 200px);">
+<nav class="navbar navbar-default" role="navigation" style="background-color: white;box-shadow: 4px 4px 6px darkgray;
+border-image:linear-gradient(to right,#ff8cd0,#77a4cb,#ff8cd0,#ffb658) 1 10;
+position: absolute;top: 0px;left: 80px;width:-webkit-calc(100% - 200px);">
     <div class="container-fluid">
     <div class="navbar-header">
         <span style="font-size: xx-small" class="navbar-brand" >项目名称：{{ project.name }}</span>
@@ -18,7 +37,7 @@
     </div>
     <div>
         <ul class="nav navbar-nav">
-            <li class="active"><a href="/apis/{{ project.id }}/">接口库</a></li>
+            <li class="active" ><a href="/apis/{{ project.id }}/" style="background: linear-gradient( to right,#a7e2ff,white,#ffd7e1)">接口库</a></li>
             <li><a href="/cases/{{ project.id }}/">用例库</a></li>
             <li><a href="/project_set/{{ project.id }}/">项目设置</a></li>
             <li><a href="/global_data/{{ project.id }}/">全局变量</a></li>
@@ -40,11 +59,11 @@
 
              <td>
                 <div class="btn-group" style="z-index: 0">
-                     <button class="btn btn-success" onclick="ts_show('{{ i.id }}','{{ i.name }}')" >调试</button>
+                     <button style="background: linear-gradient( to top,#a7e2ff,white,#ffd7e1)" class="btn btn-default" onclick="ts_show('{{ i.id }}','{{ i.name }}')" >调试</button>
                      <button class="btn btn-default" onclick="open_bz('{{ i.id }}')" >备注</button>
                      <button class="btn btn-default" onclick="copy_api('{{ i.id }}')">复制</button>
                      <button class="btn btn-default" onclick="error_test('{{ i.id }}')">异常值测试</button>
-                     <button class="btn btn-danger" onclick="document.location.href='/project_api_del/{{ i.id }}/'" >删除</button>
+                     <button class="btn btn-default" onclick="document.location.href='/project_api_del/{{ i.id }}/'" >删除</button>
                 </div>
              </td>
 
@@ -80,18 +99,16 @@
 
 
 
-
-
 <div style="position: fixed;bottom: 0px;
-width: 100%;background-color: #f8f8f8;text-align: center;
+width: 100%;text-align: center;background: linear-gradient( to right,#e4faff,white,#fff2f9);
 border: 1px solid #e7e7e7">
     <div class="btn-group">
-        <button type="button" class="btn btn-primary" onclick="document.location.href='/project_api_add/{{ project.id }}/'">新增接口</button>
+        <button type="button" style="background: linear-gradient( to bottom,#a7e2ff,white,#ffd7e1)" class="btn btn-default" onclick="document.location.href='/project_api_add/{{ project.id }}/'">新增接口</button>
         <button type="button" onclick="project_header_div_show()" class="btn btn-default">全局请求头</button>
         <button type="button" onclick="project_host_div_show()" class="btn btn-default">全局域名</button>
         <button type="button" class="btn btn-default">接口文档导入</button>
         <button type="button" class="btn btn-default">抓包导入</button>
-        <button type="button" class="btn btn-default">加密算法</button>
+        <button type="button" onclick="encryption_show()" class="btn btn-default">加密算法</button>
         <button type="button" onclick="login_show()" class="btn btn-default">登录态接口</button>
     </div>
 </div>
@@ -147,10 +164,20 @@ color: white;padding-left: 10px;">
     </div>
     <h4>接口: <small style="color: greenyellow" id="ts_api_id"></small>-
     <input placeholder="请在此输入接口名称" type="text" id="ts_api_name" style="padding-left: 5px;width: 30%;color: #329104">
-        <select name="ts_login" id="ts_login" style="color: black;font-size:medium">
-            <option value="no" id="ts_login_no">不加登陆态</option>
-            <option value="yes" id="ts_login_yes">加登陆态</option>
+        <select name="ts_login" id="ts_login" style="color: black;font-size:small">
+            <option value="no" id="ts_login_no">不加登录态</option>
+            <option value="yes" id="ts_login_yes">加登录态</option>
         </select>
+        <select name="ts_encyption" id="ts_encyption" style="color: black;font-size:small">
+            <option value="no" id="ts_encyption_no">无加密</option>
+            <option value="yes" id="ts_encyption_yes">有加密</option>
+        </select>
+
+        <select name="ts_cert" id="ts_cert" style="color: black;font-size:small">
+            <option value="no" id="ts_cert_no">无证书</option>
+            <option value="yes" id="ts_cert_yes">加证书</option>
+        </select>
+
     </h4>
     <ul class="nav navbar-nav" style="width: 98%">
         <li>
@@ -329,6 +356,8 @@ color: white;padding-left: 10px;">
         document.getElementById('ts_host').value = '';
         document.getElementById('ts_header').value='{}';
         document.getElementById('ts_login').value = 'no';
+        document.getElementById('ts_encyption').value = 'no';
+        document.getElementById('ts_cert').value = 'no';
         // 开始初始化请求体编码格式部分：
         document.getElementById('click_none').click() ; // 点击none子标签
         document.getElementById('mytbody').innerHTML='<tr><td></td><td></td></tr>';
@@ -369,6 +398,13 @@ color: white;padding-left: 10px;">
             if(ret.api_login != null && ret.api_login != ''){
                 document.getElementById('ts_login').value = ret.api_login;
             }
+            if(ret.sign != null && ret.sign != ''){
+                document.getElementById('ts_encyption').value = ret.sign;
+            }
+            if(ret.cert != null && ret.cert != ''){
+                document.getElementById('ts_cert').value = ret.cert;
+            }
+
             // 公共请求头
             if(ret.public_header != null){
                 var project_headers = ret.public_header.split(',');
@@ -451,6 +487,8 @@ color: white;padding-left: 10px;">
         var ts_host = document.getElementById('ts_host').value ;
         var ts_header = document.getElementById('ts_header').value ;
         var ts_login = document.getElementById('ts_login').value;
+        var ts_encyption = document.getElementById('ts_encyption').value;
+        var ts_cert = document.getElementById('ts_cert').value;
         var project_headers = document.getElementById('ts_project_header_li').children;
         var ts_project_headers = [];
         for(var i=0;i<project_headers.length;i++){
@@ -458,18 +496,15 @@ color: white;padding-left: 10px;">
                 ts_project_headers.push(project_headers[i].children[0].value)
             }
         }
-
         // 判断顶部的数据是否填充完
         if(api_name == ''){alert('请输入接口名字！');return}
         if(ts_method == 'none'){alert('请选择请求方式！');return}
         if(ts_url == ''){alert('请输入url！');return}
         if(ts_host == ''){alert('请输入host！');return}
-
         //判断关键数据是否符合规则
         if(ts_host.slice(0,7) != 'http://' && ts_host.slice(0,8) != 'https://' && ts_host.slice(0,4) !='全局域名' ){
             alert('host必须以http://或https://开头！');return
         }
-
         var ts_body_method = $('ul#myTab li[class="active"]')[0].innerText;
         if(ts_body_method == 'none'){
             var ts_api_body = ''
@@ -520,16 +555,16 @@ color: white;padding-left: 10px;">
             body_plan_G_G = document.getElementById('body_plan_G_G').value;
              var ts_api_body = body_plan_G_Q+ '*WQRF*' + body_plan_G_G
         }
-
         var api_id = document.getElementById('ts_api_id').innerText ; //获取到了接口id
-
         $.get('/Api_save/',{
             'api_id':api_id,
             'api_name':api_name,
+            'ts_cert':ts_cert,
             'ts_method':ts_method,
             'ts_url':ts_url,
             'ts_host':ts_host,
             'ts_login':ts_login,
+            'ts_encyption':ts_encyption,
             'ts_header':ts_header,
             'ts_body_method':ts_body_method,
             'ts_api_body':ts_api_body,
@@ -546,6 +581,8 @@ color: white;padding-left: 10px;">
         var ts_host = document.getElementById('ts_host').value ;
         var ts_header = document.getElementById('ts_header').value ;
         var ts_login = document.getElementById('ts_login').value;
+        var ts_encyption = document.getElementById('ts_encyption').value;
+        var ts_cert= document.getElementById('ts_cert').value;
         var project_headers = document.getElementById('ts_project_header_li').children;
         var ts_project_headers = [];
         for(var i=0;i<project_headers.length;i++){
@@ -553,18 +590,14 @@ color: white;padding-left: 10px;">
                 ts_project_headers.push(project_headers[i].children[0].value)
             }
         }
-
          // 判断顶部的数据是否填充完
         if(ts_method == 'none'){alert('请选择请求方式！');return}
         if(ts_url == ''){alert('请输入url！');return}
         if(ts_host == ''){alert('请输入host！');return}
-
          //判断关键数据是否符合规则
         if(ts_host.slice(0,7) != 'http://' && ts_host.slice(0,8) != 'https://' && ts_host.slice(0,4) !='全局域名'){
             alert('host必须以http://或https://开头！');return
         }
-
-
         var ts_body_method = $('ul#myTab li[class="active"]')[0].innerText;
         if(ts_body_method == 'none'){
             var ts_api_body = ''
@@ -613,13 +646,14 @@ color: white;padding-left: 10px;">
             body_plan_G_G = document.getElementById('body_plan_G_G').value;
              var ts_api_body = body_plan_G_Q+ '*WQRF*' + body_plan_G_G
         }
-
         var api_id = document.getElementById('ts_api_id').innerText ; //获取到了接口id
         // 发送请求给后台
          $.get('/Api_send/',{
             'api_id':api_id,
             'api_name':api_name,
              'ts_login':ts_login,
+             'ts_cert':ts_cert,
+             'ts_encyption':ts_encyption,
             'ts_method':ts_method,
             'ts_url':ts_url,
             'ts_host':ts_host,
@@ -629,8 +663,13 @@ color: white;padding-left: 10px;">
              'ts_project_headers':ts_project_headers.toString(),
         },function (ret) {
             $("li a[href=#response]").click(); //点击一下返回体按钮
-            document.getElementById('ts_response_body').value = ret ;//把返回值显示到返回值多行文本框中
-        })
+             try{
+                 ret = JSON.parse(ret)
+                 document.getElementById('ts_response_body').value = JSON.stringify(ret,null,4) ;//把返回值显示到返回值多行文本框中
+             }catch{
+                 document.getElementById('ts_response_body').value = ret
+             }
+         })
     }
     function ts_clear_host() {
         document.getElementById('ts_host').value='';
@@ -796,27 +835,29 @@ color: white;padding-left: 10px;">
 
 
 {# 全局请求头 #}
-<div id="project_header_div" style="display: none;border-radius:5px;width: 70%;height: 70%;
-position: absolute;left: 15%;top: 15%;box-shadow: 4px 4px 8px grey;
-padding-left: 10px;background-color: white">
-    <div class="btn-group" style="float: right">
-        <button onclick="project_header_save()" type="button" class="btn btn-success">保存</button>
-        <button onclick="project_header_close()" type="button" class="btn btn-default">取消</button>
-    </div>
-    <h4>请设置本项目的全局公共请求头：</h4>
+<div id="project_header_div" class="box" style="display: none;width: 70%;
+position: fixed;left: 15%;top: 15%;box-shadow: 4px 4px 8px grey;">
 
-    <div id="header_plan">
-        {% for i in project_header %}
-            <input type="text" name="header_id" value="{{ i.id }}" style="display: none;">
-            <input type="text" name="header_name" value="{{ i.name }}" style="width: 20%;margin-top: 3px" placeholder="请求头name"> = {"
-            <input type="text" name="header_key" value="{{ i.key }}" style="width: 15%" placeholder="请求头key"> " : "
-            <input type="text" name="header_value" value="{{ i.value }}" style="width: 50%" placeholder="请求头value"> "}
-            <br>
-        {% endfor %}
+    <div  style="margin: 3px;border-radius:5px;height: 70%;padding-left: 10px;background-color: white">
+        <div class="btn-group" style="float: right">
+            <button onclick="project_header_save()" type="button" class="btn btn-success">保存</button>
+            <button onclick="project_header_close()" type="button" class="btn btn-default">取消</button>
+        </div>
+        <span>请设置本项目的全局公共请求头：</span>
+        <br><br>
+        <div id="header_plan">
+            {% for i in project_header %}
+                <input type="text" name="header_id" value="{{ i.id }}" style="display: none;">
+                <input type="text" name="header_name" value="{{ i.name }}" style="width: 20%;margin-top: 3px" placeholder="请求头name"> = {"
+                <input type="text" name="header_key" value="{{ i.key }}" style="width: 15%" placeholder="请求头key"> " : "
+                <input type="text" name="header_value" value="{{ i.value }}" style="width: 50%" placeholder="请求头value"> "}
+                <br>
+            {% endfor %}
+        </div>
+        <br>
+        <button onclick="add_project_header()">新增</button>
+        <br><br>
     </div>
-    <br>
-    <button onclick="add_project_header()">新增</button>
-
 </div>
 <script>
     function project_header_div_show() {
@@ -883,14 +924,16 @@ padding-left: 10px;background-color: white">
 
 
 {# 全局域名 #}
-<div id="project_host_div" style="display: none;border-radius:5px;width: 70%;height: 70%;
-position: absolute;left: 15%;top: 15%;box-shadow: 4px 4px 8px grey;
-padding-left: 10px;background-color: white">
+<div id="project_host_div" class="box" style="display: none;width: 70%;
+position: fixed;left: 15%;top: 15%;box-shadow: 4px 4px 8px grey;">
+
+<div  style="margin: 3px;border-radius:5px;height: 70%;padding-left: 10px;background-color: white">
     <div class="btn-group" style="float: right">
         <button onclick="project_host_save()" type="button" class="btn btn-success">保存</button>
         <button onclick="project_host_close()" type="button" class="btn btn-default">取消</button>
     </div>
-    <h4>请设置本项目的全局公共请求头：</h4>
+    <span>请设置本项目的全局域名：</span>
+    <br><br>
     <div id="host_plan">
         {% for i in project_host %}
             <input type="text" name="host_id" value="{{ i.id }}" style="display: none;">
@@ -901,8 +944,10 @@ padding-left: 10px;background-color: white">
     </div>
     <br>
     <button onclick="add_project_host()">新增</button>
-
+    <br><br>
 </div>
+</div>
+
 <script>
     function project_host_div_show() {
         document.getElementById('project_host_div').style.display = 'block';
@@ -963,7 +1008,16 @@ position: absolute;left: 10%;top: 10%;box-shadow: 4px 4px 8px grey;padding-left:
         <button onclick="login_save()" type="button" class="btn btn-success">保存</button>
         <button onclick="login_close()" type="button" class="btn btn-default">取消</button>
     </div>
-    <h4>请设置该项目的登陆态接口：</h4>
+    <h4>请设置该项目的登陆态接口：
+    <select name="login_encyption" id="login_encyption" style="color: black;font-size:small">
+        <option value="no" id="login_encyption_no">无加密</option>
+        <option value="yes" id="login_encyption_yes">有加密</option>
+    </select>
+    <select name="login_cert" id="login_cert" style="color: black;font-size:small">
+        <option value="no" id="login_cert_no">无证书</option>
+        <option value="yes" id="login_cert_yes">有证书</option>
+    </select>
+    </h4>
     <ul class="nav navbar-nav" style="width: 98%">
         <li>
             <select id="login_method" style="height: 40px;" class="form-control">
@@ -1146,6 +1200,14 @@ token=/data/token"></textarea>
             document.getElementById('login_host').value = ret.api_host;
             document.getElementById('login_header').value = ret.api_header;
             document.getElementById('login_response_set').value = ret.set;
+            // 是否加密
+            if(ret.sign != null && ret.sign != ''){
+                document.getElementById('login_encyption').value = ret.sign;
+            }
+            // 是否加证书
+            if(ret.cert != null && ret.cert != ''){
+                document.getElementById('login_cert').value = ret.cert;
+            }
             // 请求体编码格式
             var body_method = '#login_'+ret.body_method;
             $("li a[href="+body_method+"]").click();
@@ -1215,24 +1277,21 @@ token=/data/token"></textarea>
         var login_host = document.getElementById('login_host').value ;
         var login_header = document.getElementById('login_header').value ;
         var login_response_set = document.getElementById('login_response_set').value;
-
+        var login_encyption = document.getElementById('login_encyption').value;
+        var login_cert = document.getElementById('login_cert').value;
         // 判断顶部的数据是否填充完
         if(ts_method == 'none'){alert('请选择请求方式！');return}
         if(ts_url == ''){alert('请输入url！');return}
         if(ts_host == ''){alert('请输入host！');return}
-
         //判断关键数据是否符合规则
         if(login_host.slice(0,7) != 'http://' && login_host.slice(0,8) != 'https://' && login_host.slice(0,4) !='全局域名' ){
             alert('host必须以http://或https://开头！');return
         }
-
-
         var login_body_method = $('ul#login_myTab li[class="active"]')[0].innerText;
         if(login_body_method == '返回体'){
             alert('请切换到请求体tab再保存！');
             return
         }
-
         if(login_body_method == 'none'){
             var login_api_body = ''
         }
@@ -1288,6 +1347,8 @@ token=/data/token"></textarea>
             'login_method':login_method,
             'login_url':login_url,
             'login_host':login_host,
+            'login_cert':login_cert,
+            'login_encyption':login_encyption,
             'login_header':login_header,
             'login_body_method':login_body_method,
             'login_api_body':login_api_body,
@@ -1303,23 +1364,21 @@ token=/data/token"></textarea>
         var login_host = document.getElementById('login_host').value ;
         var login_header = document.getElementById('login_header').value ;
         var login_response_set = document.getElementById('login_response_set').value;
-
+        var login_encyption = document.getElementById('login_encyption').value;
+        var login_cert = document.getElementById('login_cert').value;
          // 判断顶部的数据是否填充完
         if(login_method == 'none'){alert('请选择请求方式！');return}
         if(login_url == ''){alert('请输入url！');return}
         if(login_host == ''){alert('请输入host！');return}
-
          //判断关键数据是否符合规则
         if(login_host.slice(0,7) != 'http://' && login_host.slice(0,8) != 'https://' && login_host.slice(0,4) !='全局域名'){
             alert('host必须以http://或https://开头！');return
         }
-
         var login_body_method = $('ul#login_myTab li[class="active"]')[0].innerText;
         if(login_body_method == '返回体'){
             alert('请切换到请求体tab再保存！');
             return
         }
-
         if(login_body_method == 'none'){
             var login_api_body = ''
         }
@@ -1362,18 +1421,18 @@ token=/data/token"></textarea>
         if(login_body_method == 'Xml'){
             var login_api_body = document.getElementById('login_raw_Xml').value;
         }
-
         if(login_body_method == 'GraphQL'){
             body_plan_G_Q = document.getElementById('login_body_plan_G_Q').value;
             body_plan_G_G = document.getElementById('login_body_plan_G_G').value;
              var login_api_body = body_plan_G_Q+ '*WQRF*' + body_plan_G_G
         }
-
          $.get('/project_login_send/',{
              'project_id': '{{ project.id }}',
             'login_method':login_method,
             'login_url':login_url,
             'login_host':login_host,
+             'login_cert':login_cert,
+             'login_encyption':login_encyption,
             'login_header':login_header,
             'login_body_method':login_body_method,
             'login_api_body':login_api_body,
@@ -1387,7 +1446,67 @@ token=/data/token"></textarea>
     }
 </script>
 
+{# 加密算法#}
+<div id="encryption_div" style="display: none;border-radius:5px;width: 80%;background-color: white;
+position: absolute;left: 10%;top: 10%;box-shadow: 4px 4px 8px grey;padding: 10px">
+    <div class="btn-group" style="float: right">
+        <button onclick="encryption_save()" type="button" class="btn btn-success">保存</button>
+        <button onclick="encryption_close()" type="button" class="btn btn-default">取消</button>
+    </div>
+    <h4>请设置该项目的加密表达式：</h4>
+    <p style="color: gray">选择加密的位置：URL 还是 BODY ，一般都是URL
+选择加密的数据来源：也就是都需要哪些字段来作为入参变量。比如有的固定是选url或body中的 userid和token俩个变量，其他变量不考虑。那这里我们让用户写上userid,token。然后平台自动去url和body中去找这俩个字段和值
+最后让用户写上 表达式：
+        <br>比如： <br>sign=base64(base64("#token#"+"#userid#")+"#time#")
+注意其中我们会把##包裹的当做变量去找到真实的值进行替换，如果用户需求是 连key一起，那么应该告诉他，写成如下这样：
+sign=base64(base64("token=#token#"+"userid=#userid#")+"#time#")
+而且其中引号千万不能少 !
+        <br>最后#time# 会先检测是否存在time字段，不存在则使用10位字符串时间戳！有其他需求请通知管理员！</p>
 
+    <div class="input-group input-group-sm" style="margin-top: 5px">
+        <span class="input-group-addon">选择加密字段插入位置：</span>
+        <span class="input-group-addon" style="width: 3px;background-color: white">
+            <label>
+                <input type="radio" name="encyption_radio" value="url" id="encyption_url" checked="checked">
+                <span style="font-size: medium">url</span>
+            </label>
+        </span>
+        <span class="input-group-addon" style="width: 3px;background-color: white">
+            <label>
+                <input type="radio" name="encyption_radio" value="body" id="encyption_body">
+                <span style="font-size: medium">body</span>
+            </label>
+        </span>
+    </div>
+    <div class="input-group input-group-sm" style="margin-top: 5px">
+        <span class="input-group-addon">加密表达式：</span>
+        <input id="encyption_input" type="text" class="form-control" style="height: 40px" value="{{ project.encyption_input }}">
+    </div>
+    <br>
+</div>
+<script>
+    function encryption_show() {
+        // 展示这个div
+        document.getElementById('encryption_div').style.display = 'block';
+        $(':radio[id="encyption_{{ project.encyption_insert }}"]').attr('checked',true)
+    }
+    function encryption_close() {
+        document.location.reload()
+    }
+    function encryption_save(){
+        // 提取弹层的数据
+        encyption_insert = $(':radio[name="encyption_radio"]:checked').val() ;
+        encyption_input = $('#encyption_input').val();
+        //通过请求传递给后台
+        $.get('/encyption_save/',{
+            'project_id': '{{ project.id }}',
+            'encyption_insert':encyption_insert,
+            'encyption_input':encyption_input
+        },function (ret) {
+            document.location.reload()
+        })
+    }
+</script>
 
 
 <div id="mengceng" style="display: none;opacity:0.5;position: absolute;left: 0;top: 100px;

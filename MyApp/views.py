@@ -1,3 +1,5 @@
+import threading
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 # Create your views here.
@@ -6,6 +8,8 @@ from django.shortcuts import render
 from MyApp.models import *
 import json
 import requests
+import time
+import base64
 from MyApp.global_def import *
 
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
@@ -176,12 +180,10 @@ def delete_project(request):
     id = request.GET['id']
     DB_project.objects.filter(id=id).delete()
     DB_apis.objects.filter(project_id=id).delete() #删除旗下接口
-
     all_Case = DB_cases.objects.filter(project_id=id)
     for i in all_Case:
         DB_step.objects.filter(Case_id=i.id).delete() #删除步骤
         i.delete() #用例删除自己
-
     return HttpResponse('')
 
 # 新增项目
@@ -231,7 +233,6 @@ def project_api_del(request,id):
 def save_bz(request):
     api_id = request.GET['api_id']
     bz_value = request.GET['bz_value']
-    print(api_id)
     DB_apis.objects.filter(id=api_id).update(des=bz_value) #这里的des就是描述也就是现在的备注
     return HttpResponse('')
 
@@ -249,11 +250,12 @@ def Api_save(request):
     ts_url = request.GET['ts_url']
     ts_host = request.GET['ts_host']
     ts_login = request.GET['ts_login']
+    ts_encyption = request.GET['ts_encyption']
     ts_header = request.GET['ts_header']
     api_name = request.GET['api_name']
     ts_body_method = request.GET['ts_body_method']
     ts_project_headers = request.GET['ts_project_headers']
-
+    ts_cert = request.GET['ts_cert']
     if ts_body_method == '返回体':
         api = DB_apis.objects.filter(id=api_id)[0]
         ts_body_method = api.last_body_method
@@ -266,6 +268,8 @@ def Api_save(request):
         api_method = ts_method,
         api_url = ts_url,
         api_login = ts_login,
+        sign = ts_encyption,
+        cert = ts_cert,
         api_header = ts_header,
         api_host = ts_host,
         body_method = ts_body_method,
@@ -282,25 +286,21 @@ def get_api_data(request):
     api = DB_apis.objects.filter(id=api_id).values()[0]
     return HttpResponse(json.dumps(api),content_type='application/json')
 
-# 调试层发送请求
+# 调试层发送请求 普通接口调试
 def Api_send(request):
     # 提取所有数据
     api_id = request.GET['api_id']
-
     project_id = DB_apis.objects.filter(id=api_id)[0].project_id
-
     ts_method = request.GET['ts_method']
     ts_url = request.GET['ts_url'] #需要全局变量替换
     ts_url = global_datas_replace(project_id,ts_url)
-
     ts_host = request.GET['ts_host']
     ts_host = global_datas_replace(project_id,ts_host)
     ts_header = request.GET['ts_header'] #需要全局变量替换
     ts_header = global_datas_replace(project_id,ts_header)
-
     api_name = request.GET['api_name']
+    ts_cert = request.GET['ts_cert']
     ts_body_method = request.GET['ts_body_method']
-
     ts_project_headers = request.GET['ts_project_headers'].split(',')
     ts_login = request.GET['ts_login']
     if ts_login == 'yes': #说明要调用登陆态了
@@ -320,10 +320,9 @@ def Api_send(request):
     else:
         ts_api_body = request.GET['ts_api_body'] #需要全局变量替换
         ts_api_body = global_datas_replace(project_id,ts_api_body)
-        print(ts_api_body)
         api = DB_apis.objects.filter(id=api_id)
         api.update(last_body_method=ts_body_method,last_api_body=ts_api_body)
-    # 发送请求获取返回值
+
     if ts_header == '':
         ts_header = '{}'
     try:
@@ -358,14 +357,20 @@ def Api_send(request):
     if type(login_res) == dict:
         header.update(login_res)
 
+    # 进行加密策略
+    ts_encyption = request.GET['ts_encyption']
+    if ts_encyption == 'yes':
+        ts_url, ts_api_body = encyption(ts_url,ts_body_method, ts_api_body, project_id)
     try:
+        if ts_cert == 'yes':
+            cert_name = 'MyApp/static/Certs/%s' % DB_project.objects.filter(id=project_id)[0].cert
+        else:
+            cert_name = ''
         if ts_body_method == 'none':
             if type(login_res) == dict:
-                response = requests.request(ts_method.upper(), url, headers=header, data={} )
+                response = requests.request(ts_method.upper(), url, headers=header, data={},cert = cert_name)
             else:
-                response = login_res.request(ts_method.upper(), url, headers=header, data={} )
-
-
+                response = login_res.request(ts_method.upper(), url, headers=header, data={},cert = cert_name )
         elif ts_body_method == 'form-data':
             files = []
 
@@ -377,9 +382,9 @@ def Api_send(request):
                 for i in login_res.keys():
                     payload += ((i,login_res[i]),)
 
-                response = requests.request(ts_method.upper(), url, headers=header, data=payload, files=files )
+                response = requests.request(ts_method.upper(), url, headers=header, data=payload, files=files ,cert = cert_name )
             else:
-                response = login_res.request(ts_method.upper(), url, headers=header, data=payload, files=files )
+                response = login_res.request(ts_method.upper(), url, headers=header, data=payload, files=files,cert = cert_name )
 
 
         elif ts_body_method == 'x-www-form-urlencoded':
@@ -393,9 +398,9 @@ def Api_send(request):
                 for i in login_res.keys():
                     payload += ((i, login_res[i]),)
 
-                response = requests.request(ts_method.upper(), url, headers=header, data=payload )
+                response = requests.request(ts_method.upper(), url, headers=header, data=payload ,cert = cert_name )
             else:
-                response = login_res.request(ts_method.upper(), url, headers=header, data=payload )
+                response = login_res.request(ts_method.upper(), url, headers=header, data=payload ,cert = cert_name )
 
 
         elif ts_body_method == 'GraphQL':
@@ -408,9 +413,9 @@ def Api_send(request):
                 graphql = '{}'
             payload = '{"query":"%s","variables":%s}' % (query, graphql)
             if type(login_res) == dict:
-                response = requests.request(ts_method.upper(), url, headers=header, data=payload )
+                response = requests.request(ts_method.upper(), url, headers=header, data=payload ,cert = cert_name )
             else:
-                response = login_res.request(ts_method.upper(), url, headers=header, data=payload )
+                response = login_res.request(ts_method.upper(), url, headers=header, data=payload ,cert = cert_name )
 
 
         else: #这时肯定是raw的五个子选项：
@@ -432,10 +437,11 @@ def Api_send(request):
 
             if ts_body_method == 'Xml':
                 header['Content-Type'] = 'text/plain'
+
             if type(login_res) == dict:
-                response = requests.request(ts_method.upper(), url, headers=header, data=ts_api_body.encode('utf-8'))
+                response = requests.request(ts_method.upper(), url, headers=header, data=ts_api_body.encode('utf-8'),cert = cert_name )
             else:
-                response = login_res.request(ts_method.upper(), url, headers=header, data=ts_api_body.encode('utf-8'))
+                response = login_res.request(ts_method.upper(), url, headers=header, data=ts_api_body.encode('utf-8'),cert = cert_name )
 
 
         # 把返回值传递给前端页面
@@ -445,6 +451,7 @@ def Api_send(request):
 
         return HttpResponse(response.text)
     except Exception as e:
+        print(e)
         return HttpResponse(str(e))
 
 # 复制接口
@@ -465,6 +472,7 @@ def copy_api(request):
                            api_body = old_api.api_body,
                            result=old_api.result,
                            sign = old_api.sign,
+                           cert = old_api.cert,
                            file_key = old_api.file_key,
                            file_name=old_api.file_name,
                            public_header=old_api.public_header,
@@ -479,13 +487,13 @@ def error_request(request):
     api_id = request.GET['api_id']
     new_body = request.GET['new_body']
     span_text= request.GET['span_text']
-
     api = DB_apis.objects.filter(id=api_id)[0]
     method = api.api_method
     url = api.api_url
     host = api.api_host
     header = api.api_header
     body_method = api.body_method
+    cert = api.cert
     if header == '':
         header = '{}'
     try:
@@ -501,14 +509,17 @@ def error_request(request):
         url = host + url
 
     try:
+        project_id = api.project_id
+        if cert == 'yes':
+            cert_name = 'MyApp/static/Certs/%s' % DB_project.objects.filter(id=project_id)[0].cert
+        else:
+            cert_name = ''
         if body_method == 'form-data':
             files = []
-
             payload = ()
             for i in eval(new_body):
                 payload += ((i[0], i[1]),)
-
-            response = requests.request(method.upper(), url, headers=header, data=payload, files=files)
+            response = requests.request(method.upper(), url, headers=header, data=payload, files=files,cert=cert_name)
         elif body_method == 'x-www-form-urlencoded':
             header['Content-Type'] = 'application/x-www-form-urlencoded'
 
@@ -516,10 +527,10 @@ def error_request(request):
             for i in eval(new_body):
                 payload += ((i[0], i[1]),)
 
-            response = requests.request(method.upper(), url, headers=header, data=payload)
+            response = requests.request(method.upper(), url, headers=header, data=payload,cert=cert_name)
         elif body_method == 'Json':
             header['Content-Type'] = 'text/plain'
-            response = requests.request(method.upper(), url, headers=header, data=new_body.encode('utf-8'))
+            response = requests.request(method.upper(), url, headers=header, data=new_body.encode('utf-8'),cert=cert_name)
         elif body_method == 'GraphQL':
             header['Content-Type'] = 'applicatioon/json'
             query = request.GET['query']
@@ -529,7 +540,7 @@ def error_request(request):
             except:
                 graphql = '{}'
             payload = '{"query":"%s","variables":%s}'%(query,graphql)
-            response = requests.request(method.upper(),url,headers=header,data=payload)
+            response = requests.request(method.upper(),url,headers=header,data=payload,cert=cert_name)
 
         else:
             return HttpResponse('非法的请求体类型')
@@ -539,7 +550,6 @@ def error_request(request):
         return HttpResponse(json.dumps(res_json),content_type='application/json')
     except:
         res_json = {"response": '对不起，接口未通！', "span_text": span_text}
-        print(res_json)
         return HttpResponse(json.dumps(res_json), content_type='application/json')
 
 # 首页发送请求
@@ -670,6 +680,16 @@ def copy_case(request,eid,oid):
     DB_cases.objects.create(project_id=old_case.project_id,name=old_case.name+'_副本')
     return HttpResponseRedirect('/cases/%s/'%eid)
 
+
+# 保存用例并发设置
+def save_case_concurrent(request):
+    id = request.GET['id']
+    concurrent = request.GET['concurrent']
+    DB_cases.objects.filter(id=id).update(concurrent=eval(concurrent))
+    return HttpResponse('')
+
+
+
 # 获取小用例步骤的数据
 def get_small(request):
     case_id = request.GET['case_id']
@@ -740,9 +760,12 @@ def save_step(request):
     assert_qz = request.GET['assert_qz']
     assert_path = request.GET['assert_path']
     step_login = request.GET['step_login']
-
+    step_encyption = request.GET['step_encyption']
+    step_cert = request.GET['step_cert']
     DB_step.objects.filter(id=step_id).update(name=name,
                                               index=index,
+                                              sign = step_encyption,
+                                              cert = step_cert,
                                               api_method=step_method,
                                               api_url=step_url,
                                               api_host=step_host,
@@ -763,7 +786,6 @@ def save_step(request):
 # 步骤详情页获取接口数据：
 def step_get_api(request):
     api_id = request.GET['api_id']
-    print(api_id)
     api = DB_apis.objects.filter(id=api_id).values()[0]
     return HttpResponse(json.dumps(api),content_type='application/json')
 
@@ -779,9 +801,7 @@ def Run_Case(request):
     Case = DB_cases.objects.filter(id = Case_id)[0]
     steps = DB_step.objects.filter(Case_id=Case_id)
     from MyApp.run_case import run
-
     run(Case_id,Case.name,steps)
-
     return HttpResponse('')
 
 # 保存项目公共请求头
@@ -847,7 +867,6 @@ def project_get_login(request):
                  "api_body":"","set":""}
     return HttpResponse(json.dumps(login),content_type='application/json')
 
-
 # 保存登陆态接口
 def project_login_save(request):
     # 提取所有数据
@@ -859,6 +878,8 @@ def project_login_save(request):
     login_body_method = request.GET['login_body_method']
     login_api_body = request.GET['login_api_body']
     login_response_set = request.GET['login_response_set']
+    login_encyption = request.GET['login_encyption']
+    login_cert = request.GET['login_cert']
     # 保存数据
     DB_login.objects.update_or_create(
         defaults={
@@ -869,6 +890,8 @@ def project_login_save(request):
             "body_method": login_body_method,
             "api_body": login_api_body,
             "set": login_response_set,
+            "sign":login_encyption,
+            "cert":login_cert,
             } ,
         project_id = project_id
     )
@@ -890,6 +913,8 @@ def project_login_send(request):
     login_api_body = request.GET['login_api_body']
     login_api_body = global_datas_replace(project_id,login_api_body) #替换全局变量
     login_response_set = request.GET['login_response_set']
+    login_cert = request.GET['login_cert']
+
     if login_header == '':
         login_header = '{}'
     # 第二步，发送请求
@@ -904,17 +929,27 @@ def project_login_send(request):
         url = login_host+ '/' + login_url
     else: #肯定有一个有/
         url = login_host + login_url
+    # 进行加密策略
+    lgoin_encyption = request.GET['login_encyption']
+    if lgoin_encyption == 'yes':
+        url, login_api_body = encyption(url,login_body_method, login_api_body, project_id)
+
     try:
+
+        if login_cert == 'yes':
+            cert_name = 'MyApp/static/Certs/%s' % DB_project.objects.filter(id=project_id)[0].cert
+        else:
+            cert_name = ''
+
         if login_body_method == 'none':
-            response = requests.request(login_method.upper(), url, headers=header, data={} )
+            response = requests.request(login_method.upper(), url, headers=header, data={} ,cert=cert_name)
         elif login_body_method == 'form-data':
             files = []
-
             payload = ()
             for i in eval(login_api_body):
                 payload += ((i[0], i[1]),)
 
-            response = requests.request(login_method.upper(), url, headers=header, data=payload, files=files )
+            response = requests.request(login_method.upper(), url, headers=header, data=payload, files=files ,cert=cert_name)
 
         elif login_body_method == 'x-www-form-urlencoded':
             header['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -922,7 +957,7 @@ def project_login_send(request):
             for i in eval(login_api_body):
                 payload += ((i[0], i[1]),)
 
-            response = requests.request(login_method.upper(), url, headers=header, data=payload )
+            response = requests.request(login_method.upper(), url, headers=header, data=payload ,cert=cert_name)
 
         elif login_body_method == 'GraphQL':
             header['Content-Type'] = 'application/json'
@@ -933,7 +968,7 @@ def project_login_send(request):
             except:
                 graphql = '{}'
             payload = '{"query":"%s","variables":%s}' % (query, graphql)
-            response = requests.request(login_method.upper(), url, headers=header, data=payload )
+            response = requests.request(login_method.upper(), url, headers=header, data=payload,cert=cert_name )
 
         else: #这时肯定是raw的五个子选项：
             if login_body_method == 'Text':
@@ -950,7 +985,7 @@ def project_login_send(request):
 
             if login_body_method == 'Xml':
                 header['Content-Type'] = 'text/plain'
-            response = requests.request(login_method.upper(), url, headers=header, data=login_api_body.encode('utf-8'))
+            response = requests.request(login_method.upper(), url, headers=header, data=login_api_body.encode('utf-8'),cert=cert_name)
         # 把返回值传递给前端页面
         response.encoding = "utf-8"
         DB_host.objects.update_or_create(host=login_host) # 偷偷储存好host
@@ -984,7 +1019,7 @@ def project_login_send(request):
         end_res = {"response":str(e),"get_res":''}
         return HttpResponse(json.dumps(end_res),content_type='application/json')
 
-# 调用登陆态接口
+# 调用登陆态接口-qita
 def project_login_send_for_other(project_id):
     # 第一步，获取数据
     login_api= DB_login.objects.filter(project_id=project_id)[0]
@@ -999,6 +1034,7 @@ def project_login_send_for_other(project_id):
     login_api_body = login_api.api_body
     login_api_body = global_datas_replace(project_id,login_api_body) #替换全局变量
     login_response_set = login_api.set
+    login_cert = login_api.cert
     if login_header == '':
         login_header = '{}'
     # 第二步，发送请求
@@ -1014,29 +1050,36 @@ def project_login_send_for_other(project_id):
         url = login_host+ '/' + login_url
     else: #肯定有一个有/
         url = login_host + login_url
+    # 进行加密策略
+    login_encyption = login_api.sign
+    if login_encyption == 'yes':
+        url, login_api_body = encyption(url, login_body_method,login_api_body, project_id)
+
     try:
+        if login_cert == 'yes':
+            cert_name = 'MyApp/static/Certs/%s' % DB_project.objects.filter(id=project_id)[0].cert
+        else:
+            cert_name = ''
         if login_body_method == 'none':
             # 先判断是否是cookie持久化，若是，则不处理
             if login_response_set == 'cookie':
                 a = requests.session()
-                a.request(login_method.upper(), url, headers=header, data={} )
+                a.request(login_method.upper(), url, headers=header, data={},cert=cert_name )
                 return a
             else:
-                response = requests.request(login_method.upper(), url, headers=header, data={} )
+                response = requests.request(login_method.upper(), url, headers=header, data={},cert=cert_name  )
         elif login_body_method == 'form-data':
             files = []
-
             payload = ()
             for i in eval(login_api_body):
                 payload += ((i[0], i[1]),)
-
             # 先判断是否是cookie持久化，若是，则不处理
             if login_response_set == 'cookie':
                 a = requests.session()
-                a.request(login_method.upper(), url, headers=header, data=payload, files=files )
+                a.request(login_method.upper(), url, headers=header, data=payload, files=files ,cert=cert_name )
                 return a
             else:
-                response = requests.request(login_method.upper(), url, headers=header, data=payload, files=files )
+                response = requests.request(login_method.upper(), url, headers=header, data=payload, files=files ,cert=cert_name )
 
         elif login_body_method == 'x-www-form-urlencoded':
             header['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -1047,10 +1090,10 @@ def project_login_send_for_other(project_id):
             # 先判断是否是cookie持久化，若是，则不处理
             if login_response_set == 'cookie':
                 a = requests.session()
-                a.request(login_method.upper(), url, headers=header, data=payload )
+                a.request(login_method.upper(), url, headers=header, data=payload,cert=cert_name  )
                 return a
             else:
-                response = requests.request(login_method.upper(), url, headers=header, data=payload )
+                response = requests.request(login_method.upper(), url, headers=header, data=payload ,cert=cert_name )
 
         elif login_body_method == 'GraphQL':
             header['Content-Type'] = 'application/json'
@@ -1064,10 +1107,10 @@ def project_login_send_for_other(project_id):
             # 先判断是否是cookie持久化，若是，则不处理
             if login_response_set == 'cookie':
                 a = requests.session()
-                a.request(login_method.upper(), url, headers=header, data=payload )
+                a.request(login_method.upper(), url, headers=header, data=payload,cert=cert_name  )
                 return a
             else:
-                response = requests.request(login_method.upper(), url, headers=header, data=payload )
+                response = requests.request(login_method.upper(), url, headers=header, data=payload ,cert=cert_name )
 
         else: #这时肯定是raw的五个子选项：
             if login_body_method == 'Text':
@@ -1087,10 +1130,10 @@ def project_login_send_for_other(project_id):
             # 先判断是否是cookie持久化，若是，则不处理
             if login_response_set == 'cookie':
                 a = requests.session()
-                a.request(login_method.upper(), url, headers=header, data=login_api_body.encode('utf-8'))
+                a.request(login_method.upper(), url, headers=header, data=login_api_body.encode('utf-8'),cert=cert_name )
                 return a
             else:
-                response = requests.request(login_method.upper(), url, headers=header, data=login_api_body.encode('utf-8'))
+                response = requests.request(login_method.upper(), url, headers=header, data=login_api_body.encode('utf-8'),cert=cert_name )
         # 把返回值传递给前端页面
         response.encoding = "utf-8"
         DB_host.objects.update_or_create(host=login_host)
@@ -1191,4 +1234,170 @@ def global_data_change_check(request):
     DB_project.objects.filter(id=project_id).update(global_datas=global_datas)
     return HttpResponse('')
 
-#
+# 保存加密配置
+def encyption_save(request):
+    project_id = request.GET['project_id']
+    encyption_insert = request.GET['encyption_insert']
+    encyption_input = request.GET['encyption_input']
+
+    DB_project.objects.filter(id=project_id).update(encyption_insert = encyption_insert,encyption_input=encyption_input)
+    return HttpResponse('')
+
+# 加密功能
+def encyption(url,body_method,body,project_id):
+    # 用project_id 拿出 加密插入位置 和 加密表达式
+    project = DB_project.objects.filter(id=project_id)[0]
+    encyption_insert = project.encyption_insert
+    encyption_input = project.encyption_input
+
+    # 根据加密表达式从url和body中拿出 需要用到的参数
+    key = encyption_input.split('=')[0].rstrip() #拿到这个加密字段名
+    pars = re.findall(r'#(.*?)#',encyption_input) #拿到所有需要去替换的变量名
+    for p in pars:
+        # 从url中取
+        tmp = re.findall(r'%s=(.*?)$|&'%p,url)
+        if tmp:
+            encyption_input = encyption_input.replace('#%s#'%p,tmp[0])
+            continue
+        # body中取,这里要判断下body的格式：
+        tmp = re.findall(r'"%s",(.*?)]'%p,body)
+        if tmp:
+            encyption_input = encyption_input.replace('#%s#' % p, tmp[0])
+            continue
+        tmp = re.findall(r'"%s":(.*?)}'%p,body)
+        if tmp:
+            encyption_input = encyption_input.replace('#%s#' % p, str(eval(tmp[0])))
+            continue
+        # 解析预置字段
+        if p == 'time': #后续添加其他的可以
+            encyption_input = encyption_input.replace('#%s#' % p, str(time.time())[:10])
+    # 进行求值：
+    exec(encyption_input)
+    # 插入url
+    if encyption_insert == 'url':
+        if '?' in url : #说明已经存在参数
+            if url[-1] == '&':
+                url += key+'='+eval(key)
+            else:
+                url += '&' + key+'='+eval(key)
+        else:
+            url += '?' + key+'='+eval(key)
+    # 插入到body中
+    elif encyption_insert == 'body':
+        if body_method not in ['form-data','x-www-form-urlencoded','Json' ]:
+            return url,body
+
+        ## 首先要对Body解析
+        body = eval(body)
+        ### 然后判断什么类型
+        if type(body) == list: #二维数组
+            body.append([key,eval(key)])
+            body = str(body)
+        elif type(body) == dict: #字典
+            body[key] = eval(key)
+            body = json.dumps(body)
+    return url,body
+
+# 上传证书文件
+def cert_upload(request,pid):
+    file = request.FILES.get("fileUpload", None)  # 靠name获取上传的文件，如果没有，避免报错，设置成None
+    if not file:
+        return HttpResponseRedirect('/project_set/%s/'%pid)  # 如果没有则返回
+    new_name = 'CERT_'+pid+'_'+str(file) # 设置好这个证书的名字
+    destination = open("MyApp/static/Certs/" + new_name, 'wb+')  # 打开特定的文件进行二进制的写操作
+    for chunk in file.chunks():  # 分块写入文件
+        destination.write(chunk)
+    destination.close()
+
+    # 去修改这个关联id。
+    DB_project.objects.filter(id=pid).update(cert = new_name)
+
+    return HttpResponseRedirect('/project_set/%s/' % pid)  # 正常返回
+
+# 并发用例
+def concurrent_cases(request,pid):
+    # 找出所有的并发用例id
+    case_ids = list(DB_cases.objects.filter(project_id=pid,concurrent= True).values('id'))
+    # 遍历所有并发用例，新建线程并执行
+    def do_case(case_id):
+        print('开始执行 ',case_id)
+        from MyApp.wqrf_run_case import main_request
+        main_request(case_id)
+    ts = [] #空线程池
+    for case_id in case_ids:
+        t = threading.Thread(target=do_case,args=(case_id['id'],)) #组装成子线程
+        t.setDaemon(True) #设置守护线程
+        ts.append(t)
+    for t in ts: #启动子线程
+        t.start()
+    for t in ts:
+        t.join()
+    print('全部执行完毕')
+    # 返回
+    return HttpResponseRedirect('/cases/%s/'%pid)
+
+
+# 查看并发用例报告
+def look_concurrent_report(request,pid):
+    # 根据项目id，拿到所有参与并发的用例id
+    cases = DB_cases.objects.filter(project_id=pid,concurrent= True)
+    # 设计总res
+    res= {}
+    res["result"] = True
+    res["cases"] = []
+    res["cases_length"] = len(cases)
+    res["cases_wrong_length"] = 0
+    res["cases_right_length"] = len(cases)
+    for case in cases :
+        tmp = {}
+        tmp["case_id"] = case.id
+        tmp["case_name"] = case.name
+        tmp["result_case"] = True
+        tmp["steps"] = []
+        # 循环填充
+        steps = DB_step.objects.filter(Case_id=case.id)
+        for step in steps:
+            tmp_step = {}
+            tmp_step["step_id"] = step.id
+            tmp_step["step_name"] = step.name
+            tmp_step["result_step"] = ""
+            tmp_step["data"] = {}
+            s_report = DB_wqrf_step_report.objects.filter(step_id=step.id)[0]
+
+            tmp_step["data"]["assert_result"] = s_report.assert_result
+            if s_report.assert_result in [None,'',' ']:
+                tmp_step["result_step"] = True
+            else:
+                for i in json.loads(s_report.assert_result).keys():
+                    if  json.loads(s_report.assert_result)[i] == False:
+                        tmp_step["result_step"] = False
+                        break
+                else:
+                    tmp_step["result_step"] = True
+            tmp["steps"].append(tmp_step)
+            if tmp_step["result_step"] == False:
+                tmp["result_case"] = False
+
+        if tmp["result_case"] == False:
+            res["cases_wrong_length"] += 1
+            res["cases_right_length"] -= 1
+            res["result"] = False
+        res["cases"].append(tmp) #最后的结果塞进res["cases]这个列表中
+    res["cases_wrong_scale"] = ( res["cases_wrong_length"] / res["cases_length"] ) * 100
+    res["cases_right_scale"] = ( 100 - res["cases_wrong_scale"] )
+
+    print(res)
+    # 返回给前端
+    return render(request,'concurrent_report.html',res)
+
+# 获取具体的step报告数据
+def get_step_report(request):
+    step_id = request.GET['step_id']
+    step = DB_wqrf_step_report.objects.filter(step_id=step_id)[0]
+    res = {}
+    res["assert_result"] = step.assert_result
+    res["response_data"] = step.response
+    res["request_data"] = step.request_data
+    step_name = DB_step.objects.filter(id=step_id)[0].name
+    res["step_span"] = "id: %s name: %s"%(step_id,step_name)
+    return  HttpResponse(json.dumps(res),content_type='application/json')

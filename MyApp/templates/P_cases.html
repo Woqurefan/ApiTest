@@ -3,10 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+     .box::before {
+        content: '';
+        border-radius: 5px;
+        position: absolute;
+        width: calc(100%);
+        height: calc(100%);
+        z-index: -1;
+        background-image: linear-gradient(50deg, aquamarine, cornflowerblue, goldenrod, hotpink, salmon, lightgreen, sandybrown, violet);
+        background-size: 300%;
+        animation: animate_bg 4s infinite;
+        }
+        @keyframes animate_bg {
+            0%, 100% {
+                background-position: 0%, 50%;
+            }
+
+            50% {
+                background-position: 100%, 50%;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<nav class="navbar navbar-default" role="navigation" style="position: absolute;top: 0px;left: 80px;width:-webkit-calc(100% - 200px);z-index: 1">
+<nav class="navbar navbar-default" role="navigation" style="background-color: white;box-shadow: 4px 4px 6px darkgray;
+border-image:linear-gradient(to right,#ff8cd0,#77a4cb,#ff8cd0,#ffb658) 1 10;
+position: absolute;top: 0px;left: 80px;width:-webkit-calc(100% - 200px);">
     <div class="container-fluid">
     <div class="navbar-header">
         <span style="font-size: xx-small" class="navbar-brand" >项目名称：{{ project.name }}</span>
@@ -15,7 +38,7 @@
     <div>
         <ul class="nav navbar-nav">
             <li ><a href="/apis/{{ project.id }}/">接口库</a></li>
-            <li class="active"><a href="/cases/{{ project.id }}/">用例库</a></li>
+            <li class="active" ><a  style="background: linear-gradient( to right,#a7e2ff,white,#ffd7e1)" href="/cases/{{ project.id }}/">用例库</a></li>
             <li><a href="/project_set/{{ project.id }}/">项目设置</a></li>
             <li><a href="/global_data/{{ project.id }}/">全局变量</a></li>
         </ul>
@@ -24,26 +47,28 @@
 </nav>
 
 <br><br>
+
 <table class="table table-striped">
     <thead>
         <tr>
-            <th style="width: 50px">id</th> <th style="width: -webkit-calc(100% - 410px)">用例名称</th> <th style="width: 450px">操作</th>
+            <th style="width: 50px">id</th> <th style="width: -webkit-calc(100% - 410px)">用例名称</th> <th style="width: 100px">并发</th> <th style="width: 450px">操作</th>
         </tr>
     </thead>
     <tbody>
          {% for i in Cases %}
              <tr>
-                <td>{{ i.id }}</td><td>{{ i.name }}</td>
+                <td>{{ i.id }}</td><td>{{ i.name }}</td><td>{{ i.concurrent }}</td>
              <td>
                 <div class="btn-group" style="z-index: 0">
-                     <button id="Run_btn_{{ i.id }}" class="btn btn-success" onclick="Run_Case('{{ i.id }}')" >运行</button>
+                     <button id="Run_btn_{{ i.id }}" style="color: black;background: linear-gradient( to top,#a7e2ff,white,#ffd7e1)"
+                             class="btn btn-success" onclick="Run_Case('{{ i.id }}')" >运行</button>
 
-                     <button class="btn btn-default" onclick="show_small('{{ i.id }}','{{ i.name }}')" >设置</button>
+                     <button class="btn btn-default" onclick="show_small('{{ i.id }}','{{ i.name }}','{{ i.concurrent }}')" >设置</button>
 
                     <a href="/look_report/{{ i.id }}/" target="_blank"><button class="btn btn-default" >查看报告</button></a>
 
                     <a href="/copy_case/{{ project.id }}/{{ i.id }}/"><button class="btn btn-default" onclick="">复制</button></a>
-                    <a href="/del_case/{{ project.id }}/{{ i.id }}/"><button class="btn btn-danger" onclick="" >删除</button></a>
+                    <a href="/del_case/{{ project.id }}/{{ i.id }}/"><button class="btn btn-default" onclick="" >删除</button></a>
                 </div>
              </td>
              </tr>
@@ -51,7 +76,13 @@
     </tbody>
 </table>
 
-<a href="/add_case/{{ project.id }}/"><button style="margin-left: 10px" class="btn btn-primary">新增用例</button></a>
+<a href="/add_case/{{ project.id }}/"><button style="color: black;background: linear-gradient( to bottom,#a7e2ff,white,#ffd7e1);
+margin-left: 10px" class="btn btn-primary">新增用例</button></a>
+<a href="/concurrent_cases/{{ project.id }}/"><button style="color: black;background: linear-gradient( to bottom,#a7e2ff,white,#ffd7e1);
+margin-left: 10px" class="btn btn-primary">并发执行</button></a>
+<a target="_blank" href="/look_concurrent_report/{{ project.id }}/"><button style="color: black;background: linear-gradient( to bottom,#a7e2ff,white,#ffd7e1);
+margin-left: 10px" class="btn btn-primary">查看并发报告</button></a>
+
 
 {# 大用例函数 #}
 <script>
@@ -72,13 +103,16 @@
     <button class="btn btn-default" onclick="add_new_step()" >新增小用例接口</button>
 {#    <button class="btn btn-default" >新增登陆态接口</button>#}
     <button class="btn btn-danger" style="float: right" onclick="close_left_div()">关闭</button>
-    <div id="small_list" >
+    <div id="small_list">
         {#   小用例都在这里了     #}
 
     </div>
     <p style="position: absolute;bottom: 0;left: 5px">
         用例id： <span id="Case_id"></span>
         用例名：<input type="text" id="Case_name" style="width: 50%" placeholder="可输入新名称" onblur="save_case_name()">
+        <br>
+        是否并发：<label><span>是 </span><input type="radio" value="True" name="concurrent_r"></label> &#12288;
+                <label><span>否 </span><input type="radio" value="False" name="concurrent_r"></label>
     </p>
 </div>
 
@@ -104,7 +138,7 @@
             for(var i=0;i<all_steps.length;i++){
                 //这里写 生成小用例步骤的button代码
                 var bu = document.createElement('button');
-                bu.style = 'margin-top: 5px;width: 80%;background-color: #f5f3f3;';
+                bu.style = 'margin-top: 5px;width: 80%;background: linear-gradient( to left,#a7e2ff,white,#ffd7e1)';
                 bu.className = 'btn btn-defaul';
                 bu.innerText = all_steps[i].index+' - '+all_steps[i].name;
                 bu.id = 'step_btn_'+all_steps[i].id;
@@ -132,7 +166,7 @@
             }
         })
     }
-    function show_small(case_id,Case_name) {
+    function show_small(case_id,Case_name,case_concorrent) {
         if(document.getElementById('left_div').style.display == 'none'){
             $("#left_div").css("display","block");
             $("#left_div").animate({right:'65%'},'fast');
@@ -145,6 +179,7 @@
         }
         document.getElementById('Case_id').innerText = case_id;
         document.getElementById('Case_name').value = Case_name;
+        $(':radio[name="concurrent_r"][value="'+case_concorrent+'"]').attr("checked","checked")
         refresh_left_div(case_id);
     }
     //关闭左侧div
@@ -158,9 +193,15 @@
           'id':document.getElementById('Case_id').innerText,
           'name':document.getElementById('Case_name').value ,
       },function (ret) {
-
       })
     }
+    // 并发选择触发事件
+    $("input[name='concurrent_r']").click(function (){
+        $.get('/save_case_concurrent/',{
+            'id':document.getElementById('Case_id').innerText,
+            'concurrent':$(':radio[name="concurrent_r"]:checked').val()
+        },function (ret){})
+    })
 </script>
 
 <div id="right_div" style="background-color: white;border: 1px solid black;
@@ -196,7 +237,7 @@
             </select>
         </li>
 
-        <li style="width: -webkit-calc(100% - 219px)">
+        <li style="width: -webkit-calc(100% - 400px)">
             <input id="step_url" style="border-radius: 4px;border: 1px solid #cccccc;
             padding-left: 10px;width: 100%;height: 35px;" type="text" placeholder='url: 如 /abcd/efgh/' value="">
         </li>
@@ -206,6 +247,20 @@
             <option value="no" id="step_login_no">不加登陆态</option>
             <option value="yes" id="step_login_yes">加登陆态</option>
         </select>
+
+        </li>
+        <li>
+            <select name="step_encyption" id="step_encyption" style="height: 35px;" class="form-control">
+                <option value="no" id="step_encyption_no">不加密</option>
+                <option value="yes" id="step_encyption_yes">加密</option>
+            </select>
+        </li>
+
+        <li>
+            <select name="step_cert" id="step_cert" style="height: 35px;" class="form-control">
+                <option value="no" id="step_cert_no">无证书</option>
+                <option value="yes" id="step_cert_yes">加证书</option>
+            </select>
         </li>
 
     </ul>
@@ -386,7 +441,10 @@ code:200"></textarea>
             document.getElementById('step_host').value = '';
             document.getElementById('step_header').value='{}';
             document.getElementById('mock_res').value = '';
-
+            // 初始化三个开关：
+            document.getElementById('step_login').value = 'no';
+            document.getElementById('step_encyption').value = 'no';
+            document.getElementById('step_cert').value = 'no';
              var project_headers = document.getElementById('ts_project_header_li').children;
              for(var i=0;i<project_headers.length;i++){
                  project_headers[i].children[0].checked=false;
@@ -431,6 +489,17 @@ code:200"></textarea>
                         document.getElementById('step_url').value = ret.api_url;
                         document.getElementById('step_host').value = ret.api_host;
                         document.getElementById('step_header').value = ret.api_header;
+                        // 三个开关
+                        if(ret.api_login != null && ret.api_login != ''){
+                                document.getElementById('step_login').value = ret.api_login;
+                            }
+                        if(ret.sign != null && ret.sign != ''){
+                                document.getElementById('step_encyption').value = ret.sign;
+                            }
+                        if(ret.cert != null && ret.cert != ''){
+                                document.getElementById('step_cert').value = ret.cert;
+                            }
+
                         // 公共请求头
                         var project_headers = ret.public_header.split(',');
                         for(var i=0;i<project_headers.length;i++){
@@ -516,7 +585,6 @@ code:200"></textarea>
         },function (ret) {
             var ret = eval(ret);
             console.log(ret);
-
           // 公共请求头
             if(ret.public_header != null){
                 var project_headers = ret.public_header.split(',');
@@ -542,6 +610,12 @@ code:200"></textarea>
             document.getElementById('assert_path').value = ret.assert_path ;
             if(ret.api_login != null && ret.api_login != ''){
                 document.getElementById('step_login').value = ret.api_login;
+            }
+            if(ret.sign != null && ret.sign != ''){
+                document.getElementById('step_encyption').value = ret.sign;
+            }
+            if(ret.cert != null && ret.cert != ''){
+                document.getElementById('step_cert').value = ret.cert;
             }
             // 请求体编码格式
             var body_method = '#'+ret.api_body_method;
@@ -594,7 +668,6 @@ code:200"></textarea>
                     }
                 }
             }
-
             if(ret.api_body_method == "GraphQL"){
                 body_plan_G_Q =  ret.api_body.split('*WQRF*')[0];
                 body_plan_G_G =  ret.api_body.split('*WQRF*')[1];
@@ -616,7 +689,8 @@ code:200"></textarea>
                 var index = document.getElementById('step_index').value;
                 var mock_res = document.getElementById('mock_res').value;
                 var step_login = document.getElementById('step_login').value;
-
+                var step_encyption = document.getElementById('step_encyption').value;
+                var step_cert = document.getElementById('step_cert').value;
                 //公共请求头
                   var project_headers = document.getElementById('ts_project_header_li').children;
                   var ts_project_headers = [];
@@ -630,12 +704,10 @@ code:200"></textarea>
                 if(step_method == 'null'){alert('请选择请求方式！');return}
                 if(step_url == ''){alert('请输入url！');return}
                 if(step_host == ''){alert('请输入host！');return}
-
                 //判断关键数据是否符合规则
                 if(step_host.slice(0,7) != 'http://' && step_host.slice(0,8) != 'https://' && step_host.slice(0,4) !='全局域名'){
                     alert('host必须以http://或https://开头！');return
                 }
-
                 var step_body_method = $('ul#myTab li[class="active"]')[0].innerText;
                 if(step_body_method == 'none'){
                     var step_api_body = ''
@@ -681,19 +753,18 @@ code:200"></textarea>
                 if(step_body_method == 'Xml'){
                     var step_api_body = document.getElementById('raw_Xml').value;
                 }
-
                 if(step_body_method == 'GraphQL'){
                         body_plan_G_Q = document.getElementById('body_plan_G_Q').value;
                         body_plan_G_G = document.getElementById('body_plan_G_G').value;
                          var step_api_body = body_plan_G_Q+ '*WQRF*' + body_plan_G_G
                     }
-
                 var step_id = document.getElementById('step_id').innerText ; //获取到了接口id
-
                 $.get('/save_step/',{
                     'step_id':step_id,
                     'name':name,
                     'index':index,
+                    'step_cert':step_cert,
+                    'step_encyption':step_encyption,
                     'step_method':step_method,
                     'step_url':step_url,
                     'step_host':step_host,
@@ -730,7 +801,8 @@ code:200"></textarea>
         document.getElementById('step_header').value='{}';
         document.getElementById('mock_res').value = '';
         document.getElementById('step_login').value = 'no';
-
+        document.getElementById('step_encyption').value = 'no';
+        document.getElementById('step_cert').value = 'no';
          var project_headers = document.getElementById('ts_project_header_li').children;
              for(var i=0;i<project_headers.length;i++){
                  project_headers[i].children[0].checked=false;

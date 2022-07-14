@@ -1,24 +1,12 @@
-import requests
-
-url = "http://www.baidu.com"
-
-payload= (
-    ("a","1"),
-    ("a","2"),
-    ("a","3"),
-    ("b","5"),
-)
-
-print(payload)
 
 
-files=[
 
-]
-headers = {
-  'Cookie': 'BAIDUID=6C6C6030F1690FD7425DECAAA7BB547E:FG=1; BDSVRTM=0'
-}
 
-response = requests.request("POST", url, headers=headers, data=payload, files=files)
 
-print(response.request.body)
+a = "abc" # a是临时变量
+
+d = '{"key": "##a##" }'  #d 是刚从数据库取出来的header 的json
+
+new_d = d.replace("##a##",repr(str(a)))
+
+print(new_d)

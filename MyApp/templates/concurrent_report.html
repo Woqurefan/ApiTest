@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>并发用例报告</title>
+     <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" />
+    <script src="/static/201908059658/js/jquery-1.11.0.min.js" type="text/javascript"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="/static/bingxingtu/css/progresscircle.css">
+
+    <style>
+        .backg{
+            background-color: #dadada;
+            box-shadow: 4px 4px 8px darkgrey;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+        }
+        .circlechart {
+		 	float: left;
+			padding: 20px;
+		}
+    </style>
+</head>
+<body>
+
+    <div style="position: absolute;left: 30%">
+      <div class="circlechart"  data-percentage="{{ cases_right_scale }}"></div>
+        <br>
+        <span style="padding-left: 30px;font-size: xx-small;color: #105f72">正确率</span>
+    </div>
+
+    <div style="width: 50%" class="backg">
+       最终结果：<span id="result_id">{{ result }}</span>  <br>
+        用例总数：{{ cases_length }} <br>
+        用例通过数：{{ cases_right_length }} <br>
+        用例通过率：{{ cases_right_scale }} % <br>
+        用例失败数：{{ cases_wrong_length }} <br>
+        用例失败率：{{ cases_wrong_scale }} %
+    </div>
+    <div class="backg">
+        {% for case in cases %}
+            <table class="table table-bordered table-hover ">
+              <thead style="background-color: white">
+                <tr>
+                  <th>用例名称: {{ case.case_name }}</th>
+                  <th width="300px">用例结果: {{ case.result_case }}</th>
+                    <th width="150px">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for step in case.steps %}
+                <tr>
+                  <td>步骤名称: {{ step.step_name }}</td>
+                  <td>步骤结果: {{ step.result_step }}</td>
+                  <td><button  onclick="detail('{{ step.step_id }}')">查看详情</button></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        {% endfor %}
+    </div>
+    <div id="step_div" style="display: none;width: 80%;height: 300px;overflow-y: auto;
+                position: fixed;left: 10%;top:100px;box-shadow: 4px 4px 8px darkgray;
+                border-radius: 3px;background-color: white;
+                padding: 20px">
+        <button style="float: right" class="btn btn-danger" onclick="close_step()">关闭</button>
+        <h4 style="text-align: center"> 步骤 【<span id="step_span">  </span>】的详细数据 </h4>
+        {#    开始写内容    #}
+        <h5>【断言结果: 】 </h5> &#12288;<span id="step_assert_result"></span> <br><br>
+        <h5>【返回数据: 】 </h5>&#12288;<span id="step_response"></span> <br><br>
+        <h5>【请求数据: 】</h5> &#12288;<span id="step_request_data"></span> <br><br>
+    </div>
+
+<script>
+    if(document.getElementById('result_id').innerText == 'True'){
+        document.getElementById('result_id').style.color = 'green'
+    }else{
+        document.getElementById('result_id').style.color = 'red'
+    }
+</script>
+<script>
+        function detail(step_id) {
+            console.log(step_id)
+            $.get("/get_step_report/",{
+                "step_id":step_id
+            },function (ret) {
+                document.getElementById('step_span').innerText = ret.step_span;
+                document.getElementById('step_assert_result').innerText = ret.assert_result;
+                document.getElementById('step_response').innerText = ret.response_data;
+                document.getElementById('step_request_data').innerText = ret.request_data;
+                document.getElementById('step_div').style.display = 'block'
+            })
+        }
+        function close_step(){
+                document.getElementById('step_div').style.display = 'none'
+        }
+    </script>
+
+<script src="/static/bingxingtu/js/progresscircle.js"></script>
+<script>
+    $('.circlechart').circlechart(); // Initialization
+</script>
+</body>
+
+</html>

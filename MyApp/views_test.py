@@ -8,15 +8,13 @@ import json
 import requests
 
 def test_login_A(request):
-    res = {"userid":"uA"}
-
+    res = {"userid":"uA","userpwd":"12223jjjw","butdata":{"name":"pen","price":"$5","counts":{"start":155,"now":52}}}
     return HttpResponse(json.dumps(res),content_type='application/json')
 
 
 def test_login_B(request):
-    res = {"userid":"uB"}
-
-    return HttpResponse(json.dumps(res), content_type='application/json')
+    res ='abcdefg'
+    return HttpResponse(res)
 
 
 def test_api_A(request):

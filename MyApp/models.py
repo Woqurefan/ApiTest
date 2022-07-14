@@ -25,8 +25,11 @@ class DB_project(models.Model):
     user_id = models.CharField(max_length=10,null=True) #项目创建者id
     other_user = models.CharField(max_length=200,null=True) #项目其他创建者
     global_datas = models.CharField(max_length=100,null=True) #所生效的变量组的id列表
+    encyption_insert = models.CharField(max_length=50,null=True) # 加密算法插入位置
+    encyption_input = models.CharField(max_length=500,null=True) # 加密算法表达式
+    cert =  models.CharField(max_length=200,null=True,default='') # 证书相关
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class DB_apis(models.Model):
@@ -36,12 +39,13 @@ class DB_apis(models.Model):
     api_url =  models.CharField(max_length=1000,null=True) #url
     api_header =  models.CharField(max_length=1000,null=True) #请求头
     api_login =  models.CharField(max_length=10,null=True) #是否带登陆态
+    cert = models.CharField(max_length=10,null=True) #是否带登陆态
     api_host =  models.CharField(max_length=100,null=True) #域名
     des =  models.CharField(max_length=100,null=True) #描述
     body_method =  models.CharField(max_length=20,null=True) #请求体编码格式
     api_body =  models.CharField(max_length=1000,null=True) #请求体
     result =  models.TextField(null=True) #返回体 因为长度巨大，所以用大文本方式存储
-    sign =  models.CharField(max_length=10,null=True) #是否验签
+    sign =   models.CharField(max_length=10,null=True,default='no') #是否验签
     file_key =  models.CharField(max_length=50,null=True) #文件key
     file_name =  models.CharField(max_length=50,null=True) #文件名
     public_header =  models.CharField(max_length=1000,null=True) #全局变量-请求头
@@ -49,7 +53,7 @@ class DB_apis(models.Model):
     last_api_body =  models.CharField(max_length=1000,null=True) #上次请求体
 
     def __str__(self):
-        return self.name
+        return str(self.id)+str(self.name)
 
 class DB_apis_log(models.Model):
     user_id = models.CharField(max_length=10,null=True) #所属用户id
@@ -57,6 +61,7 @@ class DB_apis_log(models.Model):
     api_url =  models.CharField(max_length=1000,null=True) #url
     api_header =  models.CharField(max_length=1000,null=True) #请求头
     api_login =  models.CharField(max_length=10,null=True) #是否带登陆态
+    cert = models.CharField(max_length=10,null=True) #是否带登证书
     api_host =  models.CharField(max_length=100,null=True) #域名
     body_method =  models.CharField(max_length=20,null=True) #请求体编码格式
     api_body =  models.CharField(max_length=1000,null=True) #请求体
@@ -71,6 +76,7 @@ class DB_apis_log(models.Model):
 class DB_cases(models.Model):
     project_id = models.CharField(max_length=10,null=True) #所属项目id
     name = models.CharField(max_length=50,null=True) #用例名字
+    concurrent = models.BooleanField(default=True) #是否并发
     def __str__(self):
         return self.name
 
@@ -93,10 +99,11 @@ class DB_step(models.Model):
     mock_res = models.CharField(max_length=1000,null=True) #mock返回值
     public_header =  models.CharField(max_length=1000,null=True) #全局变量-请求头
     api_login =  models.CharField(max_length=10,null=True) #是否带登陆态
-
+    cert =  models.CharField(max_length=10,null=True) #是否带证书
+    sign = models.CharField(max_length=10,null=True,default='no') # 是否验签
 
     def __str__(self):
-        return self.name
+        return self.names
 
 class DB_project_header(models.Model):
     project_id = models.CharField(max_length=10,null=True) #所属项目id
@@ -131,7 +138,8 @@ class DB_login(models.Model):
     api_host =  models.CharField(max_length=100,null=True) #域名
     body_method =  models.CharField(max_length=20,null=True) #请求体编码格式
     api_body =  models.CharField(max_length=1000,null=True) #请求体
-    sign =  models.CharField(max_length=10,null=True) #是否验签
+    sign =  models.CharField(max_length=10,null=True,default='no')  # 是否验签
+    cert =  models.CharField(max_length=10,null=True,default='no')  # 是否带证书
     set = models.CharField(max_length=300,null=True) #提取设置
 
     def __str__(self):
@@ -144,3 +152,12 @@ class DB_global_data(models.Model):
 
     def __str__(self):
         return self.name
+
+class DB_wqrf_step_report(models.Model):
+    step_id = models.CharField(max_length=10,default='') #步骤id
+    request_data = models.TextField(default='{}') #请求数据
+    response = models.TextField(default='') #返回结果
+    assert_result = models.CharField(max_length=500,default='{}') #断言结果
+
+    def __str__(self):
+        return self.step_id

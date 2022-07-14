@@ -9,7 +9,6 @@ import requests
 from allpairspy import AllPairs
 import xlrd
 import xlwt
-from xlutils import copy
 import os
 
 # 获取公共参数
@@ -99,9 +98,6 @@ def zhengjiao_play(request):
             else: # 说明是没有break出来的，被动过滤组合，给bdgl组合列表送去把
                 bdgl.append('-'.join(w))
             # break出来的，说明找到了有效组合，所以这个无辜组合已经可以了，赶紧搞下一个无辜组合把～
-
-
-
 
     d = { "res" : res,"bdgl":bdgl}
     return HttpResponse(json.dumps(d),content_type="application/json")

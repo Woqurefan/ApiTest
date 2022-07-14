@@ -120,8 +120,8 @@ top: 80px;right: 15%;background-color: black;color: white;border-radius: 2px">cl
                 <div style="padding-left: 10px;font-size: xx-small">
                    备注： {{ i.remark }} <br>
                    其他管理员：{{ i.other_user }} <br>
-                    <a href="/apis/{{ i.id }}/" style="background-color: #47ba04;color: white;font-size: large;border-radius: 5px">&nbsp;立即进入&nbsp;</a> &nbsp;
-                    <a href="#" onclick="save_api('{{ i.id }}')" style="background-color: #e92f6c;color: white;font-size: large;border-radius: 5px">&nbsp;保存请求&nbsp;</a> <br>
+                    <a href="/apis/{{ i.id }}/" style="background-color: #d7faff;color: #ff80c1;font-size: large;border-radius: 5px">&nbsp;立即进入&nbsp;</a> &nbsp;
+                    <a href="#" onclick="save_api('{{ i.id }}')" style="background-color: #ffeaea;color: #4c8dff;font-size: large;border-radius: 5px">&nbsp;保存请求&nbsp;</a> <br>
                     <br>
                 </div>
             </div>
@@ -221,7 +221,7 @@ top: 80px;right: 15%;background-color: black;color: white;border-radius: 2px">cl
 <div id="home_log_plan" style="padding-left: 20px;overflow-y: scroll;width: 320px;position: absolute;bottom: 10px">
     <br>
     {% for i in home_log %}
-        <div style="background-color: #eefaff;margin-bottom: 3px;border-radius: 5px;padding: 1px">
+        <div style="background: linear-gradient(to left,#d6faff,white,#ffeBeB);margin-bottom: 3px;border-radius: 5px;padding: 1px">
         <a href="/home_log/{{ i.id }}/" style=";text-decoration: none"  class="log" >
             <span style="font-size: large;;color: black">{{ i.api_method }}</span>
             {{ i.api_host }}{{ i.api_url }}
@@ -245,7 +245,7 @@ top: 80px;right: 15%;background-color: black;color: white;border-radius: 2px">cl
             </li>
 
             <li style="width: -webkit-calc(100% - 225px)">
-                <input id="ts_url" style="color: black;padding-left: 10px;width: 100%;height: 40px;" type="text" placeholder='url: 如 /abcd/efgh/' value="{{ log.api_url }}">
+                <input id="ts_url" style="color: black;padding-left: 10px;width: 100%;height: 40px; " type="text" placeholder='url: 如 /abcd/efgh/' value="{{ log.api_url }}">
             </li>
 
             <li >
@@ -598,9 +598,10 @@ top: 80px;right: 15%;background-color: black;color: white;border-radius: 2px">cl
 </script>
 
 
-<div style="background-color: #eefaff;min-height: 100px;width:-webkit-calc(100% - 340px);
+<div style="background: linear-gradient(to right,#d6faff,white,#ffe8e8);  min-height: 100px;width:-webkit-calc(100% - 340px);
             margin-left: 342px;position: fixed;bottom: 0px;box-shadow: -4px -4px 8px #e3e3e3;padding: 10px">
-    <div style="width: 120px;height: 80px;background-color: #105f72;border-radius: 5px;color: white;padding: 3px;font-size: small">
+    <div style="width: 120px;height: 80px;background: linear-gradient(to left,#d6faff,white,#ffe8e8);
+    ;border-radius: 5px;color: #1c8aa7;padding: 3px;font-size: small">
         当前项目数: <span>{{ count_project }}</span> <br>
         当前接口数: <span>{{ count_api }}</span> <br>
         当前用例数: <span>{{ count_case }}</span> <br>

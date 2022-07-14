@@ -9,7 +9,7 @@ Function views
 Class-based views
     1. Add an import:  from other_app.views import Home
     2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
+Including another URLtconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
@@ -54,6 +54,12 @@ urlpatterns = [
     url(r'^add_case/(?P<eid>.*)/$', add_case),  # 增加用例
     url(r'^del_case/(?P<eid>.*)/(?P<oid>.*)/$', del_case),  # 删除用例
     url(r'^copy_case/(?P<eid>.*)/(?P<oid>.*)/$', copy_case),  # 复制用例
+    url(r'^save_case_concurrent/$',save_case_concurrent),# 保存用例并发设置
+
+    url(r'^concurrent_cases/(?P<pid>.*)/$', concurrent_cases),  # 用例并发
+    url(r'^look_concurrent_report/(?P<pid>.*)/$', look_concurrent_report),  # 查看用例并发报告
+    url(r'^get_step_report/$',get_step_report), #获取具体step数据
+
     url(r'^get_small/$', get_small),  # 获取小用例步骤的列表数据
     url(r'^user_upload/$', user_upload),  # 上传头像
     url(r'^add_new_step/$', add_new_step),  # 新增小步骤接口
@@ -78,11 +84,16 @@ urlpatterns = [
     url(r'^global_data_save/$', global_data_save),  # 保存一个全局变量组
     url(r'^global_data_change_check/$', global_data_change_check),  # 更改项目的生效变量组
 
+    url(r'^encyption_save/$',encyption_save), #加密配置保存
+
+    url(r'^cert_upload/(?P<pid>.*)/$', cert_upload),  # 上传证书
+
+
     # ------------ 测试用接口
-    url(r'^test_login_A/$', test_login_A),  # 保存一个全局变量组
-    url(r'^test_login_B/$', test_login_B),  # 保存一个全局变量组
-    url(r'^test_api_A/$', test_api_A),  # 保存一个全局变量组
-    url(r'^test_api_B/$', test_api_B),  # 保存一个全局变量组
+    url(r'^test_login_A/$', test_login_A),
+    url(r'^test_login_B/$', test_login_B),
+    url(r'^test_api_A/$', test_api_A),
+    url(r'^test_api_B/$', test_api_B),
 
     # ------------ 小工具 --------------- #
     url(r'^tools_zhengjiao/$', zhengjiao),  # 进入小公举页面

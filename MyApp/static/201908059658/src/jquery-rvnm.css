@@ -374,11 +374,12 @@ body,html{
 
 /* Dark ruby theme */
 .rvnm-navbar-box.dark-ruby{
-    background: #353C48 ;
+    background: linear-gradient(to right, #d7fdff,white, #ffe6f6) ;
+    box-shadow: 4px 4px 6px gray;
 }
 
 .rvnm-navbar-box.dark-ruby ul li{
-    background: #353C48 ;
+     background: linear-gradient(to right, #d7fdff,white, #ffe6f6) ;
     border-bottom: 0 ;
 }
 
@@ -387,11 +388,11 @@ body,html{
 }
 
 .rvnm-navbar-box.dark-ruby ul li:hover,.rvnm-navbar-box.dark-ruby ul li.rvnm-collapseable{
-    background-color: #f0c700;
+    background-color: #91c7f0;
 }
 .rvnm-navbar-box.dark-ruby ul li a,.rvnm-navbar-box.dark-ruby ul li a:visited,.rvnm-navbar-box.dark-ruby ul li span.spliter{
     background: transparent  ;
-    color: rgb(150, 162, 180);
+    color: rgb(63, 23, 43);
     padding-top: 15px ;
     padding-bottom: 15px;
     font-weight: 700;
@@ -406,7 +407,7 @@ body,html{
 }
 
 .rvnm-navbar-box.dark-ruby ul li:hover a,.rvnm-navbar-box.dark-ruby ul li:hover a:visited{
-    color: #ffffff;
+    color: #130e69;
 }
 
 

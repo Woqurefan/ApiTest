@@ -3,6 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>项目列表</title>
+    <style>
+         .wqrf_back{
+            background-image: linear-gradient(50deg, #ffcde8,white, #a5e5ff);
+            background-size: 200%;
+            animation: animate_bg 3s infinite;
+        }
+        @keyframes animate_bg {
+            0%, 100% {
+                background-position: 0%, 50%;
+            }
+
+            50% {
+                background-position: 100%, 50%;
+            }
+        }
+    </style>
 </head>
 <body>
     <h3 style="padding-left: 10px;color: #353c48">项目列表：
@@ -12,16 +28,20 @@
         </span>
     </h3>
 
-    <table class="table table-striped">
-        <thead>
+    <table class="table table-bordered" >
+        <thead class="wqrf_back">
             <tr>
-                <th>项目id</th> <th>项目名称</th> <th>创建者</th> <th>备注</th>  <th>操作</th>
+                <th></th><th>项目id</th> <th>项目名称</th> <th>创建者</th> <th>备注</th>  <th>操作</th>
             </tr>
         </thead>
         <tbody>
              {% for i in projects %}
                  <tr>
-                    <td>{{ i.id }}</td><td>{{ i.name }}</td> <td>{{ i.user }}</td> <td>{{ i.remark }}</td> <td>  <button onclick="javascript:document.location.href='/apis/{{ i.id }}/'" class="btn btn-success">进入</button> <button onclick="delete_project('{{ i.id }}')" class="btn btn-danger">删除</button></td>
+                    <td></td><td>{{ i.id }}</td><td>{{ i.name }}</td> <td>{{ i.user }}</td> <td>{{ i.remark }}</td>
+                     <td>
+                         <button style="background-color:#c4eeff " onclick="javascript:document.location.href='/apis/{{ i.id }}/'" class="btn btn-default">进入</button>
+                         <button style="background-color: #ffdfea;" onclick="delete_project('{{ i.id }}')" class="btn btn-default">删除</button>
+                     </td>
                 </tr>
             {% endfor %}
         </tbody>

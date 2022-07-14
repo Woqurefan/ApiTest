@@ -11,7 +11,9 @@
 </head>
 <body>
 
-<nav class="navbar navbar-default" role="navigation" style="position: absolute;top: 0px;left: 80px;width:-webkit-calc(100% - 200px);z-index: 1">
+<nav class="navbar navbar-default" role="navigation" style="background-color: white;box-shadow: 4px 4px 6px darkgray;
+border-image:linear-gradient(to right,#ff8cd0,#77a4cb,#ff8cd0,#ffb658) 1 10;
+position: absolute;top: 0px;left: 80px;width:-webkit-calc(100% - 200px);">
     <div class="container-fluid">
     <div class="navbar-header">
         <span style="font-size: xx-small" class="navbar-brand" >项目名称：{{ project.name }}</span>
@@ -19,10 +21,10 @@
     </div>
     <div>
         <ul class="nav navbar-nav">
-            <li><a href="/apis/{{ project.id }}/">接口库</a></li>
-            <li><a href="/cases/{{ project.id }}/">用例库</a></li>
+            <li  ><a href="/apis/{{ project.id }}/" >接口库</a></li>
+            <li ><a href="/cases/{{ project.id }}/">用例库</a></li>
             <li><a href="/project_set/{{ project.id }}/">项目设置</a></li>
-            <li class="active"><a href="/global_data/{{ project.id }}/">全局变量</a></li>
+            <li  class="active"><a style="background: linear-gradient( to right,#a7e2ff,white,#ffd7e1)"  href="/global_data/{{ project.id }}/">全局变量</a></li>
         </ul>
     </div>
     </div>
@@ -30,31 +32,40 @@
 
 <br><br>
 
-<div style="padding-left: 100px">
-{% for i in global_data %}
-    <button onclick="delete_one('{{ i.id }}')" class="btn-danger">删除</button>
-    <button onclick="show('{{ i.id }}','{{ i.name }}','{{ i.data }}')" class="btn-default" style="margin-top: 5px;width:150px ">{{ i.name }}</button>
-    <input type="checkbox" id="check_{{ i.id }}" value="{{ i.id }}" name="check_names" onchange="change_check()">
-    <br>
 
-    <script>
+
+<table class="table table-bordered" style="width: auto;margin-left: 100px">
+  <caption>选择不同变量组后，右侧进行修改 <button class="btn btn-default" onclick="add_new()">新增变量组</button>
+        <button class="btn btn-default" onclick="save_one()" style="">保存当前</button></caption>
+  <thead style="background: linear-gradient(to right,#daf6fe,white,#ffe7ef)">
+    <tr>
+        <th  style="width: 20px"></th>
+      <th style="width: 500px">变量组名称</th>
+        <th style="width: 100px">操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for i in global_data %}
+         <tr>
+          <td><input type="checkbox" id="check_{{ i.id }}" value="{{ i.id }}" name="check_names" onchange="change_check()"></td>
+          <td><button onclick="show('{{ i.id }}','{{ i.name }}','{{ i.data }}')" class="btn btn-default" style="background: linear-gradient(to right,#daf6fe,white,#ffe7ef);margin-top: 5px; ">{{ i.name }}</button></td>
+          <td><button onclick="delete_one('{{ i.id }}')" class="btn-danger">删除</button></td>
+        </tr>
+        <script>
         if("{{ project.global_datas }}" != "None" && "{{ project.global_datas }}" != ""){
             if( $.inArray(  "{{ i.id }}", "{{ project.global_datas }}".split(',') ) != -1 ){
                 document.getElementById('check_{{ i.id }}').checked = 'checked'
             }
         }
     </script>
+    {% endfor %}
+  </tbody>
+</table>
 
-{% endfor %}
-    <br>
-<button class="btn-primary" onclick="add_new()">新增</button>
-<button class="btn-success" onclick="save_one()" style="width:150px">保存当前</button>
-</div>
-
-<div style="position: absolute;left: 330px;top: 65px">
+<div style=";position: absolute;left: 732px;top: 110px;width: -webkit-calc(100% - 870px)">
     <input type="text" id="id" style="display: none;">
-    <input id="name" type="text" style="width: 500px" placeholder="输入变量组的名字"> <br>
-    <textarea id="data" style="width: 500px;height: 500px;" placeholder="输入json格式的变量组内容"></textarea>
+    <input id="name" type="text" style="border-image:linear-gradient(to right,#8ce3fe,#ffbae5) 1 10;width: 100%" placeholder="修改变量组的名字"> <br>
+    <textarea id="data" style="border-image:linear-gradient(to right,#b5e1fe,#ffbed8) 1 10;width: 100%;height: 500px;" placeholder="输入json格式的变量组内容"></textarea>
 </div>
 
 
@@ -113,7 +124,5 @@
         })
     }
 </script>
-
-
 </body>
 </html>

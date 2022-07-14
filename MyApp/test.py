@@ -1,10 +1,8 @@
-import json,re,requests
 
-import unittest
+import json
+s = '{"aaa":false}'
 
-a = [1,2,3]
-b = [5,4,1]
+print(json.loads(s))
 
-# c = list(set(a).difference(set(b)))
-
-print(set(a).intersection(set(b)) == set())
+for i in json.loads(s).keys():
+    print(s[i])
